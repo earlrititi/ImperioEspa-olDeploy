@@ -510,19 +510,53 @@ export default function Navigation() {
             display: none;
           }
 
+          .main-nav__inner {
+            min-height: calc(var(--space-unit) * 7);
+          }
+
+          .main-nav__logo {
+            height: clamp(2.1rem, 10vw, 2.55rem);
+          }
+
           .side-bar__panel {
             align-items: stretch;
-            padding-inline: clamp(1.5rem, 6vw, 2.25rem);
+            justify-content: center;
+            overflow-y: auto;
+            padding: clamp(5.5rem, 13svh, 7.25rem) clamp(1rem, 5vw, 1.5rem) clamp(1.5rem, 6svh, 2.5rem);
           }
 
           .side-bar__nav {
-            width: min(100%, 420px);
+            width: min(100%, 460px);
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            grid-auto-rows: minmax(54px, auto);
+            gap: clamp(0.45rem, 1.6svh, 0.85rem);
             justify-items: start;
             text-align: left;
           }
 
           .side-bar__link {
-            font-size: clamp(1.8rem, 7.2vw, 2.7rem);
+            display: block;
+            width: 100%;
+            font-size: clamp(1.02rem, 4.7vw, 1.58rem);
+            line-height: 1;
+            overflow-wrap: anywhere;
+          }
+        }
+
+        @media (max-width: 380px), (max-height: 700px) {
+          .side-bar__panel {
+            justify-content: flex-start;
+            padding-top: clamp(4.5rem, 11svh, 5.5rem);
+          }
+
+          .side-bar__nav {
+            grid-auto-rows: minmax(44px, auto);
+            gap: clamp(0.35rem, 1.15svh, 0.65rem);
+          }
+
+          .side-bar__link {
+            font-size: clamp(0.9rem, 4.2vw, 1.28rem);
+            line-height: 1;
           }
         }
 

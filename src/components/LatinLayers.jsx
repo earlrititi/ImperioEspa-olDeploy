@@ -457,6 +457,7 @@ export default function LatinLayers({
 
       <style>{`
         .latin-layers {
+          --latin-responsive-scale: 1;
           width: 100%;
           pointer-events: none;
         }
@@ -482,7 +483,7 @@ export default function LatinLayers({
         .latin-phrase-layer__content {
           transform-box: fill-box;
           transform-origin: center top;
-          transform: scale(var(--layer-scale, 1));
+          transform: scale(calc(var(--layer-scale, 1) * var(--latin-responsive-scale, 1)));
           will-change: transform;
         }
 
@@ -495,6 +496,17 @@ export default function LatinLayers({
           opacity: 0;
           filter: blur(var(--latin-max-blur-px));
           will-change: opacity, filter;
+        }
+
+        @media (max-width: 768px) {
+          .latin-layers {
+            --latin-responsive-scale: 0.64;
+          }
+
+          .latin-layers__svg-wrap,
+          .latin-layers__svg {
+            overflow: hidden;
+          }
         }
 
       `}</style>

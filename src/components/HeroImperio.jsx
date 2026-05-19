@@ -463,14 +463,18 @@ export default function HeroImperio() {
         }
 
         @media (max-width: 768px) {
+          .hero-imperio {
+            min-height: 100svh;
+          }
+
           .hero-background__img {
             object-position: 50% 50%;
           }
 
           .hero-imperio__lockup {
-            --wordmark-w: min(88vw, 420px);
+            --wordmark-w: min(84vw, 360px);
             left: 50%;
-            top: 56%;
+            top: 46%;
             transform: translate(-50%, -50%);
           }
 
@@ -478,17 +482,64 @@ export default function HeroImperio() {
             gap: var(--space-2);
           }
 
-          .hero-nav ul {
-            gap: var(--space-2);
+          .hero-imperio__latin-wrap,
+          .hero-imperio__latin-block {
+            width: min(92vw, 360px);
+            max-width: calc(100vw - var(--space-4));
+            overflow: hidden;
           }
 
-          .hero-imperio__nav,
+          .hero-imperio__nav {
+            display: block;
+            opacity: 1;
+            transform: none;
+          }
+
+          .hero-nav__surface {
+            background: rgba(255, 255, 255, 0.94);
+            border-top: 1px solid rgba(0, 0, 0, 0.08);
+          }
+
+          .hero-nav__shell {
+            min-height: auto;
+            padding-block: var(--space-2);
+          }
+
+          .hero-nav__links-wrap {
+            position: static;
+            width: 100%;
+            transform: none;
+          }
+
           .hero-nav__overlay {
             display: none;
           }
 
+          .hero-nav__links-list {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            grid-auto-rows: minmax(34px, auto);
+            gap: 3px var(--space-1);
+            width: 100%;
+            max-width: 100%;
+          }
+
+          .hero-nav__links-list li {
+            width: 100%;
+          }
+
           .nav-link {
-            font-size: 0.75rem;
+            min-height: 32px;
+            width: 100%;
+            padding-inline: var(--space-1);
+            font-size: clamp(0.62rem, 2.55vw, 0.78rem);
+            line-height: 1.1;
+            white-space: normal;
+            text-align: center;
+          }
+
+          .nav-link::before,
+          .nav-link::after {
+            display: none;
           }
         }
 

@@ -171,6 +171,27 @@ export default function Footer() {
         .footer__legal {
           gap: var(--space-3);
         }
+
+        @media (max-width: 767px) {
+          .footer {
+            padding-block: var(--space-8) var(--space-6);
+          }
+
+          .footer__grid {
+            grid-template-columns: minmax(0, 1fr);
+            gap: var(--space-5);
+          }
+
+          .footer__bottom > div {
+            align-items: flex-start;
+            text-align: left;
+          }
+
+          .footer__legal {
+            flex-direction: column;
+            gap: var(--space-1);
+          }
+        }
       `}</style>
     </footer>
   );

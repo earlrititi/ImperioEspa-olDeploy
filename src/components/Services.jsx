@@ -292,8 +292,8 @@ export default function Services() {
           }
 
           .services-army-swap {
-            width: min(112%, 520px);
-            margin: var(--space-2) -6% var(--space-2);
+            width: min(100%, 520px);
+            margin: var(--space-2) auto;
           }
 
           .services-foundation-grid {
@@ -318,6 +318,15 @@ export default function Services() {
           .service-content h3 {
             font-size: clamp(2rem, 10vw, 2.75rem);
             margin-bottom: var(--space-2);
+          }
+
+          .services-grid {
+            gap: calc(var(--space-unit) * 7);
+          }
+
+          .service-item {
+            grid-template-columns: minmax(0, 1fr);
+            gap: var(--space-3);
           }
 
           .service-image img {

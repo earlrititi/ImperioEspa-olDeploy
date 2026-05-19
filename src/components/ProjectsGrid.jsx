@@ -87,6 +87,7 @@ export default function ProjectsGrid() {
 
           .projects-section__header {
             margin-bottom: var(--space-5);
+            align-items: flex-start;
           }
 
           .projects-section__header h2 {
@@ -99,6 +100,7 @@ export default function ProjectsGrid() {
           }
 
           .projects-grid {
+            grid-template-columns: minmax(0, 1fr);
             gap: var(--space-6);
           }
 
