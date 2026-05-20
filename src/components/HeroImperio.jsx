@@ -475,6 +475,7 @@ export default function HeroImperio() {
         @media (max-width: 768px) {
           .hero-imperio {
             min-height: 100svh;
+            background: var(--color-white-pure);
           }
 
           .hero-background__img {
@@ -506,8 +507,9 @@ export default function HeroImperio() {
           }
 
           .hero-nav__surface {
-            background: rgba(255, 255, 255, 0.94);
-            border-top: 1px solid rgba(0, 0, 0, 0.08);
+            background: var(--color-white-pure);
+            border-top: 0;
+            box-shadow: none;
           }
 
           .hero-nav__shell {
