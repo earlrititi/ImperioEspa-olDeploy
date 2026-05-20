@@ -6,6 +6,7 @@ import { withBase } from "../utils/basePath";
 import {
   HERO_ENTRANCE_SEQUENCE,
   HERO_IMAGE_DEFAULT_SRC,
+  HERO_IMAGE_MOBILE_SRC,
   HERO_LAYER_VARS,
   HERO_VIEW_TRANSITION_NAME,
   LATIN_LAYER_ANIMATION,
@@ -118,11 +119,14 @@ export default function HeroImperio() {
     <>
       <section class="hero-imperio relative min-h-screen flex flex-col justify-between overflow-hidden bg-black">
         <div class="hero-background absolute inset-0" aria-hidden="true">
-          <img
-            src={HERO_IMAGE_DEFAULT_SRC}
-            alt=""
-            class="hero-background__img"
-          />
+          <picture>
+            <source media="(max-width: 768px)" srcSet={HERO_IMAGE_MOBILE_SRC} />
+            <img
+              src={HERO_IMAGE_DEFAULT_SRC}
+              alt=""
+              class="hero-background__img"
+            />
+          </picture>
         </div>
 
         <div class="hero-content hero-imperio__content flex-1 flex flex-col items-center justify-center relative z-10 px-6">
@@ -195,6 +199,12 @@ export default function HeroImperio() {
 
         body.preloader-done .hero-background {
           opacity: 1;
+        }
+
+        .hero-background picture {
+          display: block;
+          width: 100%;
+          height: 100%;
         }
 
         .hero-background__img {

@@ -1,6 +1,7 @@
 import { useEffect } from "preact/hooks";
 import {
   HERO_IMAGE_DEFAULT_SRC,
+  HERO_IMAGE_MOBILE_SRC,
   HERO_VIEW_TRANSITION_NAME,
   PRELOADER_SEQUENCE_IMAGES,
 } from "../config/hero";
@@ -128,7 +129,7 @@ export default function Preloader() {
         ].join(", ");
         finalImage.style.transform = `scale(${FINAL_IMAGE_START_SCALE})`;
         finalImage.style.opacity = "1";
-        const finalSrc = finalImage.getAttribute("src");
+        const finalSrc = finalImage.currentSrc || finalImage.getAttribute("src");
         if (finalSrc) {
           window.dispatchEvent(
             new CustomEvent("preloader:last-image", {
@@ -210,30 +211,35 @@ export default function Preloader() {
       >
         <div class="preloader-images relative">
           {PRELOADER_SEQUENCE_IMAGES.map((image) => (
-            <img
-              key={image.src}
-              src={image.src}
-              alt={image.alt}
-              class={[
-                "preloader-img",
-                "preloader-sequence-img",
-                image.shrinkTrigger && "preloader-img--shrink-trigger",
-                "absolute",
-                "opacity-0",
-              ]
-                .filter(Boolean)
-                .join(" ")}
-              style={{ "--scale-end": image.scaleEnd }}
-            />
+            <picture key={image.src}>
+              <source media="(max-width: 768px)" srcSet={image.mobileSrc} />
+              <img
+                src={image.src}
+                alt={image.alt}
+                class={[
+                  "preloader-img",
+                  "preloader-sequence-img",
+                  image.shrinkTrigger && "preloader-img--shrink-trigger",
+                  "absolute",
+                  "opacity-0",
+                ]
+                  .filter(Boolean)
+                  .join(" ")}
+                style={{ "--scale-end": image.scaleEnd }}
+              />
+            </picture>
           ))}
         </div>
 
         <div class="preloader-final-layer" aria-hidden="true">
-          <img
-            src={HERO_IMAGE_DEFAULT_SRC}
-            alt="Cargando 3"
-            class="preloader-img preloader-img--final absolute opacity-0"
-          />
+          <picture>
+            <source media="(max-width: 768px)" srcSet={HERO_IMAGE_MOBILE_SRC} />
+            <img
+              src={HERO_IMAGE_DEFAULT_SRC}
+              alt="Cargando 3"
+              class="preloader-img preloader-img--final absolute opacity-0"
+            />
+          </picture>
         </div>
       </div>
 
@@ -276,6 +282,11 @@ export default function Preloader() {
           transform: scale(${SEQUENCE_FRAME_SCALE});
           transform-origin: center;
           transition: transform var(--shrink-duration, 120ms) var(--ease-soft);
+        }
+
+        .preloader-images picture,
+        .preloader-final-layer picture {
+          display: contents;
         }
 
         #preloader.preloader--shrink .preloader-images {
