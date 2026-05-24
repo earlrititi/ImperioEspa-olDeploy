@@ -46,9 +46,7 @@ export default function Preloader() {
     let done = false;
     let started = false;
     let removeGrowListener = () => {};
-    const isPhoneViewport = window.matchMedia("(max-width: 768px)").matches;
     const supportsViewTransition =
-      !isPhoneViewport &&
       typeof document.startViewTransition === "function" &&
       !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -59,24 +57,9 @@ export default function Preloader() {
     const finalizePreloader = () => {
       if (done) return;
       done = true;
-      const keepFinalImageAsMobileHeroBackground = () => {
-        if (!isPhoneViewport) return;
-
-        const heroBackground = document.querySelector(".hero-background");
-        if (!heroBackground) return;
-
-        Array.from(heroBackground.children).forEach((child) => {
-          if (child.tagName === "PICTURE") child.remove();
-        });
-
-        finalLayer.classList.add("preloader-final-layer--hero-background");
-        finalLayer.removeAttribute("aria-hidden");
-        heroBackground.classList.add("hero-background--from-preloader");
-        heroBackground.appendChild(finalLayer);
-      };
-
       const applyHandoffState = () => {
-        keepFinalImageAsMobileHeroBackground();
+        // Cuando la 6 ya esta a pantalla completa, intercambiamos al hero.
+        // Como usan el mismo asset, el cambio de una capa a otra es invisible.
         document.body.classList.add("preloader-done");
         preloader.classList.add("preloader--done");
         window.dispatchEvent(new Event("preloader:done"));
@@ -321,14 +304,6 @@ export default function Preloader() {
           transform: scale(${FINAL_LAYER_START_SCALE});
           transform-origin: center;
           transition: transform var(--grow-duration, 120ms) var(--ease-grow);
-        }
-
-        .preloader-final-layer--hero-background {
-          position: absolute;
-          inset: 0;
-          width: 100%;
-          height: 100%;
-          transform: scale(1);
         }
 
         .preloader-img {
