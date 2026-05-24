@@ -57,7 +57,10 @@ export default function HeroImperio() {
 
     const onScroll = () => {
       if (!heroBackground) return;
-      const target = heroImage || heroBackground;
+      const activeHeroImage = heroBackground.querySelector(
+        ".preloader-img--final, .hero-background__img"
+      );
+      const target = activeHeroImage || heroBackground;
       if (!document.body.classList.contains("preloader-done")) {
         target.style.transform = "translateY(0)";
         return;
