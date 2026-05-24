@@ -19,6 +19,11 @@ const FOUNDATION_CARDS = [
   },
 ];
 
+const NEXT_BUTTON_STAR_PATH =
+  "M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z";
+
+const NEXT_BUTTON_STARS = [1, 2, 3, 4, 5, 6];
+
 export default function Services() {
   return (
     <>
@@ -56,6 +61,34 @@ export default function Services() {
               </article>
             ))}
           </div>
+          </div>
+
+          <div class="services-next-button-wrap fade-in-up">
+            <svg class="services-next-liquid-filter" aria-hidden="true" focusable="false">
+              <filter id="services-next-liquid-glass">
+                <feTurbulence type="fractalNoise" baseFrequency="0.018 0.042" numOctaves="2" seed="17" result="map"></feTurbulence>
+                <feGaussianBlur in="SourceGraphic" stdDeviation="0.45" result="blur"></feGaussianBlur>
+                <feDisplacementMap in="blur" in2="map" scale="8" xChannelSelector="R" yChannelSelector="G"></feDisplacementMap>
+              </filter>
+            </svg>
+            <button class="services-next-button" type="button">
+              <span class="services-next-liquid-lens" aria-hidden="true"></span>
+              <span class="services-next-button-content">
+                <span class="services-next-button-text">OBT&Eacute;N EL MANIFIESTO</span>
+                <svg class="services-next-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 66 43" aria-hidden="true" focusable="false">
+                  <polygon points="39.58,4.46 44.11,0 66,21.5 44.11,43 39.58,38.54 56.94,21.5"></polygon>
+                  <polygon points="19.79,4.46 24.32,0 46.21,21.5 24.32,43 19.79,38.54 37.15,21.5"></polygon>
+                  <polygon points="0,4.46 4.53,0 26.42,21.5 4.53,43 0,38.54 17.36,21.5"></polygon>
+                </svg>
+              </span>
+              {NEXT_BUTTON_STARS.map((star) => (
+                <span class={`services-next-star services-next-star--${star}`} aria-hidden="true" key={star}>
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 784.11 815.53" focusable="false">
+                    <path class="services-next-star-fill" d={NEXT_BUTTON_STAR_PATH}></path>
+                  </svg>
+                </span>
+              ))}
+            </button>
           </div>
 
           <div class="services-grid">
@@ -142,6 +175,333 @@ export default function Services() {
         .services-grid {
           display: grid;
           gap: var(--space-8);
+        }
+
+        .services-next-button-wrap {
+          display: flex;
+          justify-content: center;
+          margin: var(--space-4) 0 var(--space-8);
+          position: relative;
+        }
+
+        .services-next-liquid-filter {
+          position: absolute;
+          width: 0;
+          height: 0;
+          overflow: hidden;
+          pointer-events: none;
+        }
+
+        .services-next-button {
+          --main-size: clamp(0.98rem, 1.45vw, 1.34rem);
+          --color-background: #ff4b64;
+          --color-text: rgba(255, 255, 255, 0.94);
+          --color-outline: rgba(255, 66, 116, 0.32);
+          --color-shadow: rgba(44, 0, 15, 0.36);
+          --color-star: #ff3b5c;
+          position: relative;
+          z-index: 0;
+          isolation: isolate;
+          cursor: pointer;
+          appearance: none;
+          display: inline-flex;
+          justify-content: center;
+          align-items: center;
+          text-decoration: none;
+          border: 1px solid rgba(255, 206, 218, 0.38);
+          border-radius: 999px;
+          padding: 0;
+          font-family: "Poppins", var(--font-display);
+          font-weight: 600;
+          font-size: var(--main-size);
+          color: var(--color-text);
+          background: transparent;
+          box-shadow:
+            0 2px 5px rgba(60, 0, 24, 0.28),
+            0 14px 22px rgba(163, 0, 91, 0.26),
+            0 24px 36px -16px rgba(255, 70, 190, 0.78);
+          transition: color 0.4s cubic-bezier(1, 0, 0.4, 1), transform 0.3s ease-out, box-shadow 0.4s cubic-bezier(1, 0, 0.4, 1);
+        }
+
+        .services-next-button::after {
+          content: "";
+          position: absolute;
+          left: 8%;
+          right: 8%;
+          bottom: -36%;
+          height: 58%;
+          z-index: -2;
+          border-radius: 999px;
+          background:
+            radial-gradient(ellipse at 50% 30%, rgba(255, 75, 205, 0.85), rgba(255, 75, 205, 0.18) 58%, transparent 72%),
+            linear-gradient(90deg, rgba(255, 111, 203, 0), rgba(255, 111, 203, 0.5), rgba(255, 111, 203, 0));
+          filter: blur(9px);
+          opacity: 0.92;
+          pointer-events: none;
+          transition: opacity 0.35s ease, transform 0.35s ease;
+        }
+
+        .services-next-liquid-lens {
+          position: absolute;
+          inset: 0;
+          z-index: -1;
+          border-radius: inherit;
+          pointer-events: none;
+          background:
+            radial-gradient(ellipse at 16% 20%, rgba(255, 255, 255, 0.42), transparent 18%),
+            radial-gradient(ellipse at 9% 73%, rgba(255, 96, 10, 0.98), rgba(255, 96, 10, 0.26) 18%, transparent 30%),
+            radial-gradient(ellipse at 50% 104%, rgba(255, 88, 201, 0.86), rgba(255, 88, 201, 0.22) 40%, transparent 66%),
+            linear-gradient(180deg, rgba(255, 255, 255, 0.74) 0%, rgba(255, 255, 255, 0.2) 7%, rgba(255, 255, 255, 0.04) 18%, transparent 31%),
+            linear-gradient(180deg, #4d101d 0%, #731b3b 38%, #4a0d16 60%, #d44719 78%, #5d1015 100%);
+          backdrop-filter: blur(8px) url(#services-next-liquid-glass) saturate(150%);
+          -webkit-backdrop-filter: blur(8px) saturate(150%);
+          box-shadow:
+            inset 0 0 0 1px rgba(255, 230, 235, 0.24),
+            inset 3px 5px 5px -5px rgba(255, 255, 255, 0.9),
+            inset -3px -4px 4px -4px rgba(255, 240, 246, 0.72),
+            inset 0 10px 11px -12px rgba(255, 255, 255, 0.82),
+            inset 0 -8px 8px -7px rgba(255, 130, 20, 0.78),
+            inset 0 -15px 16px -13px rgba(255, 53, 178, 0.72),
+            inset -7px 0 10px -10px rgba(0, 0, 0, 0.68),
+            inset 7px 0 10px -10px rgba(255, 255, 255, 0.44),
+            0 1px 1px rgba(255, 255, 255, 0.2);
+          transition: background 0.4s cubic-bezier(1, 0, 0.4, 1), box-shadow 0.4s cubic-bezier(1, 0, 0.4, 1);
+        }
+
+        .services-next-liquid-lens::before {
+          content: "";
+          position: absolute;
+          inset: 6px 12px auto;
+          height: 28%;
+          border-radius: 999px;
+          background: linear-gradient(90deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.76), rgba(255, 255, 255, 0.16));
+          filter: blur(0.4px);
+          opacity: 0.75;
+        }
+
+        .services-next-liquid-lens::after {
+          content: "";
+          position: absolute;
+          left: 14%;
+          right: 12%;
+          bottom: 9%;
+          height: 9%;
+          border-radius: 999px;
+          background: linear-gradient(90deg, rgba(255, 102, 0, 0), rgba(255, 137, 24, 0.96), rgba(255, 77, 31, 0.42));
+          box-shadow: 0 0 14px rgba(255, 93, 25, 0.58);
+        }
+
+        .services-next-button-content {
+          position: relative;
+          z-index: 3;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0;
+          width: 100%;
+          padding: 0.64em 0.66em 0.62em 1.36em;
+          border-radius: inherit;
+          user-select: none;
+        }
+
+        .services-next-button:active {
+          transform: scale(0.96);
+        }
+
+        .services-next-button:hover {
+          color: #ffffff;
+          background: transparent;
+          outline: 0.1em solid transparent;
+          outline-offset: 0.2em;
+          box-shadow:
+            0 0 0 1px rgba(255, 116, 157, 0.22),
+            0 0 25px rgba(255, 59, 124, 0.36),
+            0 18px 36px rgba(105, 0, 35, 0.18);
+          animation:
+            services-next-ripple 1s linear infinite;
+          transform: scale(1.03);
+          transition: 0.5s;
+        }
+
+        .services-next-button:hover .services-next-liquid-lens {
+          background:
+            radial-gradient(ellipse at 16% 20%, rgba(255, 255, 255, 0.36), transparent 18%),
+            radial-gradient(ellipse at 9% 73%, rgba(255, 96, 10, 0.88), rgba(255, 96, 10, 0.18) 18%, transparent 30%),
+            radial-gradient(ellipse at 50% 104%, rgba(255, 88, 201, 0.72), rgba(255, 88, 201, 0.18) 40%, transparent 66%),
+            linear-gradient(180deg, rgba(255, 255, 255, 0.68) 0%, rgba(255, 255, 255, 0.16) 7%, rgba(255, 255, 255, 0.03) 18%, transparent 31%),
+            linear-gradient(180deg, rgba(77, 16, 29, 0.82) 0%, rgba(115, 27, 59, 0.82) 38%, rgba(74, 13, 22, 0.78) 60%, rgba(212, 71, 25, 0.76) 78%, rgba(93, 16, 21, 0.82) 100%);
+          box-shadow:
+            inset 0 0 0 1px rgba(255, 206, 218, 0.28),
+            inset 3px 5px 5px -5px rgba(255, 255, 255, 0.82),
+            inset 0 -8px 8px -7px rgba(255, 130, 20, 0.64),
+            inset 0 -15px 16px -13px rgba(255, 53, 178, 0.58),
+            0 0 25px rgba(255, 59, 124, 0.24);
+        }
+
+        .services-next-button:hover:active {
+          transform: scale(0.96);
+        }
+
+        .services-next-button-text {
+          margin-right: 0.3em;
+          text-shadow: 0 1px 2px rgba(0, 0, 0, 0.42);
+          transition: 0.5s;
+        }
+
+        .services-next-button:hover .services-next-button-text {
+          text-shadow: 5px 5px 5px var(--color-shadow);
+        }
+
+        .services-next-button:active .services-next-button-text {
+          text-shadow: none;
+        }
+
+        .services-next-arrow {
+          height: 0.8em;
+          fill: currentColor;
+          margin-right: -0.16em;
+          position: relative;
+          transition: 0.5s;
+        }
+
+        .services-next-button:hover .services-next-arrow {
+          margin-right: 0.66em;
+          transition: 0.5s;
+          filter: drop-shadow(5px 5px 2.5px var(--color-shadow));
+        }
+
+        .services-next-button:active .services-next-arrow {
+          filter: none;
+        }
+
+        .services-next-arrow polygon:nth-child(1) {
+          transition: 0.4s;
+          transform: translateX(-60%);
+        }
+
+        .services-next-arrow polygon:nth-child(2) {
+          transition: 0.5s;
+          transform: translateX(-30%);
+        }
+
+        .services-next-button:hover .services-next-arrow polygon:nth-child(1) {
+          transform: translateX(0%);
+          animation: services-next-opacity 1s infinite 0.6s;
+        }
+
+        .services-next-button:hover .services-next-arrow polygon:nth-child(2) {
+          transform: translateX(0%);
+          animation: services-next-opacity 1s infinite 0.4s;
+        }
+
+        .services-next-button:hover .services-next-arrow polygon:nth-child(3) {
+          animation: services-next-opacity 1s infinite 0.2s;
+        }
+
+        .services-next-star {
+          position: absolute;
+          display: block;
+          height: auto;
+          opacity: 0;
+          pointer-events: none;
+          filter: drop-shadow(0 0 0 var(--color-star));
+          z-index: -1;
+        }
+
+        .services-next-star svg {
+          display: block;
+          width: 100%;
+          height: auto;
+          margin: 0;
+          fill: none;
+        }
+
+        .services-next-star-fill {
+          fill: var(--color-star);
+        }
+
+        .services-next-star--1 {
+          top: 20%;
+          left: 20%;
+          width: 25px;
+          transition: all 1s cubic-bezier(0.05, 0.83, 0.43, 0.96);
+        }
+
+        .services-next-star--2 {
+          top: 45%;
+          left: 45%;
+          width: 15px;
+          transition: all 1s cubic-bezier(0, 0.4, 0, 1.01);
+        }
+
+        .services-next-star--3 {
+          top: 40%;
+          left: 40%;
+          width: 5px;
+          transition: all 1s cubic-bezier(0, 0.4, 0, 1.01);
+        }
+
+        .services-next-star--4 {
+          top: 20%;
+          left: 40%;
+          width: 8px;
+          transition: all 0.8s cubic-bezier(0, 0.4, 0, 1.01);
+        }
+
+        .services-next-star--5 {
+          top: 25%;
+          left: 45%;
+          width: 15px;
+          transition: all 0.6s cubic-bezier(0, 0.4, 0, 1.01);
+        }
+
+        .services-next-star--6 {
+          top: 5%;
+          left: 50%;
+          width: 5px;
+          transition: all 0.8s ease;
+        }
+
+        .services-next-button:hover .services-next-star {
+          opacity: 1;
+          filter: drop-shadow(0 0 10px var(--color-star));
+          z-index: 2;
+        }
+
+        .services-next-button:hover .services-next-star--1 {
+          top: -80%;
+          left: -30%;
+          width: 25px;
+        }
+
+        .services-next-button:hover .services-next-star--2 {
+          top: -25%;
+          left: 10%;
+          width: 15px;
+        }
+
+        .services-next-button:hover .services-next-star--3 {
+          top: 108%;
+          left: 12%;
+          width: 5px;
+        }
+
+        .services-next-button:hover .services-next-star--4 {
+          top: -42%;
+          left: 78%;
+          width: 8px;
+        }
+
+        .services-next-button:hover .services-next-star--5 {
+          top: 25%;
+          left: 115%;
+          width: 15px;
+        }
+
+        .services-next-button:hover .services-next-star--6 {
+          top: 104%;
+          left: 72%;
+          width: 5px;
         }
 
         .services-foundation-grid {
@@ -324,6 +684,10 @@ export default function Services() {
             gap: calc(var(--space-unit) * 7);
           }
 
+          .services-next-button-wrap {
+            margin: var(--space-2) 0 var(--space-6);
+          }
+
           .service-item {
             grid-template-columns: minmax(0, 1fr);
             gap: var(--space-3);
@@ -331,6 +695,33 @@ export default function Services() {
 
           .service-image img {
             height: clamp(260px, 76vw, 360px);
+          }
+        }
+
+        @keyframes services-next-opacity {
+          0% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0;
+          }
+          100% {
+            opacity: 1;
+          }
+        }
+
+        @keyframes services-next-ripple {
+          0% {
+            outline: 0em solid transparent;
+            outline-offset: -0.1em;
+          }
+          50% {
+            outline: 0.2em solid var(--color-outline);
+            outline-offset: 0.2em;
+          }
+          100% {
+            outline: 0.4em solid transparent;
+            outline-offset: 0.4em;
           }
         }
       `}</style>
