@@ -8,6 +8,13 @@ export const SERVICES_ITEMS = [
     imageAlt: "Consultoria",
     description:
       "Una vision audaz tiene el poder de alinear comunidades y crear impulso. Nuestro equipo de consultoria colabora con lideres y juntas directivas para guiar el pensamiento inicial y desarrollar consenso, acelerando en ultima instancia los resultados.",
+    highlights: [
+      "Vision estrategica",
+      "Alineacion directiva",
+      "Criterio editorial",
+      "Hoja de ruta accionable",
+      "Consenso y decision",
+    ],
   },
   {
     id: "02",
@@ -16,6 +23,13 @@ export const SERVICES_ITEMS = [
     imageAlt: "Planificacion",
     description:
       "Los servicios de planificacion traducen las necesidades y aspiraciones organizacionales en marcos flexibles que apoyan la toma de decisiones duradera y transparente. Nuestro enfoque interdisciplinario esta impulsado por datos y centrado en el programa.",
+    highlights: [
+      "Marcos flexibles",
+      "Lectura de datos",
+      "Programa claro",
+      "Decisiones transparentes",
+      "Escenarios duraderos",
+    ],
     reverseOnDesktop: true,
   },
   {
@@ -25,6 +39,13 @@ export const SERVICES_ITEMS = [
     imageAlt: "Arquitectura",
     description:
       "Un sentido perdurable de custodia para reforzar lugares especiales esta en el corazon de nuestra filosofia. Estamos comprometidos con composiciones unicas y atemporales que reflejan a nuestros clientes como individuos y organizaciones.",
+    highlights: [
+      "Composicion atemporal",
+      "Custodia patrimonial",
+      "Materialidad noble",
+      "Lugares singulares",
+      "Identidad del cliente",
+    ],
   },
   {
     id: "04",
