@@ -47,8 +47,6 @@ export default function Services() {
             <div class="services-foundation-grid fade-in-up">
             {FOUNDATION_CARDS.map((card) => (
               <article class="services-foundation-card" key={card.title}>
-                <span class="services-foundation-card__lens" aria-hidden="true"></span>
-                <span class="services-foundation-card__accent" aria-hidden="true"></span>
                 <h3 class="services-foundation-card__title">
                   <TextHoverEffect text={card.title} duration={0.72} />
                 </h3>
@@ -1283,62 +1281,26 @@ export default function Services() {
           position: relative;
           display: grid;
           align-content: start;
+          justify-items: center;
           gap: var(--space-2);
-          min-height: 100%;
-          padding: clamp(var(--space-3), 3.2vw, var(--space-6));
-          text-align: left;
-          overflow: hidden;
+          width: 100%;
+          padding: clamp(var(--space-3), 3.2vw, var(--space-6)) 0;
+          text-align: center;
+          overflow: visible;
           isolation: isolate;
-          border: 1px solid rgba(255, 255, 255, 0.58);
-          border-radius: calc(var(--space-2) * 1.15);
-          background:
-            linear-gradient(145deg, rgba(255, 255, 255, 0.42), rgba(255, 255, 255, 0.18) 58%, rgba(193, 18, 31, 0.08)),
-            rgba(255, 255, 255, 0.2);
-          box-shadow:
-            0 6px 6px rgba(0, 0, 0, 0.11),
-            0 18px 34px -28px rgba(0, 0, 0, 0.36),
-            inset 1px 1px 0 rgba(255, 255, 255, 0.54);
-          backdrop-filter: blur(14px);
-          -webkit-backdrop-filter: blur(14px);
+          border: 0;
+          border-radius: 0;
+          background: transparent;
+          box-shadow: none;
+          backdrop-filter: none;
+          -webkit-backdrop-filter: none;
           transition:
-            transform 0.7s cubic-bezier(0.175, 0.885, 0.32, 2.2),
-            box-shadow 0.7s cubic-bezier(0.175, 0.885, 0.32, 2.2);
+            color 0.7s cubic-bezier(0.175, 0.885, 0.32, 2.2),
+            opacity 0.7s cubic-bezier(0.175, 0.885, 0.32, 2.2);
         }
 
         .services-foundation-card:hover {
-          transform: translateY(-4px) scale(1.01);
-          box-shadow:
-            0 8px 8px rgba(0, 0, 0, 0.13),
-            0 24px 42px -30px rgba(0, 0, 0, 0.42),
-            inset 1px 1px 0 rgba(255, 255, 255, 0.6);
-        }
-
-        .services-foundation-card__lens {
-          position: absolute;
-          inset: 0;
-          pointer-events: none;
-          border-radius: inherit;
-        }
-
-        .services-foundation-card__lens {
-          z-index: 0;
-          background:
-            linear-gradient(145deg, rgba(255, 255, 255, 0.24), rgba(255, 255, 255, 0.08) 58%, rgba(193, 18, 31, 0.07)),
-            rgba(255, 255, 255, 0.12);
-          backdrop-filter: blur(3px);
-          -webkit-backdrop-filter: blur(3px);
-          filter: none;
-          opacity: 1;
-        }
-
-        .services-foundation-card__accent {
-          display: block;
-          width: 100%;
-          height: 1px;
-          background: var(--color-red-accent);
-          margin-bottom: var(--space-2);
-          position: relative;
-          z-index: 2;
+          box-shadow: none;
         }
 
         .services-foundation-card__title {
@@ -1355,7 +1317,7 @@ export default function Services() {
 
         .services-foundation-card__copy {
           max-width: 86ch;
-          margin: 0;
+          margin: 0 auto;
           color: rgba(0, 0, 0, 0.62);
           font-size: clamp(1.2rem, 1.55vw, 1.72rem);
           font-weight: 600;
@@ -1449,7 +1411,7 @@ export default function Services() {
           }
 
           .services-foundation-card {
-            padding: clamp(var(--space-4), 3.4vw, var(--space-8));
+            padding: clamp(var(--space-4), 3.4vw, var(--space-8)) 0;
           }
 
           .services-army-swap {
@@ -1482,7 +1444,7 @@ export default function Services() {
           }
 
           .services-foundation-card {
-            padding: var(--space-3) calc(var(--space-unit) * 2.5);
+            padding: var(--space-3) 0;
           }
 
           .services-foundation-card__title {
