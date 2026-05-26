@@ -1,4 +1,5 @@
 import { PROJECTS_ITEMS } from "../config/home";
+import { TextHoverEffect } from "./ui/text-hover-effect";
 import { withBase } from "../utils/basePath";
 
 export default function ProjectsGrid() {
@@ -42,8 +43,8 @@ export default function ProjectsGrid() {
                   </div>
                 </div>
                 <div class="project-info">
-                  <h3 class="text-2xl font-bold mb-2 group-hover:text-[var(--color-red-accent)] transition-colors">
-                    {project.title}
+                  <h3 class="project-card__title text-2xl font-bold mb-2">
+                    <TextHoverEffect text={project.title} duration={0.78} />
                   </h3>
                   <p class="text-black/60 uppercase text-sm tracking-wide">{project.location}</p>
                 </div>

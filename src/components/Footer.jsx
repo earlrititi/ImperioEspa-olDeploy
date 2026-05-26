@@ -108,7 +108,7 @@ export default function Footer() {
 
         <div class="footer__bottom border-t border-black/10 pt-8 mt-8">
           <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-black/70">
-            <p>&copy; El Siglo Espanol {new Date().getFullYear()}.</p>
+            <p>&copy; Imperio Español {new Date().getFullYear()}.</p>
 
             <div class="footer__legal flex gap-6">
               {FOOTER_LEGAL_LINKS.map((item) => (
@@ -125,7 +125,7 @@ export default function Footer() {
             <p class="text-xs">
               Sitio web por{" "}
               <a href="#" class="hover:text-[var(--color-red-accent)] transition-colors">
-                El Siglo Espanol
+                Imperio Español
               </a>
             </p>
           </div>

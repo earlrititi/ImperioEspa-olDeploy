@@ -1,6 +1,6 @@
 export default function LogoImperio({
   width = 180,
-  title = "Imperio Espanol",
+  title = "Imperio Español",
   className,
   style,
   classes = {},

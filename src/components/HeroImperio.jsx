@@ -136,7 +136,7 @@ export default function HeroImperio() {
                 <LogoImperio
                   width={720}
                   className="hero-imperio__wordmark"
-                  title="Imperio Espanol"
+                  title="Imperio Español"
                   classes={{
                     corona: "hero-imperio__corona-part",
                     imperio: "hero-imperio__imperio-part",

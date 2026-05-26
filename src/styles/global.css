@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "tw-animate-css";
 
 :root {
   color-scheme: light;
@@ -37,6 +38,7 @@
   --font-rosa-black: "FS Rosa Black", "Inter", "Segoe UI", sans-serif;
   --font-display: "Inter", "Segoe UI", sans-serif;
   --font-body: "Inter", "Segoe UI", sans-serif;
+  --font-serif: "Cormorant Garamond", Georgia, "Times New Roman", serif;
   --services-title-primary-size: clamp(3.05rem, 15vw, 5.4rem);
   --services-title-secondary-size: clamp(2rem, 9.8vw, 3.15rem);
   --services-title-offset-y: 0rem;
@@ -207,6 +209,8 @@ a {
 }
 
 p {
+  font-family: var(--font-serif);
+  font-weight: 600;
   line-height: 1.6;
   color: var(--ink-soft);
 }
@@ -214,7 +218,8 @@ p {
 h1,
 h2,
 h3 {
-  font-family: var(--font-display);
+  font-family: var(--font-serif);
+  font-weight: 700;
   margin: 0 0 var(--space-2);
   letter-spacing: 0.02em;
 }
@@ -800,5 +805,95 @@ h3 {
   }
   50% {
     opacity: 1;
+  }
+}
+
+@keyframes moveBackground {
+  from {
+    background-position: 0% 0%;
+  }
+  to {
+    background-position: 0% -1000%;
+  }
+}
+
+.text-hover-effect {
+  --text-hover-duration: 0.75s;
+  --text-hover-ease: cubic-bezier(0.175, 0.885, 0.32, 1.18);
+  --text-hover-gradient: linear-gradient(90deg, #050505 0%, #c1121f 46%, #d4af37 78%, #ffffff 100%);
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+  line-height: inherit;
+  color: inherit;
+  isolation: isolate;
+}
+
+.text-hover-effect__base {
+  display: inline;
+  color: currentColor;
+  transition: color 0.24s ease, opacity 0.24s ease;
+}
+
+.text-hover-effect__gradient,
+.text-hover-effect__outline {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  clip-path: inset(0 100% 0 0);
+  transition:
+    clip-path var(--text-hover-duration) var(--text-hover-ease),
+    opacity 0.2s ease;
+}
+
+.text-hover-effect__gradient {
+  z-index: 1;
+  background: var(--text-hover-gradient);
+  background-size: 180% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-hover-effect__outline {
+  z-index: 2;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(193, 18, 31, 0.76);
+  text-shadow:
+    0 0 9px rgba(193, 18, 31, 0.2),
+    0 0 16px rgba(212, 175, 55, 0.14);
+}
+
+.text-hover-effect:hover .text-hover-effect__gradient,
+.text-hover-effect:hover .text-hover-effect__outline,
+.is-text-hovered .text-hover-effect__gradient,
+.is-text-hovered .text-hover-effect__outline,
+.services-foundation-card:hover .text-hover-effect__gradient,
+.services-foundation-card:hover .text-hover-effect__outline,
+.service-cta-card:hover .text-hover-effect__gradient,
+.service-cta-card:hover .text-hover-effect__outline,
+.service-item:hover .text-hover-effect__gradient,
+.service-item:hover .text-hover-effect__outline,
+.project-card:hover .text-hover-effect__gradient,
+.project-card:hover .text-hover-effect__outline {
+  opacity: 1;
+  clip-path: inset(0 -0.08em 0 -0.08em);
+}
+
+.text-hover-effect:hover .text-hover-effect__base,
+.is-text-hovered .text-hover-effect__base,
+.services-foundation-card:hover .text-hover-effect__base,
+.service-cta-card:hover .text-hover-effect__base,
+.service-item:hover .text-hover-effect__base,
+.project-card:hover .text-hover-effect__base {
+  color: rgba(0, 0, 0, 0.74);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .text-hover-effect__gradient,
+  .text-hover-effect__outline {
+    transition: opacity 0.2s ease;
   }
 }

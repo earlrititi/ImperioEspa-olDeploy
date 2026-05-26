@@ -1,4 +1,5 @@
 import { SERVICES_ITEMS } from "../config/home";
+import { TextHoverEffect } from "./ui/text-hover-effect";
 import { withBase } from "../utils/basePath";
 
 const FOUNDATION_CARDS = [
@@ -6,16 +7,6 @@ const FOUNDATION_CARDS = [
     title: "Nuestra Historia",
     description:
       "Donde nunca se ponía el sol. Una historia de descubrimientos, hazañas y legado que cambió el mundo para siempre. Un linaje de exploradores, conquistadores y visionarios que se atrevieron a soñar más allá de lo conocido, dejando una marca imborrable en la historia de la humanidad.",
-  },
-  {
-    title: "Nuestra Practica",
-    description:
-      "Integramos investigacion, criterio y diseno para dar forma a un marco coherente. El proceso es deliberado, abierto y preciso: hacemos las preguntas grandes, depuramos lo esencial y articulamos una posicion con peso propio.",
-  },
-  {
-    title: "Nuestra Gente",
-    description:
-      "Trabajamos con intensidad, humor y exigencia. Nos interesa rodearnos de perfiles que piensan por cuenta propia, discuten con fundamento y entienden el diseno como una herramienta real de influencia, conexion y cambio.",
   },
 ];
 
@@ -56,8 +47,11 @@ export default function Services() {
             <div class="services-foundation-grid fade-in-up">
             {FOUNDATION_CARDS.map((card) => (
               <article class="services-foundation-card" key={card.title}>
+                <span class="services-foundation-card__lens" aria-hidden="true"></span>
                 <span class="services-foundation-card__accent" aria-hidden="true"></span>
-                <h3 class="services-foundation-card__title">{card.title}</h3>
+                <h3 class="services-foundation-card__title">
+                  <TextHoverEffect text={card.title} duration={0.72} />
+                </h3>
                 <p class="services-foundation-card__copy">{card.description}</p>
               </article>
             ))}
@@ -66,10 +60,19 @@ export default function Services() {
 
           <div class="services-next-button-wrap fade-in-up">
             <svg class="services-next-liquid-filter" aria-hidden="true" focusable="false">
-              <filter id="services-next-liquid-glass">
-                <feTurbulence type="fractalNoise" baseFrequency="0.018 0.042" numOctaves="2" seed="17" result="map"></feTurbulence>
-                <feGaussianBlur in="SourceGraphic" stdDeviation="0.45" result="blur"></feGaussianBlur>
-                <feDisplacementMap in="blur" in2="map" scale="8" xChannelSelector="R" yChannelSelector="G"></feDisplacementMap>
+              <filter id="services-next-liquid-glass" x="-20%" y="-20%" width="140%" height="140%" filterUnits="objectBoundingBox">
+                <feTurbulence type="fractalNoise" baseFrequency="0.001 0.005" numOctaves="1" seed="17" result="turbulence"></feTurbulence>
+                <feComponentTransfer in="turbulence" result="mapped">
+                  <feFuncR type="gamma" amplitude="1" exponent="10" offset="0.5"></feFuncR>
+                  <feFuncG type="gamma" amplitude="0" exponent="1" offset="0"></feFuncG>
+                  <feFuncB type="gamma" amplitude="0" exponent="1" offset="0.5"></feFuncB>
+                </feComponentTransfer>
+                <feGaussianBlur in="turbulence" stdDeviation="3" result="softMap"></feGaussianBlur>
+                <feSpecularLighting in="softMap" surfaceScale="5" specularConstant="1" specularExponent="100" lighting-color="white" result="specLight">
+                  <fePointLight x="-200" y="-200" z="300"></fePointLight>
+                </feSpecularLighting>
+                <feComposite in="specLight" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" result="litImage"></feComposite>
+                <feDisplacementMap in="SourceGraphic" in2="softMap" scale="42" xChannelSelector="R" yChannelSelector="G"></feDisplacementMap>
               </filter>
             </svg>
             <button class="services-next-button" type="button">
@@ -81,6 +84,7 @@ export default function Services() {
               <span class="services-next-edge services-next-edge--bottom" aria-hidden="true"></span>
               <span class="services-next-edge services-next-edge--right" aria-hidden="true"></span>
               <span class="services-next-button-content">
+                <span class="services-next-content-plate" aria-hidden="true"></span>
                 <svg class="services-next-sparkle" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                   <path d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456ZM16.894 20.567 16.5 21.75l-.394-1.183a2.25 2.25 0 0 0-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 0 0 1.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 0 0 1.423 1.423l1.183.394-1.183.394a2.25 2.25 0 0 0-1.423 1.423Z"></path>
                 </svg>
@@ -114,23 +118,19 @@ export default function Services() {
                 return (
                   <article class="service-cta-card fade-in-up" key={service.id}>
                     <span class="service-cta-card__bg" aria-hidden="true"></span>
-                    <span class="service-cta-card__edge-line" aria-hidden="true"></span>
-                    <span class="service-cta-card__border-trace" aria-hidden="true">
-                      <span class="service-cta-card__border-trace-segment service-cta-card__border-trace-segment--top"></span>
-                      <span class="service-cta-card__border-trace-segment service-cta-card__border-trace-segment--right"></span>
-                      <span class="service-cta-card__border-trace-segment service-cta-card__border-trace-segment--bottom"></span>
-                      <span class="service-cta-card__border-trace-segment service-cta-card__border-trace-segment--left"></span>
-                    </span>
+                    <span class="service-cta-card__pointer" aria-hidden="true"></span>
                     <div class="service-cta-card__body">
                       <span class="service-number service-cta-card__number">
                         {service.id}
                       </span>
-                      <h3 class="service-cta-card__title">{service.title}</h3>
+                      <h3 class="service-cta-card__title">
+                        <TextHoverEffect text={service.title} duration={0.78} />
+                      </h3>
                       <p class="service-cta-card__copy">{service.description}</p>
-                      <a class="service-cta-card__button" href={withBase("/contacto")}>
+                      <button class="service-cta-card__button" type="button">
                         <span>Empezar</span>
                         <span class="service-cta-card__button-arrow" aria-hidden="true">-></span>
-                      </a>
+                      </button>
                     </div>
                     <ul class="service-cta-card__list" aria-label={`Puntos clave de ${service.title}`}>
                       {service.highlights.map((highlight) => (
@@ -160,10 +160,9 @@ export default function Services() {
               return (
                 <div class="service-item grid md:grid-cols-2 gap-12 items-center fade-in-up" key={service.id}>
                   <div class={contentClassName}>
-                    <span class="service-number text-[var(--color-red-spanish)] text-xl font-bold block">
-                      {service.id}
-                    </span>
-                    <h3 class="text-4xl font-bold mb-6">{service.title}</h3>
+                    <h3 class="text-4xl font-bold mb-6">
+                      <TextHoverEffect text={service.title} duration={0.78} />
+                    </h3>
                     <p class="text-lg leading-relaxed text-black/70">{service.description}</p>
                   </div>
                   <div class={imageClassName}>
@@ -178,6 +177,7 @@ export default function Services() {
                 </div>
               );
             })}
+            <div class="service-cards-overlay" aria-hidden="true"></div>
           </div>
         </div>
       </section>
@@ -238,162 +238,196 @@ export default function Services() {
         .services-grid {
           display: grid;
           gap: var(--space-4);
+          position: relative;
+        }
+
+        .service-cards-overlay {
+          position: absolute;
+          inset: 0;
+          z-index: 6;
+          pointer-events: none;
+          user-select: none;
+          opacity: var(--service-cards-overlay-opacity, 0);
+          -webkit-mask:
+            radial-gradient(
+              24rem 24rem at var(--service-cards-overlay-x, 50%) var(--service-cards-overlay-y, 50%),
+              #000 1%,
+              transparent 50%
+            );
+          mask:
+            radial-gradient(
+              24rem 24rem at var(--service-cards-overlay-x, 50%) var(--service-cards-overlay-y, 50%),
+              #000 1%,
+              transparent 50%
+            );
+          transition: opacity 0.18s ease, mask 0.4s ease, -webkit-mask 0.4s ease;
+          will-change: opacity, mask, -webkit-mask;
+        }
+
+        .service-cards-overlay__card {
+          --service-glow-hsl: 356 78% 49%;
+          position: absolute;
+          border: 1px solid hsl(var(--service-glow-hsl));
+          border-radius: calc(var(--space-2) * 1.25);
+          background:
+            radial-gradient(
+              38rem 24rem at var(--service-overlay-card-x, 50%) var(--service-overlay-card-y, 50%),
+              hsl(var(--service-glow-hsl) / 0.18),
+              transparent 64%
+            ),
+            hsl(var(--service-glow-hsl) / 0.075);
+          box-shadow:
+            inset 0 0 0 1px hsl(var(--service-glow-hsl) / 0.55),
+            inset 0 0 28px hsl(var(--service-glow-hsl) / 0.16),
+            0 0 28px hsl(var(--service-glow-hsl) / 0.24),
+            0 0 64px hsl(var(--service-glow-hsl) / 0.12);
+        }
+
+        .service-cards-overlay__card:nth-child(1) {
+          --service-glow-hsl: 356 78% 45%;
+        }
+
+        .service-cards-overlay__card:nth-child(2) {
+          --service-glow-hsl: 43 82% 48%;
+        }
+
+        .service-cards-overlay__card:nth-child(3) {
+          --service-glow-hsl: 0 0% 7%;
+        }
+
+        .service-cards-overlay__cta {
+          position: absolute;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          left: var(--service-overlay-cta-left, clamp(var(--space-3), 4.8vw, var(--space-8)));
+          top: var(--service-overlay-cta-top, auto);
+          width: var(--service-overlay-cta-width, min(132px, calc(100% - clamp(var(--space-3), 4.8vw, var(--space-8)) * 2)));
+          height: var(--service-overlay-cta-height, 50px);
+          border-radius: var(--service-overlay-cta-radius, var(--space-1));
+          background: hsl(var(--service-glow-hsl) / 0.86);
+          color: #fff;
+          font-weight: 800;
+          line-height: 1;
+          box-shadow:
+            0 0 0 1px hsl(var(--service-glow-hsl)),
+            0 0 22px hsl(var(--service-glow-hsl) / 0.34),
+            inset 0 1px 0 rgba(255, 255, 255, 0.36);
         }
 
         .service-cta-card {
+          --service-card-pointer-opacity: 0;
+          --service-card-pointer-x: 50%;
+          --service-card-pointer-y: 50%;
+          --service-glow-hsl: 356 78% 49%;
           display: grid;
           grid-template-columns: minmax(0, 1fr);
           gap: var(--space-4);
           align-items: center;
-          min-height: clamp(280px, 26vw, 350px);
-          padding: clamp(var(--space-4), 6vw, var(--space-10));
-          border-radius: var(--space-1);
-          background: #f4f4f4;
+          min-height: clamp(236px, 21vw, 300px);
+          padding: clamp(var(--space-3), 4.8vw, var(--space-8));
+          border-radius: calc(var(--space-2) * 1.25);
+          border: 0;
+          background:
+            linear-gradient(145deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0.11) 52%, rgba(193, 18, 31, 0.1)),
+            rgba(255, 255, 255, 0.18);
           color: var(--color-black-pure);
           position: relative;
           z-index: 0;
           overflow: hidden;
-          box-shadow: 0 0 0 rgba(0, 0, 0, 0);
-          transition: transform 0.28s ease, box-shadow 0.28s ease;
+          isolation: isolate;
+          box-shadow:
+            0 6px 6px rgba(0, 0, 0, 0.14),
+            0 18px 38px -28px rgba(0, 0, 0, 0.44),
+            0 0 22px rgba(0, 0, 0, 0.08),
+            inset 1px 1px 0 rgba(255, 255, 255, 0.54);
+          backdrop-filter: blur(16px);
+          -webkit-backdrop-filter: blur(16px);
+          transition:
+            transform 0.7s cubic-bezier(0.175, 0.885, 0.32, 2.2),
+            box-shadow 0.7s cubic-bezier(0.175, 0.885, 0.32, 2.2),
+            background 0.7s cubic-bezier(0.175, 0.885, 0.32, 2.2);
+        }
+
+        .service-cta-card::before {
+          content: "";
+          position: absolute;
+          inset: 0;
+          z-index: 4;
+          border-radius: inherit;
+          pointer-events: none;
+          border: 1px solid rgba(255, 255, 255, 0.6);
+          background:
+            linear-gradient(135deg, rgba(255, 255, 255, 0.42), transparent 34%),
+            linear-gradient(315deg, rgba(193, 18, 31, 0.16), transparent 38%);
+          box-shadow:
+            inset 2px 2px 1px rgba(255, 255, 255, 0.44),
+            inset -1px -1px 1px rgba(255, 255, 255, 0.32);
+          opacity: 0.92;
         }
 
         .service-cta-card__bg,
-        .service-cta-card__edge-line {
+        .service-cta-card__pointer {
           position: absolute;
           pointer-events: none;
           opacity: 0;
-          transition: opacity 0.28s ease;
+          transition: opacity 0.16s ease;
         }
 
         .service-cta-card__bg {
-          inset: 5px;
-          z-index: 2;
-          border-radius: calc(var(--space-1) - 2px);
-          background: rgba(255, 255, 255, 0.72);
-          outline: 2px solid rgba(255, 255, 255, 0.95);
+          inset: 0;
+          z-index: 1;
+          border-radius: inherit;
+          background:
+            linear-gradient(145deg, rgba(255, 255, 255, 0.26), rgba(255, 255, 255, 0.1) 58%, rgba(193, 18, 31, 0.08)),
+            rgba(255, 255, 255, 0.16);
+          outline: 0;
           overflow: hidden;
-          backdrop-filter: blur(24px);
-          -webkit-backdrop-filter: blur(24px);
+          opacity: 1;
+          backdrop-filter: blur(3px);
+          -webkit-backdrop-filter: blur(3px);
+          filter: none;
+          box-shadow: none;
+          transform: none;
+          transition: opacity 0.16s ease, transform 0.16s ease, border-radius 0.16s ease, background 0.16s ease;
         }
 
-        .service-cta-card__edge-line {
-          top: 50%;
-          left: 50%;
-          z-index: 1;
-          width: clamp(420px, 54vw, 860px);
-          height: clamp(420px, 54vw, 860px);
-          border-radius: 50%;
+        .service-cta-card__pointer {
+          inset: 0;
+          z-index: 2;
+          border-radius: inherit;
           background:
-            radial-gradient(circle at 30% 26%, rgba(255, 0, 0, 0.82) 0 16%, rgba(255, 0, 0, 0.34) 28%, transparent 54%),
-            radial-gradient(circle at 72% 68%, rgba(255, 58, 58, 0.34) 0 12%, transparent 42%);
-          filter: blur(18px);
-          transform: translate(-50%, -50%);
+            radial-gradient(
+              22rem 22rem at var(--service-card-pointer-x) var(--service-card-pointer-y),
+              rgba(255, 0, 43, 0.18),
+              rgba(255, 0, 43, 0.07) 34%,
+              transparent 62%
+            );
+          opacity: var(--service-card-pointer-opacity);
+          mix-blend-mode: multiply;
+          will-change: opacity, background;
         }
 
         .service-cta-card:hover {
-          transform: scale(1.015);
-          box-shadow: 20px 20px 60px rgba(190, 190, 190, 0.45), -20px -20px 60px rgba(255, 255, 255, 0.95);
+          transform: none;
+          background:
+            linear-gradient(163deg, rgba(255, 255, 255, 0.38) 0%, rgba(255, 255, 255, 0.18) 42%, rgba(193, 18, 31, 0.22) 100%),
+            rgba(255, 255, 255, 0.2);
+          box-shadow:
+            0 0 18px 1px hsl(var(--service-glow-hsl) / 0.14),
+            0 0 48px hsl(var(--service-glow-hsl) / 0.1),
+            0 22px 42px -26px rgba(0, 0, 0, 0.42),
+            10px 10px 32px rgba(190, 190, 190, 0.18),
+            -10px -10px 32px rgba(255, 255, 255, 0.58);
         }
 
         .service-cta-card:hover .service-cta-card__bg {
           opacity: 1;
-        }
-
-        .service-cta-card:hover .service-cta-card__edge-line {
-          opacity: 0.34;
-          animation: service-card-blob-random-bounce 8.5s infinite ease-in-out;
-        }
-
-        .service-cta-card__border-trace {
-          position: absolute;
-          inset: 0;
-          z-index: 5;
+          background:
+            linear-gradient(145deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.13) 58%, rgba(193, 18, 31, 0.12)),
+            rgba(255, 255, 255, 0.18);
           border-radius: inherit;
-          overflow: hidden;
-          pointer-events: none;
-          opacity: 0;
-          transition: opacity 0.24s ease;
-        }
-
-        .service-cta-card:hover .service-cta-card__border-trace {
-          opacity: 1;
-        }
-
-        .service-cta-card__border-trace-segment {
-          position: absolute;
-          display: block;
-          opacity: 0;
-          background: linear-gradient(
-            90deg,
-            rgba(255, 0, 0, 0),
-            rgba(255, 0, 0, 0.45) 18%,
-            #ff0000 50%,
-            rgba(255, 72, 72, 0.9) 72%,
-            rgba(255, 0, 0, 0)
-          );
-          filter:
-            drop-shadow(0 0 6px rgba(255, 0, 0, 0.95))
-            drop-shadow(0 0 14px rgba(255, 0, 0, 0.55));
-        }
-
-        .service-cta-card__border-trace-segment--top,
-        .service-cta-card__border-trace-segment--bottom {
-          width: 32%;
-          height: 4px;
-          left: 0;
-        }
-
-        .service-cta-card__border-trace-segment--top {
-          top: 0;
-        }
-
-        .service-cta-card__border-trace-segment--bottom {
-          right: 0;
-          bottom: 0;
-          left: auto;
-          transform: rotate(180deg);
-        }
-
-        .service-cta-card__border-trace-segment--right,
-        .service-cta-card__border-trace-segment--left {
-          width: 4px;
-          height: 32%;
-          top: 0;
-          background: linear-gradient(
-            180deg,
-            rgba(255, 0, 0, 0),
-            rgba(255, 0, 0, 0.45) 18%,
-            #ff0000 50%,
-            rgba(255, 72, 72, 0.9) 72%,
-            rgba(255, 0, 0, 0)
-          );
-        }
-
-        .service-cta-card__border-trace-segment--right {
-          right: 0;
-        }
-
-        .service-cta-card__border-trace-segment--left {
-          bottom: 0;
-          left: 0;
-          top: auto;
-          transform: rotate(180deg);
-        }
-
-        .service-cta-card:hover .service-cta-card__border-trace-segment--top {
-          animation: service-card-trace-top 3.8s linear infinite;
-        }
-
-        .service-cta-card:hover .service-cta-card__border-trace-segment--right {
-          animation: service-card-trace-right 3.8s linear infinite;
-        }
-
-        .service-cta-card:hover .service-cta-card__border-trace-segment--bottom {
-          animation: service-card-trace-bottom 3.8s linear infinite;
-        }
-
-        .service-cta-card:hover .service-cta-card__border-trace-segment--left {
-          animation: service-card-trace-left 3.8s linear infinite;
+          transform: none;
         }
 
         .service-cta-card__body {
@@ -412,7 +446,7 @@ export default function Services() {
         .service-cta-card__title {
           margin: 0;
           font-family: var(--font-display);
-          font-size: clamp(2.15rem, 4.6vw, 3.4rem);
+          font-size: clamp(1.95rem, 3.65vw, 2.85rem);
           font-weight: 800;
           line-height: 1;
           letter-spacing: 0;
@@ -422,11 +456,13 @@ export default function Services() {
         .service-cta-card__copy {
           margin: 0;
           color: rgba(0, 0, 0, 0.58);
-          font-size: clamp(1rem, 1.45vw, 1.38rem);
+          font-size: clamp(0.96rem, 1.12vw, 1.16rem);
           line-height: 1.48;
         }
 
         .service-cta-card__button {
+          position: relative;
+          isolation: isolate;
           display: inline-flex;
           align-items: center;
           justify-content: center;
@@ -434,18 +470,93 @@ export default function Services() {
           min-height: 50px;
           margin-top: var(--space-2);
           padding: 0.88rem 1.18rem;
+          overflow: hidden;
+          border: 1px solid rgba(255, 255, 255, 0.1);
           border-radius: var(--space-1);
-          background: #1b1b1b;
+          background:
+            radial-gradient(
+              12rem 8rem at var(--service-card-pointer-x, 50%) var(--service-card-pointer-y, 50%),
+              hsl(var(--service-glow-hsl) / 0.2),
+              transparent 58%
+            ),
+            #1b1b1b;
           color: var(--color-white-pure);
           font-weight: 800;
           line-height: 1;
           text-decoration: none;
-          transition: transform 0.18s ease, background-color 0.18s ease;
+          box-shadow:
+            0 0 0 1px hsl(var(--service-glow-hsl) / 0),
+            0 0 0 hsl(var(--service-glow-hsl) / 0);
+          transition:
+            transform 0.18s ease,
+            border-color 0.22s ease,
+            background 0.22s ease,
+            box-shadow 0.22s ease;
+        }
+
+        .service-cta-card__button::before {
+          content: "";
+          position: absolute;
+          inset: -1px;
+          z-index: -1;
+          border-radius: inherit;
+          opacity: var(--service-card-pointer-opacity, 0);
+          background:
+            radial-gradient(
+              10rem 8rem at var(--service-card-pointer-x, 50%) var(--service-card-pointer-y, 50%),
+              hsl(var(--service-glow-hsl) / 0.88),
+              hsl(var(--service-glow-hsl) / 0.22) 42%,
+              transparent 72%
+            );
+          filter: blur(10px);
+          transition: opacity 0.18s ease;
+        }
+
+        .service-cta-card:hover .service-cta-card__button {
+          border-color: hsl(var(--service-glow-hsl) / 0.72);
+          background:
+            radial-gradient(
+              12rem 8rem at var(--service-card-pointer-x, 50%) var(--service-card-pointer-y, 50%),
+              hsl(var(--service-glow-hsl) / 0.44),
+              transparent 58%
+            ),
+            #111;
+          box-shadow:
+            0 0 0 1px hsl(var(--service-glow-hsl) / 0.44),
+            0 0 22px hsl(var(--service-glow-hsl) / 0.34),
+            0 0 48px hsl(var(--service-glow-hsl) / 0.16),
+            inset 0 1px 0 rgba(255, 255, 255, 0.28);
+        }
+
+        .service-cta-card__button > span {
+          position: relative;
+          z-index: 1;
         }
 
         .service-cta-card__button:hover {
-          background: var(--color-black-pure);
           transform: translateY(-1px);
+        }
+
+        .service-cta-card__button:active {
+          transform: translateY(1px) scale(0.965);
+          border-color: hsl(var(--service-glow-hsl) / 0.92);
+          background:
+            radial-gradient(
+              10rem 7rem at var(--service-card-pointer-x, 50%) var(--service-card-pointer-y, 50%),
+              hsl(var(--service-glow-hsl) / 0.62),
+              transparent 58%
+            ),
+            #080808;
+          box-shadow:
+            0 0 0 1px hsl(var(--service-glow-hsl) / 0.62),
+            0 0 16px hsl(var(--service-glow-hsl) / 0.28),
+            inset 0 3px 10px rgba(0, 0, 0, 0.52),
+            inset 0 1px 0 rgba(255, 255, 255, 0.16);
+        }
+
+        .service-cta-card__button:active::before {
+          opacity: 1;
+          filter: blur(6px);
         }
 
         .service-cta-card__button-arrow {
@@ -485,14 +596,26 @@ export default function Services() {
         }
 
         .services-next-button-wrap {
-          --services-next-hover-time: 400ms;
-          --services-next-hover-ease: cubic-bezier(0.25, 1, 0.5, 1);
+          --services-next-hover-time: 700ms;
+          --services-next-hover-ease: cubic-bezier(0.175, 0.885, 0.32, 2.2);
           display: flex;
           justify-content: center;
           margin: var(--space-4) 0 var(--space-8);
           position: relative;
           border-radius: 999px;
           transition: transform var(--services-next-hover-time) var(--services-next-hover-ease);
+        }
+
+        .service-cta-card:nth-child(1) {
+          --service-glow-hsl: 356 78% 45%;
+        }
+
+        .service-cta-card:nth-child(2) {
+          --service-glow-hsl: 43 82% 48%;
+        }
+
+        .service-cta-card:nth-child(3) {
+          --service-glow-hsl: 0 0% 7%;
         }
 
         .services-next-button-wrap:has(.services-next-button:active) {
@@ -562,12 +685,15 @@ export default function Services() {
 
         .services-next-button {
           --main-size: clamp(0.98rem, 1.45vw, 1.34rem);
-          --border-width: clamp(1px, 0.0625em, 4px);
+          --border-width: 0;
           --color-background: var(--color-red-spanish);
           --color-text: rgba(255, 255, 255, 0.94);
           --color-outline: rgba(193, 18, 31, 0.28);
           --color-shadow: rgba(0, 0, 0, 0.36);
           --color-star: var(--color-red-accent);
+          --glass-edge: transparent;
+          --glass-highlight: rgba(255, 255, 255, 0.74);
+          --glass-plate: rgba(255, 255, 255, 0.22);
           position: relative;
           z-index: 3;
           isolation: isolate;
@@ -577,25 +703,37 @@ export default function Services() {
           justify-content: center;
           align-items: center;
           text-decoration: none;
-          border: 1px solid rgba(0, 0, 0, 0.8);
-          border-radius: 24px;
+          border: none;
+          border-radius: 1.5rem;
           padding: 0;
           font-family: "Poppins", var(--font-display);
           font-weight: 600;
           font-size: var(--main-size);
           color: var(--color-text);
-          background:
-            linear-gradient(-75deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.17), rgba(255, 255, 255, 0.04)),
-            rgba(0, 0, 0, 0);
+          background: transparent;
           box-shadow:
-            inset 0 1px 1px rgba(255, 255, 255, 0.2),
-            inset 0 2px 2px rgba(255, 255, 255, 0.14),
-            inset 0 4px 4px rgba(255, 255, 255, 0.1),
-            inset 0 8px 8px rgba(255, 255, 255, 0.05),
-            inset 0 16px 16px rgba(255, 255, 255, 0.05),
-            0 0.25em 0.125em -0.125em rgba(0, 0, 0, 0.2),
-            0 0 0.1em 0.25em inset rgba(255, 255, 255, 0.16);
-          transition: color 0.4s cubic-bezier(1, 0, 0.4, 1), transform 0.3s ease-out, border-color 0.4s ease, background-color 0.4s ease, box-shadow 0.4s cubic-bezier(1, 0, 0.4, 1);
+            0 6px 6px rgba(0, 0, 0, 0.2),
+            0 0 20px rgba(0, 0, 0, 0.1);
+          transition:
+            color var(--services-next-hover-time) var(--services-next-hover-ease),
+            transform var(--services-next-hover-time) var(--services-next-hover-ease),
+            border-radius var(--services-next-hover-time) var(--services-next-hover-ease),
+            box-shadow var(--services-next-hover-time) var(--services-next-hover-ease);
+        }
+
+        .services-next-button:focus-visible {
+          outline: 2px solid rgba(255, 255, 255, 0.96);
+          outline-offset: 0.22em;
+          box-shadow:
+            inset 0 0 0 1px rgba(255, 255, 255, 0.3),
+            0 0 0 4px rgba(193, 18, 31, 0.32),
+            0 12px 28px rgba(0, 0, 0, 0.12);
+        }
+
+        .services-next-button:disabled {
+          cursor: not-allowed;
+          opacity: 0.55;
+          filter: saturate(0.65);
         }
 
         .services-next-button::after {
@@ -620,76 +758,42 @@ export default function Services() {
         .services-next-liquid-lens {
           position: absolute;
           inset: 0;
-          z-index: -1;
+          z-index: 0;
           border-radius: inherit;
           pointer-events: none;
-          background:
-            radial-gradient(ellipse at 14% 22%, rgba(255, 255, 255, 0.28), transparent 20%),
-            radial-gradient(ellipse at 12% 75%, rgba(193, 18, 31, 0.36), rgba(193, 18, 31, 0.08) 22%, transparent 40%),
-            radial-gradient(ellipse at 52% 105%, rgba(193, 18, 31, 0.22), rgba(193, 18, 31, 0.06) 48%, transparent 72%),
-            linear-gradient(180deg, rgba(255, 255, 255, 0.24) 0%, rgba(255, 255, 255, 0.08) 30%, rgba(193, 18, 31, 0.16) 100%);
-          background-color: rgba(0, 0, 0, 0);
-          backdrop-filter: blur(10px) url(#services-next-liquid-glass) saturate(140%) contrast(108%);
-          -webkit-backdrop-filter: blur(10px) saturate(140%) contrast(108%);
-          box-shadow:
-            inset 0 0 0 1px rgba(255, 255, 255, 0.18),
-            inset 0 -8px 12px -8px rgba(255, 255, 255, 0.08),
-            inset 0 -16px 16px -8px rgba(193, 18, 31, 0.18),
-            inset 0 1px 1px rgba(255, 255, 255, 0.22),
-            inset 0 2px 2px rgba(255, 255, 255, 0.14),
-            inset 0 4px 4px rgba(255, 255, 255, 0.08);
-          transition: background 0.4s cubic-bezier(1, 0, 0.4, 1), box-shadow 0.4s cubic-bezier(1, 0, 0.4, 1);
+          overflow: hidden;
+          isolation: isolate;
+          background: transparent;
+          backdrop-filter: blur(3px);
+          -webkit-backdrop-filter: blur(3px);
+          filter: url(#services-next-liquid-glass);
+          transition: filter var(--services-next-hover-time) var(--services-next-hover-ease);
         }
 
         .services-next-liquid-lens::before {
-          content: "";
-          position: absolute;
-          inset: 7px 18px auto;
-          height: 25%;
-          border-radius: 999px;
-          background: linear-gradient(90deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.86) 26%, rgba(255, 255, 255, 0.68) 68%, rgba(255, 255, 255, 0.08));
-          filter: blur(0.35px);
-          opacity: 0.84;
+          display: none;
         }
 
         .services-next-liquid-lens::after {
-          content: "";
-          position: absolute;
-          left: 12%;
-          right: 12%;
-          bottom: 12%;
-          height: 7%;
-          border-radius: 999px;
-          background: linear-gradient(90deg, rgba(193, 18, 31, 0), rgba(193, 18, 31, 0.62), rgba(193, 18, 31, 0.12));
-          box-shadow: 0 0 10px rgba(193, 18, 31, 0.32);
+          display: none;
         }
 
         .services-next-glass-outline {
           position: absolute;
-          z-index: 1;
-          inset: calc(var(--border-width) / -2);
+          z-index: 2;
+          inset: 0;
           border-radius: inherit;
-          padding: var(--border-width);
+          padding: 0;
           box-sizing: border-box;
-          background:
-            conic-gradient(
-              from var(--services-next-angle-1) at 50% 50%,
-              rgba(193, 18, 31, 0.5),
-              rgba(193, 18, 31, 0) 5% 40%,
-              rgba(255, 255, 255, 0.72) 50%,
-              rgba(193, 18, 31, 0) 60% 95%,
-              rgba(193, 18, 31, 0.5)
-            ),
-            linear-gradient(180deg, rgba(255, 255, 255, 0.62), rgba(255, 255, 255, 0.24));
-          box-shadow: inset 0 0 0 calc(var(--border-width) / 2) rgba(255, 255, 255, 0.62);
-          mask:
-            linear-gradient(#000 0 0) content-box,
-            linear-gradient(#000 0 0);
-          mask-composite: exclude;
+          overflow: hidden;
+          background: transparent;
+          box-shadow:
+            inset 2px 2px 1px rgba(255, 255, 255, 0.5),
+            inset -1px -1px 1px 1px rgba(255, 255, 255, 0.5);
           pointer-events: none;
           transition:
-            all var(--services-next-hover-time) var(--services-next-hover-ease),
-            --services-next-angle-1 500ms ease;
+            border-radius var(--services-next-hover-time) var(--services-next-hover-ease),
+            box-shadow var(--services-next-hover-time) var(--services-next-hover-ease);
         }
 
         .services-next-button:hover .services-next-glass-outline {
@@ -788,16 +892,36 @@ export default function Services() {
         .services-next-button-content {
           position: relative;
           z-index: 3;
+          isolation: isolate;
           display: inline-flex;
           align-items: center;
           justify-content: center;
           gap: 0;
           width: 100%;
-          padding: 0.7em 0.76em 0.68em 1.44em;
+          padding: 0.86em 1em 0.84em 1.64em;
           border-radius: inherit;
           user-select: none;
           overflow: hidden;
-          transition: color 0.42s ease;
+          transition:
+            color var(--services-next-hover-time) var(--services-next-hover-ease),
+            padding var(--services-next-hover-time) var(--services-next-hover-ease),
+            transform var(--services-next-hover-time) var(--services-next-hover-ease);
+        }
+
+        .services-next-content-plate {
+          position: absolute;
+          inset: 0;
+          z-index: 1;
+          border-radius: inherit;
+          pointer-events: none;
+          background: rgba(255, 255, 255, 0.25);
+          box-shadow: none;
+          backdrop-filter: none;
+          -webkit-backdrop-filter: none;
+          transition:
+            background var(--services-next-hover-time) var(--services-next-hover-ease),
+            transform var(--services-next-hover-time) var(--services-next-hover-ease),
+            border-radius var(--services-next-hover-time) var(--services-next-hover-ease);
         }
 
         .services-next-button-content::after {
@@ -844,7 +968,7 @@ export default function Services() {
 
         .services-next-button:active {
           transform: scale(0.96);
-          border-color: rgba(0, 0, 0, 0.8);
+          border-color: transparent;
           background-color: rgba(0, 0, 0, 0);
           box-shadow:
             inset 0 0.125em 0.125em rgba(193, 18, 31, 0.08),
@@ -855,34 +979,36 @@ export default function Services() {
             0 0.25em 0 rgba(255, 255, 255, 0.65);
         }
 
+        .services-next-button:active .services-next-content-plate {
+          transform: translateY(1px) scaleX(0.99);
+        }
+
         .services-next-button:hover {
           color: var(--color-red-accent);
           background: transparent;
-          border-color: rgba(0, 0, 0, 0.8);
+          border-color: transparent;
           outline: 0.1em solid transparent;
           outline-offset: 0.2em;
+          border-radius: 2rem;
           box-shadow:
-            0 0 0 1px rgba(255, 116, 157, 0.22),
-            0 0 16px rgba(193, 18, 31, 0.18),
-            0 18px 36px rgba(193, 18, 31, 0.08);
+            0 7px 8px rgba(0, 0, 0, 0.18),
+            0 0 24px rgba(193, 18, 31, 0.14);
           animation:
             services-next-ripple 1s linear infinite;
           transform: scale(1.03);
-          transition: 0.5s;
         }
 
         .services-next-button:hover .services-next-liquid-lens {
-          background:
-            radial-gradient(ellipse at 14% 22%, rgba(255, 255, 255, 0.34), transparent 20%),
-            radial-gradient(ellipse at 12% 75%, rgba(193, 18, 31, 0.42), rgba(193, 18, 31, 0.1) 22%, transparent 40%),
-            radial-gradient(ellipse at 52% 105%, rgba(193, 18, 31, 0.28), rgba(193, 18, 31, 0.07) 48%, transparent 72%),
-            linear-gradient(180deg, rgba(255, 255, 255, 0.24) 0%, rgba(255, 255, 255, 0.08) 30%, rgba(193, 18, 31, 0.2) 100%);
-          background-color: rgba(0, 0, 0, 0);
-          box-shadow:
-            inset 0 0 0 1px rgba(255, 255, 255, 0.24),
-            inset 0 -8px 12px -8px rgba(255, 255, 255, 0.16),
-            inset 0 -16px 16px -8px rgba(193, 18, 31, 0.28),
-            inset 0 1px 1px rgba(255, 255, 255, 0.22);
+          filter: url(#services-next-liquid-glass) saturate(1.06);
+        }
+
+        .services-next-button:hover .services-next-content-plate {
+          background: rgba(255, 255, 255, 0.28);
+        }
+
+        .services-next-button:hover .services-next-button-content {
+          padding: 0.96em 1.12em 0.94em 1.76em;
+          transform: scale(0.95);
         }
 
         .services-next-button:hover:active {
@@ -903,6 +1029,8 @@ export default function Services() {
         }
 
         .services-next-button-text {
+          position: relative;
+          z-index: 7;
           display: inline-flex;
           align-items: center;
           margin-right: 0.3em;
@@ -952,6 +1080,7 @@ export default function Services() {
         }
 
         .services-next-arrow {
+          z-index: 7;
           height: 0.8em;
           fill: currentColor;
           margin-right: -0.16em;
@@ -960,6 +1089,8 @@ export default function Services() {
         }
 
         .services-next-sparkle {
+          position: relative;
+          z-index: 7;
           flex: 0 0 auto;
           width: 1.08em;
           height: 1.08em;
@@ -994,6 +1125,18 @@ export default function Services() {
 
         .services-next-button:active .services-next-arrow {
           filter: none;
+        }
+
+        @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+          .services-next-liquid-lens {
+            background:
+              linear-gradient(145deg, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0.16) 44%, rgba(193, 18, 31, 0.18)),
+              rgba(255, 255, 255, 0.18);
+          }
+
+          .services-next-content-plate {
+            background: rgba(255, 255, 255, 0.34);
+          }
         }
 
         .services-next-arrow polygon:nth-child(1) {
@@ -1129,7 +1272,7 @@ export default function Services() {
         .services-foundation-grid {
           display: grid;
           gap: clamp(var(--space-3), 1.6vw, var(--space-6));
-          grid-template-columns: repeat(1, minmax(0, 1fr));
+          grid-template-columns: minmax(0, 1fr);
           position: relative;
           z-index: 5;
           margin-top: calc(var(--space-10) * -0.58);
@@ -1142,9 +1285,50 @@ export default function Services() {
           align-content: start;
           gap: var(--space-2);
           min-height: 100%;
-          padding: var(--space-3) var(--space-2) 0;
+          padding: clamp(var(--space-3), 3.2vw, var(--space-6));
           text-align: left;
-          background: linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(255, 255, 255, 0.98) 100%);
+          overflow: hidden;
+          isolation: isolate;
+          border: 1px solid rgba(255, 255, 255, 0.58);
+          border-radius: calc(var(--space-2) * 1.15);
+          background:
+            linear-gradient(145deg, rgba(255, 255, 255, 0.42), rgba(255, 255, 255, 0.18) 58%, rgba(193, 18, 31, 0.08)),
+            rgba(255, 255, 255, 0.2);
+          box-shadow:
+            0 6px 6px rgba(0, 0, 0, 0.11),
+            0 18px 34px -28px rgba(0, 0, 0, 0.36),
+            inset 1px 1px 0 rgba(255, 255, 255, 0.54);
+          backdrop-filter: blur(14px);
+          -webkit-backdrop-filter: blur(14px);
+          transition:
+            transform 0.7s cubic-bezier(0.175, 0.885, 0.32, 2.2),
+            box-shadow 0.7s cubic-bezier(0.175, 0.885, 0.32, 2.2);
+        }
+
+        .services-foundation-card:hover {
+          transform: translateY(-4px) scale(1.01);
+          box-shadow:
+            0 8px 8px rgba(0, 0, 0, 0.13),
+            0 24px 42px -30px rgba(0, 0, 0, 0.42),
+            inset 1px 1px 0 rgba(255, 255, 255, 0.6);
+        }
+
+        .services-foundation-card__lens {
+          position: absolute;
+          inset: 0;
+          pointer-events: none;
+          border-radius: inherit;
+        }
+
+        .services-foundation-card__lens {
+          z-index: 0;
+          background:
+            linear-gradient(145deg, rgba(255, 255, 255, 0.24), rgba(255, 255, 255, 0.08) 58%, rgba(193, 18, 31, 0.07)),
+            rgba(255, 255, 255, 0.12);
+          backdrop-filter: blur(3px);
+          -webkit-backdrop-filter: blur(3px);
+          filter: none;
+          opacity: 1;
         }
 
         .services-foundation-card__accent {
@@ -1153,26 +1337,32 @@ export default function Services() {
           height: 1px;
           background: var(--color-red-accent);
           margin-bottom: var(--space-2);
+          position: relative;
+          z-index: 2;
         }
 
         .services-foundation-card__title {
-          font-family: var(--font-display);
-          font-size: clamp(2rem, 2.2vw, 2.85rem);
-          font-weight: 800;
+          font-family: var(--font-serif);
+          font-size: clamp(2.4rem, 4.2vw, 5.1rem);
+          font-weight: 700;
           letter-spacing: 0.01em;
           line-height: 1.05;
           margin: 0;
           color: var(--color-black-pure);
+          position: relative;
+          z-index: 2;
         }
 
         .services-foundation-card__copy {
-          max-width: 30ch;
+          max-width: 86ch;
           margin: 0;
           color: rgba(0, 0, 0, 0.62);
-          font-size: clamp(1.05rem, 1.15vw, 1.35rem);
-          font-weight: 500;
-          line-height: 1.34;
+          font-size: clamp(1.2rem, 1.55vw, 1.72rem);
+          font-weight: 600;
+          line-height: 1.28;
           text-wrap: balance;
+          position: relative;
+          z-index: 2;
         }
 
         .services-army-swap {
@@ -1241,7 +1431,7 @@ export default function Services() {
           }
 
           .service-cta-card {
-            grid-template-columns: minmax(0, 1.1fr) minmax(260px, 0.76fr);
+            grid-template-columns: minmax(0, 1.1fr) minmax(230px, 0.72fr);
           }
 
           .service-cta-card__list {
@@ -1253,13 +1443,13 @@ export default function Services() {
           }
 
           .services-foundation-grid {
-            grid-template-columns: repeat(3, minmax(0, 1fr));
+            grid-template-columns: minmax(0, 1fr);
             margin-top: calc(var(--space-12) * -0.6);
             margin-bottom: var(--space-3);
           }
 
           .services-foundation-card {
-            padding: var(--space-4) var(--space-4) 0;
+            padding: clamp(var(--space-4), 3.4vw, var(--space-8));
           }
 
           .services-army-swap {
@@ -1292,17 +1482,17 @@ export default function Services() {
           }
 
           .services-foundation-card {
-            padding: var(--space-3) 0 0;
+            padding: var(--space-3) calc(var(--space-unit) * 2.5);
           }
 
           .services-foundation-card__title {
-            font-size: clamp(1.6rem, 9vw, 2.2rem);
+            font-size: clamp(2rem, 10vw, 2.85rem);
           }
 
           .services-foundation-card__copy {
             max-width: 100%;
-            font-size: 1rem;
-            line-height: 1.42;
+            font-size: 1.12rem;
+            line-height: 1.34;
           }
 
           .service-content h3 {
@@ -1316,7 +1506,7 @@ export default function Services() {
 
           .service-cta-card {
             min-height: auto;
-            padding: var(--space-4) var(--space-3);
+            padding: var(--space-3) calc(var(--space-unit) * 2.5);
           }
 
           .service-cta-card__button {
@@ -1481,166 +1671,145 @@ export default function Services() {
           }
         }
 
-        @keyframes service-card-blob-random-bounce {
-          0% {
-            top: 16%;
-            left: 14%;
-            transform: translate(-50%, -50%) scale(1);
-          }
-
-          14% {
-            top: 18%;
-            left: 82%;
-            transform: translate(-50%, -50%) scale(1.04);
-          }
-
-          29% {
-            top: 74%;
-            left: 88%;
-            transform: translate(-50%, -50%) scale(0.98);
-          }
-
-          43% {
-            top: 88%;
-            left: 36%;
-            transform: translate(-50%, -50%) scale(1.06);
-          }
-
-          58% {
-            top: 52%;
-            left: 10%;
-            transform: translate(-50%, -50%) scale(1.01);
-          }
-
-          73% {
-            top: 12%;
-            left: 48%;
-            transform: translate(-50%, -50%) scale(1.05);
-          }
-
-          87% {
-            top: 66%;
-            left: 78%;
-            transform: translate(-50%, -50%) scale(0.99);
-          }
-
-          100% {
-            top: 16%;
-            left: 14%;
-            transform: translate(-50%, -50%) scale(1);
-          }
-        }
-
-        @keyframes service-card-trace-top {
-          0% {
-            opacity: 1;
-            transform: translateX(-110%);
-          }
-
-          24% {
-            opacity: 1;
-            transform: translateX(330%);
-          }
-
-          24.01%,
-          100% {
-            opacity: 0;
-            transform: translateX(330%);
-          }
-        }
-
-        @keyframes service-card-trace-right {
-          0%,
-          24% {
-            opacity: 0;
-            transform: translateY(-110%);
-          }
-
-          25% {
-            opacity: 1;
-            transform: translateY(-110%);
-          }
-
-          49% {
-            opacity: 1;
-            transform: translateY(330%);
-          }
-
-          49.01%,
-          100% {
-            opacity: 0;
-            transform: translateY(330%);
-          }
-        }
-
-        @keyframes service-card-trace-bottom {
-          0%,
-          49% {
-            opacity: 0;
-            transform: translateX(110%) rotate(180deg);
-          }
-
-          50% {
-            opacity: 1;
-            transform: translateX(110%) rotate(180deg);
-          }
-
-          74% {
-            opacity: 1;
-            transform: translateX(-330%) rotate(180deg);
-          }
-
-          74.01%,
-          100% {
-            opacity: 0;
-            transform: translateX(-330%) rotate(180deg);
-          }
-        }
-
-        @keyframes service-card-trace-left {
-          0%,
-          74% {
-            opacity: 0;
-            transform: translateY(110%) rotate(180deg);
-          }
-
-          75% {
-            opacity: 1;
-            transform: translateY(110%) rotate(180deg);
-          }
-
-          99% {
-            opacity: 1;
-            transform: translateY(-330%) rotate(180deg);
-          }
-
-          100% {
-            opacity: 0;
-            transform: translateY(-330%) rotate(180deg);
-          }
-        }
-
         @media (prefers-reduced-motion: reduce) {
           .service-cta-card,
           .service-cta-card__bg,
-          .service-cta-card__edge-line,
-          .service-cta-card__border-trace {
+          .service-cta-card__pointer {
+            animation: none;
             transition: none;
           }
 
           .service-cta-card:hover {
             transform: none;
           }
-
-          .service-cta-card:hover .service-cta-card__edge-line {
-            animation: none;
-          }
-
-          .service-cta-card:hover .service-cta-card__border-trace-segment {
-            animation: none;
-          }
         }
       `}</style>
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `
+            (() => {
+              const setupServiceCardPointer = () => {
+                document.querySelectorAll(".service-cta-card").forEach((card) => {
+                  if (card.dataset.servicePointerReady === "true") return;
+                  card.dataset.servicePointerReady = "true";
+
+                  card.addEventListener("pointermove", (event) => {
+                    const rect = card.getBoundingClientRect();
+                    card.style.setProperty("--service-card-pointer-opacity", "1");
+                    card.style.setProperty("--service-card-pointer-x", (event.clientX - rect.left) + "px");
+                    card.style.setProperty("--service-card-pointer-y", (event.clientY - rect.top) + "px");
+                  });
+
+                  card.addEventListener("pointerleave", () => {
+                    card.style.setProperty("--service-card-pointer-opacity", "0");
+                  });
+                });
+              };
+
+              const setupServiceCardsOverlay = () => {
+                const grid = document.querySelector(".services-grid");
+                const overlay = grid?.querySelector(".service-cards-overlay");
+                if (!grid || !overlay) return;
+
+                const cards = Array.from(grid.querySelectorAll(".service-cta-card"));
+
+                const ensureOverlayCards = () => {
+                  while (overlay.children.length < cards.length) {
+                    const sourceCard = cards[overlay.children.length];
+                    const overlayCard = document.createElement("div");
+                    overlayCard.className = "service-cards-overlay__card";
+
+                    const overlayCta = document.createElement("div");
+                    overlayCta.className = "service-cards-overlay__cta";
+                    overlayCta.textContent = sourceCard?.querySelector(".service-cta-card__button")?.innerText || "Empezar";
+                    overlayCard.append(overlayCta);
+
+                    overlay.append(overlayCard);
+                  }
+
+                  while (overlay.children.length > cards.length) {
+                    overlay.lastElementChild?.remove();
+                  }
+                };
+
+                const syncOverlayCards = () => {
+                  const gridRect = grid.getBoundingClientRect();
+                  cards.forEach((card, index) => {
+                    const overlayCard = overlay.children[index];
+                    if (!overlayCard) return;
+
+                    const rect = card.getBoundingClientRect();
+                    overlayCard.style.left = (rect.left - gridRect.left) + "px";
+                    overlayCard.style.top = (rect.top - gridRect.top) + "px";
+                    overlayCard.style.width = rect.width + "px";
+                    overlayCard.style.height = rect.height + "px";
+
+                    const button = card.querySelector(".service-cta-card__button");
+                    if (button) {
+                      const buttonRect = button.getBoundingClientRect();
+                      overlayCard.style.setProperty("--service-overlay-cta-left", (buttonRect.left - rect.left) + "px");
+                      overlayCard.style.setProperty("--service-overlay-cta-top", (buttonRect.top - rect.top) + "px");
+                      overlayCard.style.setProperty("--service-overlay-cta-width", buttonRect.width + "px");
+                      overlayCard.style.setProperty("--service-overlay-cta-height", buttonRect.height + "px");
+                      overlayCard.style.setProperty("--service-overlay-cta-radius", getComputedStyle(button).borderRadius);
+                    }
+                  });
+                };
+
+                ensureOverlayCards();
+                syncOverlayCards();
+
+                if (overlay.dataset.serviceOverlayReady !== "true") {
+                  overlay.dataset.serviceOverlayReady = "true";
+
+                  grid.addEventListener("pointermove", (event) => {
+                    const rect = grid.getBoundingClientRect();
+                    const cards = Array.from(grid.querySelectorAll(".service-cta-card"));
+                    overlay.style.setProperty("--service-cards-overlay-opacity", "1");
+                    overlay.style.setProperty("--service-cards-overlay-x", (event.clientX - rect.left) + "px");
+                    overlay.style.setProperty("--service-cards-overlay-y", (event.clientY - rect.top) + "px");
+
+                    cards.forEach((card, index) => {
+                      const overlayCard = overlay.children[index];
+                      if (!overlayCard) return;
+
+                      const cardRect = card.getBoundingClientRect();
+                      overlayCard.style.setProperty("--service-overlay-card-x", (event.clientX - cardRect.left) + "px");
+                      overlayCard.style.setProperty("--service-overlay-card-y", (event.clientY - cardRect.top) + "px");
+                    });
+                  });
+
+                  grid.addEventListener("pointerleave", () => {
+                    overlay.style.setProperty("--service-cards-overlay-opacity", "0");
+                  });
+
+                  window.addEventListener("resize", syncOverlayCards);
+                  window.addEventListener("scroll", syncOverlayCards, { passive: true });
+
+                  if ("ResizeObserver" in window) {
+                    const observer = new ResizeObserver(syncOverlayCards);
+                    cards.forEach((card) => observer.observe(card));
+                    overlay._serviceOverlayObserver = observer;
+                  }
+                }
+              };
+
+              const setupServiceCardEffects = () => {
+                setupServiceCardPointer();
+                setupServiceCardsOverlay();
+              };
+
+              if (document.readyState === "loading") {
+                document.addEventListener("DOMContentLoaded", setupServiceCardEffects, { once: true });
+              } else {
+                setupServiceCardEffects();
+              }
+
+              document.addEventListener("astro:page-load", setupServiceCardEffects);
+            })();
+          `,
+        }}
+      />
     </>
   );
 }

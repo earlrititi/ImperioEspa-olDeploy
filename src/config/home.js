@@ -47,15 +47,6 @@ export const SERVICES_ITEMS = [
       "Identidad del cliente",
     ],
   },
-  {
-    id: "04",
-    title: "Interiores",
-    imageSrc: withBase("/images/services/interiores.jpg"),
-    imageAlt: "Interiores",
-    description:
-      "Nuestra practica de diseno de interiores conecta arquitectura y atmosfera. Abordamos cada proyecto con una profunda sensibilidad hacia la proporcion, la materialidad y el uso, disenando espacios que reflejan tanto el caracter del cliente como las demandas del programa.",
-    reverseOnDesktop: true,
-  },
 ];
 
 export const PROJECTS_ITEMS = [
@@ -67,7 +58,7 @@ export const PROJECTS_ITEMS = [
   },
   {
     title: "Casa de la Condesa",
-    location: "Granada - Interiores Historicos",
+    location: "Granada - Restauracion Historica",
     imageSrc: withBase("/images/projects/project-2.jpg"),
     imageAlt: "Casa de la Condesa",
   },

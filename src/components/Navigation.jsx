@@ -33,7 +33,7 @@ export default function Navigation() {
           >
             <img
               src={withBase("/images/logo-redv2.png")}
-              alt="El Siglo Espanol"
+              alt="Imperio Español"
               class="main-nav__logo"
             />
           </a>
@@ -79,13 +79,19 @@ export default function Navigation() {
         class="side-bar"
       >
         <div class="side-bar__media" aria-hidden="true">
-          <img
-            src={withBase("/images/red_hamburguer_final.png")}
-            alt=""
-            class="side-bar__media-image"
-            decoding="async"
-            loading="eager"
-          />
+          <picture>
+            <source
+              media="(max-width: 767px)"
+              srcSet={withBase("/images/red_hamburguer_phone.png")}
+            />
+            <img
+              src={withBase("/images/red_hamburguer_final.png")}
+              alt=""
+              class="side-bar__media-image"
+              decoding="async"
+              loading="eager"
+            />
+          </picture>
         </div>
         <div class="side-bar__veil" aria-hidden="true"></div>
 

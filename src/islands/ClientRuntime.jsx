@@ -4,6 +4,7 @@ import { createMenuController } from "../utils/clientRuntime/menuController";
 import { createNavController } from "../utils/clientRuntime/navController";
 import { createRevealController } from "../utils/clientRuntime/revealController";
 import { createScrollbarController } from "../utils/clientRuntime/scrollbarController";
+import { createTextHoverController } from "../utils/clientRuntime/textHoverController";
 
 export default function ClientRuntime() {
   useEffect(() => {
@@ -18,6 +19,7 @@ export default function ClientRuntime() {
     const scrollbar = createScrollbarController(elements);
     const nav = createNavController({ ...elements, reducedMotion });
     const reveal = createRevealController();
+    const textHover = createTextHoverController();
     const menu = createMenuController({
       ...elements,
       onMenuStateChange(isOpen) {
@@ -61,6 +63,7 @@ export default function ClientRuntime() {
     syncLayout();
     nav.start();
     reveal.observeAll();
+    textHover.initialize();
 
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onResize, { passive: true });
@@ -78,6 +81,7 @@ export default function ClientRuntime() {
       nav.stop();
       menu.cleanup();
       reveal.disconnect();
+      textHover.cleanup();
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onResize);
       window.removeEventListener("keydown", menu.onKeyDown);
