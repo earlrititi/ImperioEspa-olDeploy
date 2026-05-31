@@ -15,6 +15,11 @@ const NEXT_BUTTON_STAR_PATH =
 
 const NEXT_BUTTON_STARS = [1, 2, 3, 4, 5, 6];
 const NEXT_BUTTON_LABEL = "OBT\u00c9N EL MANIFIESTO";
+const SERVICE_CARD_IMAGES = {
+  "01": "/images/card-1.png",
+  "02": "/images/card-2.png",
+  "03": "/images/card-3.png",
+};
 
 export default function Services() {
   return (
@@ -112,13 +117,27 @@ export default function Services() {
 
           <div class="services-grid">
             {SERVICES_ITEMS.map((service) => {
+              const cardImageSrc = SERVICE_CARD_IMAGES[service.id];
+
               if (service.highlights?.length) {
                 return (
-                  <article class="service-cta-card fade-in-up" key={service.id}>
+                  <article
+                    class={`service-cta-card fade-in-up${cardImageSrc ? " service-cta-card--image-bg" : ""}`}
+                    data-stat-counter-group
+                    style={cardImageSrc ? { "--service-card-image": `url("${withBase(cardImageSrc)}")` } : undefined}
+                    key={service.id}
+                  >
+                    <span class="service-cta-card__stat-rail" aria-hidden="true"></span>
+                    <span class="service-cta-card__event-bg" aria-hidden="true"></span>
+                    <span class="service-cta-card__grid-pattern" aria-hidden="true"></span>
                     <span class="service-cta-card__bg" aria-hidden="true"></span>
-                    <span class="service-cta-card__pointer" aria-hidden="true"></span>
                     <div class="service-cta-card__body">
-                      <span class="service-number service-cta-card__number">
+                      <span
+                        class="service-number service-cta-card__number"
+                        data-stat-counter
+                        data-stat-value={service.id}
+                        data-stat-duration="920"
+                      >
                         {service.id}
                       </span>
                       <h3 class="service-cta-card__title">
@@ -175,7 +194,6 @@ export default function Services() {
                 </div>
               );
             })}
-            <div class="service-cards-overlay" aria-hidden="true"></div>
           </div>
         </div>
       </section>
@@ -239,85 +257,18 @@ export default function Services() {
           position: relative;
         }
 
-        .service-cards-overlay {
-          position: absolute;
-          inset: 0;
-          z-index: 6;
-          pointer-events: none;
-          user-select: none;
-          opacity: var(--service-cards-overlay-opacity, 0);
-          -webkit-mask:
-            radial-gradient(
-              24rem 24rem at var(--service-cards-overlay-x, 50%) var(--service-cards-overlay-y, 50%),
-              #000 1%,
-              transparent 50%
-            );
-          mask:
-            radial-gradient(
-              24rem 24rem at var(--service-cards-overlay-x, 50%) var(--service-cards-overlay-y, 50%),
-              #000 1%,
-              transparent 50%
-            );
-          transition: opacity 0.18s ease, mask 0.4s ease, -webkit-mask 0.4s ease;
-          will-change: opacity, mask, -webkit-mask;
-        }
-
-        .service-cards-overlay__card {
-          --service-glow-hsl: 356 78% 49%;
-          position: absolute;
-          border: 1px solid hsl(var(--service-glow-hsl));
-          border-radius: calc(var(--space-2) * 1.25);
-          background:
-            radial-gradient(
-              38rem 24rem at var(--service-overlay-card-x, 50%) var(--service-overlay-card-y, 50%),
-              hsl(var(--service-glow-hsl) / 0.18),
-              transparent 64%
-            ),
-            hsl(var(--service-glow-hsl) / 0.075);
-          box-shadow:
-            inset 0 0 0 1px hsl(var(--service-glow-hsl) / 0.55),
-            inset 0 0 28px hsl(var(--service-glow-hsl) / 0.16),
-            0 0 28px hsl(var(--service-glow-hsl) / 0.24),
-            0 0 64px hsl(var(--service-glow-hsl) / 0.12);
-        }
-
-        .service-cards-overlay__card:nth-child(1) {
-          --service-glow-hsl: 356 78% 45%;
-        }
-
-        .service-cards-overlay__card:nth-child(2) {
-          --service-glow-hsl: 43 82% 48%;
-        }
-
-        .service-cards-overlay__card:nth-child(3) {
-          --service-glow-hsl: 0 0% 7%;
-        }
-
-        .service-cards-overlay__cta {
-          position: absolute;
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          left: var(--service-overlay-cta-left, clamp(var(--space-3), 4.8vw, var(--space-8)));
-          top: var(--service-overlay-cta-top, auto);
-          width: var(--service-overlay-cta-width, min(132px, calc(100% - clamp(var(--space-3), 4.8vw, var(--space-8)) * 2)));
-          height: var(--service-overlay-cta-height, 50px);
-          border-radius: var(--service-overlay-cta-radius, var(--space-1));
-          background: hsl(var(--service-glow-hsl) / 0.86);
-          color: #fff;
-          font-weight: 800;
-          line-height: 1;
-          box-shadow:
-            0 0 0 1px hsl(var(--service-glow-hsl)),
-            0 0 22px hsl(var(--service-glow-hsl) / 0.34),
-            inset 0 1px 0 rgba(255, 255, 255, 0.36);
-        }
-
         .service-cta-card {
-          --service-card-pointer-opacity: 0;
-          --service-card-pointer-x: 50%;
-          --service-card-pointer-y: 50%;
           --service-glow-hsl: 356 78% 49%;
+          --service-card-bg-start: rgba(255, 255, 255, 0.78);
+          --service-card-bg-mid: hsl(var(--service-glow-hsl) / 0.12);
+          --service-card-bg-end: hsl(var(--service-glow-hsl) / 0.2);
+          --service-card-bg-base: hsl(var(--service-glow-hsl) / 0.08);
+          --service-card-copy-color: rgba(0, 0, 0, 0.68);
+          --service-card-check-color: hsl(var(--service-glow-hsl));
+          --service-button-bg: hsl(var(--service-glow-hsl) / 0.96);
+          --service-button-bg-hover: hsl(var(--service-glow-hsl) / 1);
+          --service-button-bg-active: hsl(var(--service-glow-hsl) / 0.88);
+          --service-button-text-color: var(--color-white-pure);
           display: grid;
           grid-template-columns: minmax(0, 1fr);
           gap: var(--space-4);
@@ -325,10 +276,10 @@ export default function Services() {
           min-height: clamp(236px, 21vw, 300px);
           padding: clamp(var(--space-3), 4.8vw, var(--space-8));
           border-radius: calc(var(--space-2) * 1.25);
-          border: 0;
+          border: 1px solid hsl(var(--service-glow-hsl) / 0.14);
           background:
-            linear-gradient(145deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0.11) 52%, rgba(193, 18, 31, 0.1)),
-            rgba(255, 255, 255, 0.18);
+            linear-gradient(145deg, var(--service-card-bg-start) 0%, var(--service-card-bg-mid) 52%, var(--service-card-bg-end) 100%),
+            var(--service-card-bg-base);
           color: var(--color-black-pure);
           position: relative;
           z-index: 0;
@@ -338,11 +289,13 @@ export default function Services() {
             0 6px 6px rgba(0, 0, 0, 0.14),
             0 18px 38px -28px rgba(0, 0, 0, 0.44),
             0 0 22px rgba(0, 0, 0, 0.08),
+            0 0 0 1px hsl(var(--service-glow-hsl) / 0.12),
             inset 1px 1px 0 rgba(255, 255, 255, 0.54);
           backdrop-filter: blur(16px);
           -webkit-backdrop-filter: blur(16px);
           transition:
             transform 0.7s cubic-bezier(0.175, 0.885, 0.32, 2.2),
+            border-color 0.3s ease,
             box-shadow 0.7s cubic-bezier(0.175, 0.885, 0.32, 2.2),
             background 0.7s cubic-bezier(0.175, 0.885, 0.32, 2.2);
         }
@@ -357,19 +310,64 @@ export default function Services() {
           border: 1px solid rgba(255, 255, 255, 0.6);
           background:
             linear-gradient(135deg, rgba(255, 255, 255, 0.42), transparent 34%),
-            linear-gradient(315deg, rgba(193, 18, 31, 0.16), transparent 38%);
+            linear-gradient(315deg, hsl(var(--service-glow-hsl) / 0.12), transparent 38%);
           box-shadow:
             inset 2px 2px 1px rgba(255, 255, 255, 0.44),
             inset -1px -1px 1px rgba(255, 255, 255, 0.32);
           opacity: 0.92;
         }
 
+        .service-cta-card__stat-rail,
         .service-cta-card__bg,
-        .service-cta-card__pointer {
+        .service-cta-card__event-bg,
+        .service-cta-card__grid-pattern {
           position: absolute;
           pointer-events: none;
+        }
+
+        .service-cta-card__stat-rail {
+          top: 0;
+          bottom: 0;
+          left: 0;
+          z-index: 5;
+          width: 5px;
+          border-radius: inherit;
+          background: hsl(var(--service-glow-hsl));
+          box-shadow:
+            0 0 16px hsl(var(--service-glow-hsl) / 0.42),
+            0 0 34px hsl(var(--service-glow-hsl) / 0.22);
+          transform: scaleY(0);
+          transform-origin: center;
+          transition: transform 0.32s ease;
+        }
+
+        .service-cta-card__event-bg {
+          inset: 0;
+          z-index: 0;
+          border-radius: inherit;
+          background:
+            radial-gradient(
+              34rem 24rem at 50% 50%,
+              hsl(var(--service-glow-hsl) / 0.18),
+              transparent 68%
+            ),
+            linear-gradient(135deg, hsl(var(--service-glow-hsl) / 0.2) 0%, rgba(255, 255, 255, 0.06) 52%, hsl(var(--service-glow-hsl) / 0.1) 100%);
+          transform: scale(1);
+          transform-origin: center;
+          transition: transform 0.5s ease, opacity 0.3s ease;
+          will-change: transform;
+        }
+
+        .service-cta-card__grid-pattern {
+          inset: 0;
+          z-index: 2;
+          border-radius: inherit;
+          background-image:
+            linear-gradient(hsl(var(--service-glow-hsl) / 0.08) 1px, transparent 1px),
+            linear-gradient(90deg, hsl(var(--service-glow-hsl) / 0.08) 1px, transparent 1px);
+          background-size: 30px 30px;
           opacity: 0;
-          transition: opacity 0.16s ease;
+          transition: opacity 0.3s ease;
         }
 
         .service-cta-card__bg {
@@ -377,7 +375,8 @@ export default function Services() {
           z-index: 1;
           border-radius: inherit;
           background:
-            linear-gradient(145deg, rgba(255, 255, 255, 0.26), rgba(255, 255, 255, 0.1) 58%, rgba(193, 18, 31, 0.08)),
+            linear-gradient(145deg, rgba(255, 255, 255, 0.26), rgba(255, 255, 255, 0.1) 58%, hsl(var(--service-glow-hsl) / 0.08)),
+            hsl(var(--service-glow-hsl) / 0.04),
             rgba(255, 255, 255, 0.16);
           outline: 0;
           overflow: hidden;
@@ -390,26 +389,12 @@ export default function Services() {
           transition: opacity 0.16s ease, transform 0.16s ease, border-radius 0.16s ease, background 0.16s ease;
         }
 
-        .service-cta-card__pointer {
-          inset: 0;
-          z-index: 2;
-          border-radius: inherit;
-          background:
-            radial-gradient(
-              22rem 22rem at var(--service-card-pointer-x) var(--service-card-pointer-y),
-              rgba(255, 0, 43, 0.18),
-              rgba(255, 0, 43, 0.07) 34%,
-              transparent 62%
-            );
-          opacity: var(--service-card-pointer-opacity);
-          mix-blend-mode: multiply;
-          will-change: opacity, background;
-        }
-
         .service-cta-card:hover {
-          transform: none;
+          transform: translateY(-6px);
+          border-color: hsl(var(--service-glow-hsl) / 0.42);
           background:
-            linear-gradient(163deg, rgba(255, 255, 255, 0.38) 0%, rgba(255, 255, 255, 0.18) 42%, rgba(193, 18, 31, 0.22) 100%),
+            linear-gradient(163deg, rgba(255, 255, 255, 0.38) 0%, rgba(255, 255, 255, 0.18) 42%, hsl(var(--service-glow-hsl) / 0.16) 100%),
+            hsl(var(--service-glow-hsl) / 0.06),
             rgba(255, 255, 255, 0.2);
           box-shadow:
             0 0 18px 1px hsl(var(--service-glow-hsl) / 0.14),
@@ -419,10 +404,23 @@ export default function Services() {
             -10px -10px 32px rgba(255, 255, 255, 0.58);
         }
 
+        .service-cta-card:hover .service-cta-card__stat-rail {
+          transform: scaleY(1);
+        }
+
+        .service-cta-card:hover .service-cta-card__event-bg {
+          transform: scale(1.05);
+        }
+
+        .service-cta-card:hover .service-cta-card__grid-pattern {
+          opacity: 1;
+        }
+
         .service-cta-card:hover .service-cta-card__bg {
           opacity: 1;
           background:
-            linear-gradient(145deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.13) 58%, rgba(193, 18, 31, 0.12)),
+            linear-gradient(145deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.13) 58%, hsl(var(--service-glow-hsl) / 0.1)),
+            hsl(var(--service-glow-hsl) / 0.04),
             rgba(255, 255, 255, 0.18);
           border-radius: inherit;
           transform: none;
@@ -439,6 +437,15 @@ export default function Services() {
 
         .service-cta-card__number {
           margin-bottom: 0;
+          color: hsl(var(--service-glow-hsl));
+          font-family: var(--font-display);
+          font-size: clamp(3.15rem, 6vw, 4.8rem);
+          font-weight: 800;
+          line-height: 0.86;
+          text-shadow:
+            0 0 10px hsl(var(--service-glow-hsl) / 0.24),
+            0 0 24px hsl(var(--service-glow-hsl) / 0.12);
+          transition: color 0.3s ease, text-shadow 0.3s ease;
         }
 
         .service-cta-card__title {
@@ -453,7 +460,7 @@ export default function Services() {
 
         .service-cta-card__copy {
           margin: 0;
-          color: rgba(0, 0, 0, 0.58);
+          color: var(--service-card-copy-color);
           font-size: clamp(0.96rem, 1.12vw, 1.16rem);
           line-height: 1.48;
         }
@@ -473,12 +480,12 @@ export default function Services() {
           border-radius: var(--space-1);
           background:
             radial-gradient(
-              12rem 8rem at var(--service-card-pointer-x, 50%) var(--service-card-pointer-y, 50%),
+              12rem 8rem at 50% 50%,
               hsl(var(--service-glow-hsl) / 0.2),
               transparent 58%
             ),
-            #1b1b1b;
-          color: var(--color-white-pure);
+            var(--service-button-bg);
+          color: var(--service-button-text-color);
           font-weight: 800;
           line-height: 1;
           text-decoration: none;
@@ -492,33 +499,15 @@ export default function Services() {
             box-shadow 0.22s ease;
         }
 
-        .service-cta-card__button::before {
-          content: "";
-          position: absolute;
-          inset: -1px;
-          z-index: -1;
-          border-radius: inherit;
-          opacity: var(--service-card-pointer-opacity, 0);
-          background:
-            radial-gradient(
-              10rem 8rem at var(--service-card-pointer-x, 50%) var(--service-card-pointer-y, 50%),
-              hsl(var(--service-glow-hsl) / 0.88),
-              hsl(var(--service-glow-hsl) / 0.22) 42%,
-              transparent 72%
-            );
-          filter: blur(10px);
-          transition: opacity 0.18s ease;
-        }
-
         .service-cta-card:hover .service-cta-card__button {
           border-color: hsl(var(--service-glow-hsl) / 0.72);
           background:
             radial-gradient(
-              12rem 8rem at var(--service-card-pointer-x, 50%) var(--service-card-pointer-y, 50%),
+              12rem 8rem at 50% 50%,
               hsl(var(--service-glow-hsl) / 0.44),
               transparent 58%
             ),
-            #111;
+            var(--service-button-bg-hover);
           box-shadow:
             0 0 0 1px hsl(var(--service-glow-hsl) / 0.44),
             0 0 22px hsl(var(--service-glow-hsl) / 0.34),
@@ -540,21 +529,16 @@ export default function Services() {
           border-color: hsl(var(--service-glow-hsl) / 0.92);
           background:
             radial-gradient(
-              10rem 7rem at var(--service-card-pointer-x, 50%) var(--service-card-pointer-y, 50%),
+              10rem 7rem at 50% 50%,
               hsl(var(--service-glow-hsl) / 0.62),
               transparent 58%
             ),
-            #080808;
+            var(--service-button-bg-active);
           box-shadow:
             0 0 0 1px hsl(var(--service-glow-hsl) / 0.62),
             0 0 16px hsl(var(--service-glow-hsl) / 0.28),
             inset 0 3px 10px rgba(0, 0, 0, 0.52),
             inset 0 1px 0 rgba(255, 255, 255, 0.16);
-        }
-
-        .service-cta-card__button:active::before {
-          opacity: 1;
-          filter: blur(6px);
         }
 
         .service-cta-card__button-arrow {
@@ -587,7 +571,7 @@ export default function Services() {
           display: inline-flex;
           align-items: center;
           justify-content: center;
-          color: var(--color-black-pure);
+          color: var(--service-card-check-color);
           font-size: 1.05rem;
           font-weight: 800;
           line-height: 1;
@@ -605,15 +589,96 @@ export default function Services() {
         }
 
         .service-cta-card:nth-child(1) {
-          --service-glow-hsl: 356 78% 45%;
+          --service-glow-hsl: 0 0% 7%;
+          --service-card-bg-start: rgba(250, 250, 250, 0.86);
+          --service-card-bg-mid: hsl(0 0% 7% / 0.1);
+          --service-card-bg-end: hsl(0 0% 7% / 0.22);
+          --service-card-bg-base: hsl(0 0% 7% / 0.08);
+          --service-button-bg: hsl(0 0% 7%);
+          --service-button-bg-hover: hsl(0 0% 0%);
+          --service-button-bg-active: hsl(0 0% 4%);
         }
 
         .service-cta-card:nth-child(2) {
-          --service-glow-hsl: 43 82% 48%;
+          --service-glow-hsl: 356 78% 45%;
+          --service-card-bg-start: rgba(255, 248, 248, 0.84);
+          --service-card-bg-mid: hsl(356 78% 45% / 0.14);
+          --service-card-bg-end: hsl(356 78% 45% / 0.26);
+          --service-card-bg-base: hsl(356 78% 45% / 0.1);
+          --service-button-bg: hsl(356 78% 42%);
+          --service-button-bg-hover: hsl(356 82% 48%);
+          --service-button-bg-active: hsl(356 74% 34%);
         }
 
         .service-cta-card:nth-child(3) {
-          --service-glow-hsl: 0 0% 7%;
+          --service-glow-hsl: 43 82% 48%;
+          --service-card-bg-start: rgba(255, 252, 239, 0.86);
+          --service-card-bg-mid: hsl(43 82% 48% / 0.18);
+          --service-card-bg-end: hsl(43 82% 48% / 0.32);
+          --service-card-bg-base: hsl(43 82% 48% / 0.12);
+          --service-button-bg: hsl(43 82% 52%);
+          --service-button-bg-hover: hsl(43 88% 58%);
+          --service-button-bg-active: hsl(43 74% 43%);
+          --service-button-text-color: var(--color-black-pure);
+        }
+
+        .service-cta-card--image-bg:hover {
+          --service-card-copy-color: rgba(255, 255, 255, 0.86);
+          --service-card-check-color: var(--color-white-pure);
+          --service-button-text-color: hsl(var(--service-glow-hsl));
+          color: var(--color-white-pure);
+          background:
+            linear-gradient(180deg, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.5)),
+            var(--service-card-image) center / cover no-repeat;
+        }
+
+        .service-cta-card--image-bg .service-cta-card__grid-pattern {
+          display: none;
+        }
+
+        .service-cta-card--image-bg:hover .service-cta-card__event-bg,
+        .service-cta-card--image-bg:hover .service-cta-card__bg {
+          opacity: 0;
+        }
+
+        .service-cta-card--image-bg:hover .service-cta-card__number,
+        .service-cta-card--image-bg:hover .service-cta-card__title,
+        .service-cta-card--image-bg:hover .text-hover-effect__base {
+          color: var(--color-white-pure);
+        }
+
+        .service-cta-card--image-bg:hover .text-hover-effect__gradient,
+        .service-cta-card--image-bg:hover .text-hover-effect__outline {
+          opacity: 0;
+          clip-path: inset(0 100% 0 0);
+        }
+
+        .service-cta-card--image-bg:hover .service-cta-card__button {
+          border-color: rgba(255, 255, 255, 0.76);
+          background:
+            radial-gradient(
+              11rem 7rem at 50% 50%,
+              rgba(255, 255, 255, 0.82),
+              rgba(255, 255, 255, 0.52) 58%,
+              rgba(255, 255, 255, 0.34)
+            ),
+            rgba(255, 255, 255, 0.9);
+          color: hsl(var(--service-glow-hsl));
+          box-shadow:
+            0 0 0 1px rgba(255, 255, 255, 0.36),
+            0 0 22px rgba(255, 255, 255, 0.28),
+            inset 0 1px 0 rgba(255, 255, 255, 0.7);
+        }
+
+        .service-cta-card--image-bg:hover .service-cta-card__button:active {
+          background:
+            radial-gradient(
+              10rem 7rem at 50% 50%,
+              rgba(255, 255, 255, 0.72),
+              rgba(255, 255, 255, 0.42) 58%,
+              rgba(255, 255, 255, 0.28)
+            ),
+            rgba(255, 255, 255, 0.82);
         }
 
         .services-next-button-wrap:has(.services-next-button:active) {
@@ -1635,8 +1700,10 @@ export default function Services() {
 
         @media (prefers-reduced-motion: reduce) {
           .service-cta-card,
+          .service-cta-card__stat-rail,
           .service-cta-card__bg,
-          .service-cta-card__pointer {
+          .service-cta-card__event-bg,
+          .service-cta-card__grid-pattern {
             animation: none;
             transition: none;
           }
@@ -1646,132 +1713,6 @@ export default function Services() {
           }
         }
       `}</style>
-      <script
-        dangerouslySetInnerHTML={{
-          __html: `
-            (() => {
-              const setupServiceCardPointer = () => {
-                document.querySelectorAll(".service-cta-card").forEach((card) => {
-                  if (card.dataset.servicePointerReady === "true") return;
-                  card.dataset.servicePointerReady = "true";
-
-                  card.addEventListener("pointermove", (event) => {
-                    const rect = card.getBoundingClientRect();
-                    card.style.setProperty("--service-card-pointer-opacity", "1");
-                    card.style.setProperty("--service-card-pointer-x", (event.clientX - rect.left) + "px");
-                    card.style.setProperty("--service-card-pointer-y", (event.clientY - rect.top) + "px");
-                  });
-
-                  card.addEventListener("pointerleave", () => {
-                    card.style.setProperty("--service-card-pointer-opacity", "0");
-                  });
-                });
-              };
-
-              const setupServiceCardsOverlay = () => {
-                const grid = document.querySelector(".services-grid");
-                const overlay = grid?.querySelector(".service-cards-overlay");
-                if (!grid || !overlay) return;
-
-                const cards = Array.from(grid.querySelectorAll(".service-cta-card"));
-
-                const ensureOverlayCards = () => {
-                  while (overlay.children.length < cards.length) {
-                    const sourceCard = cards[overlay.children.length];
-                    const overlayCard = document.createElement("div");
-                    overlayCard.className = "service-cards-overlay__card";
-
-                    const overlayCta = document.createElement("div");
-                    overlayCta.className = "service-cards-overlay__cta";
-                    overlayCta.textContent = sourceCard?.querySelector(".service-cta-card__button")?.innerText || "Empezar";
-                    overlayCard.append(overlayCta);
-
-                    overlay.append(overlayCard);
-                  }
-
-                  while (overlay.children.length > cards.length) {
-                    overlay.lastElementChild?.remove();
-                  }
-                };
-
-                const syncOverlayCards = () => {
-                  const gridRect = grid.getBoundingClientRect();
-                  cards.forEach((card, index) => {
-                    const overlayCard = overlay.children[index];
-                    if (!overlayCard) return;
-
-                    const rect = card.getBoundingClientRect();
-                    overlayCard.style.left = (rect.left - gridRect.left) + "px";
-                    overlayCard.style.top = (rect.top - gridRect.top) + "px";
-                    overlayCard.style.width = rect.width + "px";
-                    overlayCard.style.height = rect.height + "px";
-
-                    const button = card.querySelector(".service-cta-card__button");
-                    if (button) {
-                      const buttonRect = button.getBoundingClientRect();
-                      overlayCard.style.setProperty("--service-overlay-cta-left", (buttonRect.left - rect.left) + "px");
-                      overlayCard.style.setProperty("--service-overlay-cta-top", (buttonRect.top - rect.top) + "px");
-                      overlayCard.style.setProperty("--service-overlay-cta-width", buttonRect.width + "px");
-                      overlayCard.style.setProperty("--service-overlay-cta-height", buttonRect.height + "px");
-                      overlayCard.style.setProperty("--service-overlay-cta-radius", getComputedStyle(button).borderRadius);
-                    }
-                  });
-                };
-
-                ensureOverlayCards();
-                syncOverlayCards();
-
-                if (overlay.dataset.serviceOverlayReady !== "true") {
-                  overlay.dataset.serviceOverlayReady = "true";
-
-                  grid.addEventListener("pointermove", (event) => {
-                    const rect = grid.getBoundingClientRect();
-                    const cards = Array.from(grid.querySelectorAll(".service-cta-card"));
-                    overlay.style.setProperty("--service-cards-overlay-opacity", "1");
-                    overlay.style.setProperty("--service-cards-overlay-x", (event.clientX - rect.left) + "px");
-                    overlay.style.setProperty("--service-cards-overlay-y", (event.clientY - rect.top) + "px");
-
-                    cards.forEach((card, index) => {
-                      const overlayCard = overlay.children[index];
-                      if (!overlayCard) return;
-
-                      const cardRect = card.getBoundingClientRect();
-                      overlayCard.style.setProperty("--service-overlay-card-x", (event.clientX - cardRect.left) + "px");
-                      overlayCard.style.setProperty("--service-overlay-card-y", (event.clientY - cardRect.top) + "px");
-                    });
-                  });
-
-                  grid.addEventListener("pointerleave", () => {
-                    overlay.style.setProperty("--service-cards-overlay-opacity", "0");
-                  });
-
-                  window.addEventListener("resize", syncOverlayCards);
-                  window.addEventListener("scroll", syncOverlayCards, { passive: true });
-
-                  if ("ResizeObserver" in window) {
-                    const observer = new ResizeObserver(syncOverlayCards);
-                    cards.forEach((card) => observer.observe(card));
-                    overlay._serviceOverlayObserver = observer;
-                  }
-                }
-              };
-
-              const setupServiceCardEffects = () => {
-                setupServiceCardPointer();
-                setupServiceCardsOverlay();
-              };
-
-              if (document.readyState === "loading") {
-                document.addEventListener("DOMContentLoaded", setupServiceCardEffects, { once: true });
-              } else {
-                setupServiceCardEffects();
-              }
-
-              document.addEventListener("astro:page-load", setupServiceCardEffects);
-            })();
-          `,
-        }}
-      />
     </>
   );
 }

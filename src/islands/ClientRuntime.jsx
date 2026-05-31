@@ -4,6 +4,7 @@ import { createMenuController } from "../utils/clientRuntime/menuController";
 import { createNavController } from "../utils/clientRuntime/navController";
 import { createRevealController } from "../utils/clientRuntime/revealController";
 import { createScrollbarController } from "../utils/clientRuntime/scrollbarController";
+import { createStatCounterController } from "../utils/clientRuntime/statCounterController";
 import { createTextHoverController } from "../utils/clientRuntime/textHoverController";
 
 export default function ClientRuntime() {
@@ -19,6 +20,7 @@ export default function ClientRuntime() {
     const scrollbar = createScrollbarController(elements);
     const nav = createNavController({ ...elements, reducedMotion });
     const reveal = createRevealController();
+    const statCounter = createStatCounterController({ reducedMotion });
     const textHover = createTextHoverController();
     const menu = createMenuController({
       ...elements,
@@ -63,6 +65,7 @@ export default function ClientRuntime() {
     syncLayout();
     nav.start();
     reveal.observeAll();
+    statCounter.initialize();
     textHover.initialize();
 
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -81,6 +84,7 @@ export default function ClientRuntime() {
       nav.stop();
       menu.cleanup();
       reveal.disconnect();
+      statCounter.cleanup();
       textHover.cleanup();
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onResize);
