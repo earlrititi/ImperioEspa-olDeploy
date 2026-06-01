@@ -20,6 +20,11 @@ const SERVICE_CARD_IMAGES = {
   "02": "/images/card-2.png",
   "03": "/images/card-3.png",
 };
+const SERVICE_CARD_MORPH_IMAGES = {
+  "01": "/images/card-1-morph.png",
+  "02": "/images/card-2-morph.png",
+  "03": "/images/card-3-morph.png",
+};
 
 export default function Services() {
   return (
@@ -118,18 +123,23 @@ export default function Services() {
           <div class="services-grid">
             {SERVICES_ITEMS.map((service) => {
               const cardImageSrc = SERVICE_CARD_IMAGES[service.id];
+              const cardMorphSrc = SERVICE_CARD_MORPH_IMAGES[service.id];
 
               if (service.highlights?.length) {
                 return (
                   <article
                     class={`service-cta-card fade-in-up${cardImageSrc ? " service-cta-card--image-bg" : ""}`}
                     data-stat-counter-group
-                    style={cardImageSrc ? { "--service-card-image": `url("${withBase(cardImageSrc)}")` } : undefined}
+                    style={cardImageSrc ? {
+                      "--service-card-image": `url("${withBase(cardImageSrc)}")`,
+                      "--service-card-morph-image": cardMorphSrc ? `url("${withBase(cardMorphSrc)}")` : undefined,
+                    } : undefined}
                     key={service.id}
                   >
                     <span class="service-cta-card__stat-rail" aria-hidden="true"></span>
                     <span class="service-cta-card__event-bg" aria-hidden="true"></span>
                     <span class="service-cta-card__grid-pattern" aria-hidden="true"></span>
+                    {cardMorphSrc && <span class="service-cta-card__morph-bg" aria-hidden="true"></span>}
                     <span class="service-cta-card__bg" aria-hidden="true"></span>
                     <div class="service-cta-card__body">
                       <span
@@ -265,6 +275,7 @@ export default function Services() {
           --service-card-bg-base: hsl(var(--service-glow-hsl) / 0.08);
           --service-card-copy-color: rgba(0, 0, 0, 0.68);
           --service-card-check-color: hsl(var(--service-glow-hsl));
+          --service-stat-rail-color: hsl(var(--service-glow-hsl));
           --service-button-bg: hsl(var(--service-glow-hsl) / 0.96);
           --service-button-bg-hover: hsl(var(--service-glow-hsl) / 1);
           --service-button-bg-active: hsl(var(--service-glow-hsl) / 0.88);
@@ -273,7 +284,8 @@ export default function Services() {
           grid-template-columns: minmax(0, 1fr);
           gap: var(--space-4);
           align-items: center;
-          min-height: clamp(236px, 21vw, 300px);
+          width: 100%;
+          min-height: clamp(176px, 16vw, 220px);
           padding: clamp(var(--space-3), 4.8vw, var(--space-8));
           border-radius: calc(var(--space-2) * 1.25);
           border: 1px solid hsl(var(--service-glow-hsl) / 0.14);
@@ -295,6 +307,7 @@ export default function Services() {
           -webkit-backdrop-filter: blur(16px);
           transition:
             transform 0.7s cubic-bezier(0.175, 0.885, 0.32, 2.2),
+            min-height 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.2),
             border-color 0.3s ease,
             box-shadow 0.7s cubic-bezier(0.175, 0.885, 0.32, 2.2),
             background 0.7s cubic-bezier(0.175, 0.885, 0.32, 2.2);
@@ -320,6 +333,7 @@ export default function Services() {
         .service-cta-card__stat-rail,
         .service-cta-card__bg,
         .service-cta-card__event-bg,
+        .service-cta-card__morph-bg,
         .service-cta-card__grid-pattern {
           position: absolute;
           pointer-events: none;
@@ -332,10 +346,10 @@ export default function Services() {
           z-index: 5;
           width: 5px;
           border-radius: inherit;
-          background: hsl(var(--service-glow-hsl));
+          background: var(--service-stat-rail-color);
           box-shadow:
-            0 0 16px hsl(var(--service-glow-hsl) / 0.42),
-            0 0 34px hsl(var(--service-glow-hsl) / 0.22);
+            0 0 16px color-mix(in srgb, var(--service-stat-rail-color) 42%, transparent),
+            0 0 34px color-mix(in srgb, var(--service-stat-rail-color) 22%, transparent);
           transform: scaleY(0);
           transform-origin: center;
           transition: transform 0.32s ease;
@@ -370,6 +384,23 @@ export default function Services() {
           transition: opacity 0.3s ease;
         }
 
+        .service-cta-card__morph-bg {
+          inset: 0;
+          z-index: 0;
+          border-radius: inherit;
+          background:
+            linear-gradient(180deg, rgba(0, 0, 0, 0.04), rgba(0, 0, 0, 0.44)),
+            var(--service-card-morph-image) center / cover no-repeat;
+          opacity: 0;
+          transform: scale(1.045);
+          filter: saturate(1.05) contrast(1.03);
+          transition:
+            opacity 0.42s ease,
+            transform 0.72s cubic-bezier(0.175, 0.885, 0.32, 1.08),
+            filter 0.72s ease;
+          will-change: opacity, transform;
+        }
+
         .service-cta-card__bg {
           inset: 0;
           z-index: 1;
@@ -389,7 +420,9 @@ export default function Services() {
           transition: opacity 0.16s ease, transform 0.16s ease, border-radius 0.16s ease, background 0.16s ease;
         }
 
-        .service-cta-card:hover {
+        .service-cta-card:hover,
+        .service-cta-card:focus-within {
+          min-height: clamp(236px, 21vw, 300px);
           transform: translateY(-6px);
           border-color: hsl(var(--service-glow-hsl) / 0.42);
           background:
@@ -404,19 +437,23 @@ export default function Services() {
             -10px -10px 32px rgba(255, 255, 255, 0.58);
         }
 
-        .service-cta-card:hover .service-cta-card__stat-rail {
+        .service-cta-card:hover .service-cta-card__stat-rail,
+        .service-cta-card:focus-within .service-cta-card__stat-rail {
           transform: scaleY(1);
         }
 
-        .service-cta-card:hover .service-cta-card__event-bg {
+        .service-cta-card:hover .service-cta-card__event-bg,
+        .service-cta-card:focus-within .service-cta-card__event-bg {
           transform: scale(1.05);
         }
 
-        .service-cta-card:hover .service-cta-card__grid-pattern {
+        .service-cta-card:hover .service-cta-card__grid-pattern,
+        .service-cta-card:focus-within .service-cta-card__grid-pattern {
           opacity: 1;
         }
 
-        .service-cta-card:hover .service-cta-card__bg {
+        .service-cta-card:hover .service-cta-card__bg,
+        .service-cta-card:focus-within .service-cta-card__bg {
           opacity: 1;
           background:
             linear-gradient(145deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.13) 58%, hsl(var(--service-glow-hsl) / 0.1)),
@@ -463,6 +500,21 @@ export default function Services() {
           color: var(--service-card-copy-color);
           font-size: clamp(0.96rem, 1.12vw, 1.16rem);
           line-height: 1.48;
+          max-height: 0;
+          opacity: 0;
+          overflow: hidden;
+          transform: translateY(-0.35rem);
+          transition:
+            max-height 0.48s ease,
+            opacity 0.28s ease,
+            transform 0.48s ease;
+        }
+
+        .service-cta-card:hover .service-cta-card__copy,
+        .service-cta-card:focus-within .service-cta-card__copy {
+          max-height: 8rem;
+          opacity: 1;
+          transform: translateY(0);
         }
 
         .service-cta-card__button {
@@ -558,6 +610,21 @@ export default function Services() {
           line-height: 1.25;
           position: relative;
           z-index: 3;
+          max-height: 0;
+          opacity: 0;
+          overflow: hidden;
+          transform: translateX(-0.75rem);
+          transition:
+            max-height 0.56s ease,
+            opacity 0.32s ease,
+            transform 0.56s ease;
+        }
+
+        .service-cta-card:hover .service-cta-card__list,
+        .service-cta-card:focus-within .service-cta-card__list {
+          max-height: 18rem;
+          opacity: 1;
+          transform: translateX(0);
         }
 
         .service-cta-card__list-item {
@@ -594,6 +661,7 @@ export default function Services() {
           --service-card-bg-mid: hsl(0 0% 7% / 0.1);
           --service-card-bg-end: hsl(0 0% 7% / 0.22);
           --service-card-bg-base: hsl(0 0% 7% / 0.08);
+          --service-stat-rail-color: hsl(0 0% 58%);
           --service-button-bg: hsl(0 0% 7%);
           --service-button-bg-hover: hsl(0 0% 0%);
           --service-button-bg-active: hsl(0 0% 4%);
@@ -622,7 +690,8 @@ export default function Services() {
           --service-button-text-color: var(--color-black-pure);
         }
 
-        .service-cta-card--image-bg:hover {
+        .service-cta-card--image-bg:hover,
+        .service-cta-card--image-bg:focus-within {
           --service-card-copy-color: rgba(255, 255, 255, 0.86);
           --service-card-check-color: var(--color-white-pure);
           --service-button-text-color: hsl(var(--service-glow-hsl));
@@ -637,23 +706,39 @@ export default function Services() {
         }
 
         .service-cta-card--image-bg:hover .service-cta-card__event-bg,
-        .service-cta-card--image-bg:hover .service-cta-card__bg {
+        .service-cta-card--image-bg:hover .service-cta-card__bg,
+        .service-cta-card--image-bg:focus-within .service-cta-card__event-bg,
+        .service-cta-card--image-bg:focus-within .service-cta-card__bg {
           opacity: 0;
+        }
+
+        .service-cta-card--image-bg:hover .service-cta-card__morph-bg,
+        .service-cta-card--image-bg:focus-within .service-cta-card__morph-bg {
+          opacity: 1;
+          transform: scale(1);
+          filter: saturate(1.08) contrast(1.05);
+          transition-delay: 1.3s;
         }
 
         .service-cta-card--image-bg:hover .service-cta-card__number,
         .service-cta-card--image-bg:hover .service-cta-card__title,
-        .service-cta-card--image-bg:hover .text-hover-effect__base {
+        .service-cta-card--image-bg:hover .text-hover-effect__base,
+        .service-cta-card--image-bg:focus-within .service-cta-card__number,
+        .service-cta-card--image-bg:focus-within .service-cta-card__title,
+        .service-cta-card--image-bg:focus-within .text-hover-effect__base {
           color: var(--color-white-pure);
         }
 
         .service-cta-card--image-bg:hover .text-hover-effect__gradient,
-        .service-cta-card--image-bg:hover .text-hover-effect__outline {
+        .service-cta-card--image-bg:hover .text-hover-effect__outline,
+        .service-cta-card--image-bg:focus-within .text-hover-effect__gradient,
+        .service-cta-card--image-bg:focus-within .text-hover-effect__outline {
           opacity: 0;
           clip-path: inset(0 100% 0 0);
         }
 
-        .service-cta-card--image-bg:hover .service-cta-card__button {
+        .service-cta-card--image-bg:hover .service-cta-card__button,
+        .service-cta-card--image-bg:focus-within .service-cta-card__button {
           border-color: rgba(255, 255, 255, 0.76);
           background:
             radial-gradient(
@@ -670,7 +755,8 @@ export default function Services() {
             inset 0 1px 0 rgba(255, 255, 255, 0.7);
         }
 
-        .service-cta-card--image-bg:hover .service-cta-card__button:active {
+        .service-cta-card--image-bg:hover .service-cta-card__button:active,
+        .service-cta-card--image-bg:focus-within .service-cta-card__button:active {
           background:
             radial-gradient(
               10rem 7rem at 50% 50%,
