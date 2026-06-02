@@ -1,16 +1,507 @@
 ---
-import PageShell from "../layouts/PageShell.astro";
+import Layout from "../layouts/Layout.astro";
+import Navigation from "../components/Navigation.jsx";
+import { withBase } from "../utils/basePath";
+
+const backgroundImage = withBase("/images/ejercito-blanco_upscaled_2x.png");
+const email = "hola@imperioes.com";
 ---
 
-<PageShell
+<Layout
   title="Contacto"
-  description="Contacto y soporte editorial."
-  eyebrow="Contacto"
-  heading="Escribenos"
-  summary="Para colaboraciones, soporte o prensa, escribe a:"
-  narrow
+  description="Audiencia de Imperio Espanol para colaboraciones, archivo, prensa y soporte editorial."
 >
-  <div slot="header" class="card">
-    <p><strong>hola@imperioes.com</strong></p>
-  </div>
-</PageShell>
+  <Navigation />
+  <script is:inline>
+    document.body.classList.add("preloader-done", "contact-nav-ready");
+  </script>
+
+  <main class="contact-page">
+    <div class="contact-grain" aria-hidden="true"></div>
+    <div class="contact-illustration" aria-hidden="true"></div>
+
+    <header class="contact-header" aria-label="Imperio Espanol">
+      <a class="contact-brand" href={withBase("/")}>
+        <span>IMPERIO</span>
+        <strong>ESPANOL</strong>
+      </a>
+    </header>
+
+    <section class="contact-layout" aria-labelledby="contact-title">
+      <div class="contact-title-wrap">
+        <p class="contact-kicker">Audiencia</p>
+        <h1 id="contact-title">CONTACTO</h1>
+      </div>
+
+      <div class="contact-intro">
+        <p>
+          En Imperio Espanol creemos que una comunidad de memoria empieza con una
+          conversacion clara. Si quieres proponer una colaboracion, consultar el
+          archivo, enviar una nota de prensa o resolver una duda editorial, estamos
+          aqui para leerte.
+        </p>
+      </div>
+
+      <form
+        class="contact-form"
+        action={`mailto:${email}`}
+        method="post"
+        enctype="text/plain"
+      >
+        <div class="contact-fields-row">
+          <label>
+            <span>Nombre</span>
+            <input type="text" name="nombre" placeholder="Nombre" autocomplete="given-name" />
+          </label>
+          <label>
+            <span>Apellidos</span>
+            <input type="text" name="apellidos" placeholder="Apellidos" autocomplete="family-name" />
+          </label>
+          <label class="contact-field-wide">
+            <span>Correo</span>
+            <input type="email" name="correo" placeholder="Correo" autocomplete="email" required />
+          </label>
+        </div>
+
+        <label>
+          <span>Tema</span>
+          <input type="text" name="tema" placeholder="Tema del mensaje" required />
+        </label>
+
+        <label>
+          <span>Mensaje</span>
+          <textarea name="mensaje" placeholder="Escribe tu mensaje" rows="8" required></textarea>
+        </label>
+
+        <button type="submit">ENVIAR SOLICITUD</button>
+      </form>
+
+      <aside class="contact-info" aria-label="Datos de contacto">
+        <div class="contact-info-group">
+          <p class="contact-info-label">Correspondencia</p>
+          <a href={`mailto:${email}`}>{email}</a>
+        </div>
+
+        <div class="contact-info-group">
+          <p class="contact-info-label">Colaboraciones</p>
+          <p>
+            Ensayos, efemerides, rutas, bibliografia y propuestas para el archivo.
+          </p>
+        </div>
+
+        <div class="contact-info-group">
+          <p class="contact-info-label">Prensa y derechos</p>
+          <p>
+            Consultas sobre materiales, citas, reproducciones y uso editorial.
+          </p>
+        </div>
+      </aside>
+    </section>
+  </main>
+</Layout>
+
+<style define:vars={{ backgroundImage }}>
+  :global(body.contact-nav-ready) {
+    background: #050505;
+  }
+
+  :global(body.contact-nav-ready #main-nav) {
+    --nav-gradient-top-alpha: 0;
+    --nav-gradient-bottom-alpha: 0;
+    --nav-glass-line-alpha: 0;
+    --nav-glass-shadow-alpha: 0;
+    background: transparent;
+    border-bottom-color: transparent;
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  :global(body.contact-nav-ready #main-nav .main-nav__fx),
+  :global(body.contact-nav-ready #main-nav .main-nav__brand),
+  :global(body.contact-nav-ready #main-nav .main-nav__links-wrap),
+  :global(body.contact-nav-ready #main-nav .main-nav__floating-links-layer) {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  :global(body.contact-nav-ready #main-nav .menu-button) {
+    color: #ff341f;
+    mix-blend-mode: normal;
+  }
+
+  :global(body.contact-nav-ready #main-nav.main-nav--menu-revealed .menu-button) {
+    color: #000;
+  }
+
+  :global(body.contact-nav-ready #main-nav .menu-button:focus-visible) {
+    outline-color: rgba(255, 52, 31, 0.75);
+  }
+
+  .contact-page {
+    position: relative;
+    min-height: 100svh;
+    overflow: hidden;
+    padding: clamp(1rem, 2.4vw, 1.9rem) clamp(1rem, 5.8vw, 5.1rem)
+      clamp(2.5rem, 5vw, 5.5rem);
+    background:
+      radial-gradient(circle at 74% 44%, rgba(255, 255, 255, 0.1), transparent 34rem),
+      linear-gradient(90deg, rgba(5, 5, 5, 0.96) 0%, rgba(5, 5, 5, 0.88) 52%, rgba(5, 5, 5, 0.96) 100%),
+      #050505;
+    color: #fff;
+  }
+
+  .contact-grain {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    opacity: 0.42;
+    pointer-events: none;
+    background-image:
+      radial-gradient(circle at 18% 28%, rgba(255, 255, 255, 0.28) 0 1px, transparent 1px),
+      radial-gradient(circle at 65% 14%, rgba(255, 255, 255, 0.16) 0 1px, transparent 1px),
+      radial-gradient(circle at 42% 78%, rgba(255, 255, 255, 0.18) 0 1px, transparent 1px);
+    background-size: 17px 19px, 23px 29px, 31px 37px;
+  }
+
+  .contact-illustration {
+    position: absolute;
+    right: -8vw;
+    bottom: -5vh;
+    z-index: 0;
+    width: min(74rem, 78vw);
+    height: min(46rem, 72vh);
+    background-image: linear-gradient(rgba(5, 5, 5, 0.34), rgba(5, 5, 5, 0.34)), var(--backgroundImage);
+    background-repeat: no-repeat;
+    background-position: right bottom;
+    background-size: contain;
+    opacity: 0.28;
+    filter: invert(1) grayscale(1) contrast(1.12);
+    mix-blend-mode: screen;
+  }
+
+  .contact-header,
+  .contact-layout {
+    position: relative;
+    z-index: 2;
+  }
+
+  .contact-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    min-height: clamp(4.5rem, 8vw, 6.2rem);
+  }
+
+  .contact-brand {
+    display: inline-grid;
+    gap: 0.05rem;
+    width: fit-content;
+    color: #fff;
+    font-family: var(--font-display);
+    font-weight: 900;
+    letter-spacing: 0;
+    line-height: 0.86;
+    text-decoration: none;
+  }
+
+  .contact-brand span {
+    font-size: clamp(0.58rem, 1vw, 0.76rem);
+    font-weight: 700;
+  }
+
+  .contact-brand strong {
+    font-size: clamp(1.38rem, 2.4vw, 2.05rem);
+    font-weight: 900;
+  }
+
+  .contact-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.35fr) minmax(18rem, 0.68fr);
+    grid-template-areas:
+      "title intro"
+      "form info";
+    column-gap: clamp(2.5rem, 8vw, 7rem);
+    row-gap: clamp(1.7rem, 3.4vw, 3.1rem);
+    width: min(100%, 72rem);
+    margin-inline: auto;
+    padding-top: clamp(1rem, 2.6vw, 2.2rem);
+  }
+
+  .contact-title-wrap {
+    grid-area: title;
+    align-self: end;
+  }
+
+  .contact-kicker {
+    margin: 0 0 0.45rem;
+    color: rgba(255, 255, 255, 0.52);
+    font-family: var(--font-display);
+    font-size: 0.76rem;
+    font-weight: 700;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  .contact-title-wrap h1 {
+    margin: 0;
+    color: #fff;
+    font-family: var(--font-rosa-black);
+    font-size: clamp(3.1rem, 7.2vw, 6.4rem);
+    font-weight: 900;
+    line-height: 0.9;
+    letter-spacing: 0;
+    text-transform: uppercase;
+  }
+
+  .contact-intro {
+    grid-area: intro;
+    align-self: end;
+    max-width: 35rem;
+  }
+
+  .contact-intro p {
+    margin: 0;
+    color: #fff;
+    font-family: var(--font-display);
+    font-size: clamp(1.05rem, 1.45vw, 1.25rem);
+    font-weight: 800;
+    line-height: 1.22;
+  }
+
+  .contact-form {
+    grid-area: form;
+    display: grid;
+    gap: clamp(1.2rem, 2vw, 1.45rem);
+  }
+
+  .contact-fields-row {
+    display: grid;
+    grid-template-columns: minmax(8.4rem, 0.85fr) minmax(8.4rem, 0.85fr) minmax(13rem, 1.7fr);
+    gap: clamp(0.85rem, 1.8vw, 1.35rem);
+  }
+
+  .contact-form label {
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .contact-form label span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  .contact-form input,
+  .contact-form textarea {
+    width: 100%;
+    border: 1px solid rgba(255, 255, 255, 0.02);
+    border-radius: 0;
+    background: rgba(28, 28, 28, 0.92);
+    color: #fff;
+    font-family: var(--font-display);
+    font-size: 1rem;
+    line-height: 1.25;
+    outline: none;
+    transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .contact-form input {
+    min-height: 4rem;
+    padding: 0 1.25rem;
+  }
+
+  .contact-form textarea {
+    min-height: clamp(10rem, 18vw, 13rem);
+    resize: vertical;
+    padding: 1.35rem 1.25rem;
+  }
+
+  .contact-form input::placeholder,
+  .contact-form textarea::placeholder {
+    color: rgba(215, 222, 230, 0.78);
+  }
+
+  .contact-form input:focus,
+  .contact-form textarea:focus {
+    border-color: rgba(255, 52, 31, 0.82);
+    background: rgba(34, 34, 34, 0.96);
+    box-shadow: 0 0 0 2px rgba(255, 52, 31, 0.18);
+  }
+
+  .contact-form button {
+    justify-self: start;
+    min-height: 3.7rem;
+    margin-top: clamp(0.3rem, 1vw, 0.75rem);
+    padding: 0 1.9rem;
+    border: 1px solid #fff;
+    border-radius: 0;
+    background: #fff;
+    color: #050505;
+    cursor: pointer;
+    font-family: var(--font-display);
+    font-size: clamp(0.94rem, 1.15vw, 1.1rem);
+    font-weight: 900;
+    letter-spacing: 0;
+    line-height: 1;
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  }
+
+  .contact-form button:hover,
+  .contact-form button:focus-visible {
+    border-color: #ff341f;
+    background: #ff341f;
+    color: #fff;
+  }
+
+  .contact-info {
+    grid-area: info;
+    display: grid;
+    align-content: start;
+    gap: clamp(1.8rem, 3.2vw, 2.6rem);
+    padding-top: 0.15rem;
+  }
+
+  .contact-info-group {
+    display: grid;
+    gap: 0.8rem;
+  }
+
+  .contact-info-label {
+    margin: 0;
+    color: #fff;
+    font-family: var(--font-display);
+    font-size: clamp(1rem, 1.35vw, 1.2rem);
+    font-weight: 500;
+    line-height: 1.1;
+  }
+
+  .contact-info a,
+  .contact-info p:not(.contact-info-label) {
+    margin: 0;
+    color: #fff;
+    font-family: var(--font-display);
+    font-size: clamp(1.06rem, 1.5vw, 1.34rem);
+    font-weight: 800;
+    line-height: 1.22;
+  }
+
+  .contact-info a {
+    text-decoration: none;
+  }
+
+  .contact-info a::selection,
+  .contact-info p::selection,
+  .contact-intro p::selection,
+  .contact-title-wrap h1::selection {
+    background: #ff341f;
+    color: #fff;
+  }
+
+  .contact-info a:hover,
+  .contact-info a:focus-visible {
+    color: #ff341f;
+  }
+
+  @media (max-width: 980px) {
+    .contact-page {
+      overflow: visible;
+    }
+
+    .contact-layout {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-areas:
+        "title"
+        "intro"
+        "form"
+        "info";
+      row-gap: 2rem;
+    }
+
+    .contact-intro {
+      max-width: 44rem;
+    }
+
+    .contact-fields-row {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .contact-field-wide {
+      grid-column: 1 / -1;
+    }
+
+    .contact-info {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1.25rem;
+      padding-top: 1.2rem;
+    }
+  }
+
+  @media (max-width: 680px) {
+    .contact-page {
+      width: 100%;
+      max-width: 100vw;
+      overflow-x: hidden;
+      padding: 1rem 1rem 2.4rem;
+    }
+
+    .contact-header {
+      min-height: 4.75rem;
+      padding-right: 3.35rem;
+    }
+
+    .contact-layout {
+      width: 100%;
+      max-width: calc(100vw - 2rem);
+      padding-top: 0.5rem;
+      overflow: hidden;
+    }
+
+    .contact-title-wrap,
+    .contact-intro,
+    .contact-form,
+    .contact-info,
+    .contact-form label {
+      min-width: 0;
+      max-width: 100%;
+    }
+
+    .contact-title-wrap h1 {
+      font-size: clamp(2.55rem, 13vw, 3.1rem);
+    }
+
+    .contact-intro p {
+      overflow-wrap: break-word;
+    }
+
+    .contact-fields-row,
+    .contact-info {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .contact-form input {
+      min-height: 3.7rem;
+      min-width: 0;
+    }
+
+    .contact-form textarea {
+      min-width: 0;
+    }
+
+    .contact-form button {
+      width: 100%;
+    }
+
+    .contact-illustration {
+      right: -42vw;
+      bottom: 5vh;
+      width: 120vw;
+      height: 50vh;
+      opacity: 0.18;
+    }
+  }
+</style>

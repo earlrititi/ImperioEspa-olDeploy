@@ -20,6 +20,11 @@ tmp-*.png
 # environment variables
 .env
 .env.production
+.dev.vars
+private/manifesto-config.php
+public/*.pdf
+!public/manifesto-email.pdf
+.codex-*
 
 # macOS-specific files
 .DS_Store

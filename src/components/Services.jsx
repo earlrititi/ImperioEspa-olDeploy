@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from "preact/hooks";
 import { SERVICES_ITEMS } from "../config/home";
 import { TextHoverEffect } from "./ui/text-hover-effect";
 import { withBase } from "../utils/basePath";
@@ -7,6 +8,11 @@ const FOUNDATION_CARDS = [
     title: "Nuestra Historia",
     description:
       "Donde nunca se ponía el sol. Una historia de descubrimientos, hazañas y legado que cambió el mundo para siempre. Un linaje de exploradores, conquistadores y visionarios que se atrevieron a soñar más allá de lo conocido, dejando una marca imborrable en la historia de la humanidad.",
+  },
+  {
+    title: "Forma parte",
+    description:
+      "Descarga gratis el manifiesto del Imperio Español. Forma parte de este proyecto que recupera la increíble historia del imperio donde nunca se ponía el sol. Empápate de nuestros artículos exclusivos, información y divulgación, debates en el foro, acceso a preventa de drops en nuestra tienda y muchas más ventajas para suscriptores.",
   },
 ];
 
@@ -27,6 +33,59 @@ const SERVICE_CARD_MORPH_IMAGES = {
 };
 
 export default function Services() {
+  const [isManifestFormOpen, setIsManifestFormOpen] = useState(false);
+  const [manifestEmail, setManifestEmail] = useState("");
+  const [manifestCompany, setManifestCompany] = useState("");
+  const [manifestStatus, setManifestStatus] = useState("idle");
+  const [manifestError, setManifestError] = useState("");
+  const manifestModalRef = useRef(null);
+  const manifestEmailInputRef = useRef(null);
+  const isManifestFormReady = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(manifestEmail.trim());
+
+  useEffect(() => {
+    if (!isManifestFormOpen) return;
+
+    if (manifestModalRef.current && !manifestModalRef.current.open) {
+      manifestModalRef.current.showModal();
+    }
+
+    manifestEmailInputRef.current?.focus();
+  }, [isManifestFormOpen]);
+
+  const handleManifestSubmit = async (event) => {
+    event.preventDefault();
+    if (!isManifestFormReady || manifestStatus === "submitting") return;
+
+    setManifestStatus("submitting");
+    setManifestError("");
+
+    try {
+      const response = await fetch("/api/manifesto.php", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+        },
+        body: JSON.stringify({
+          email: manifestEmail,
+          company: manifestCompany,
+          source: "home",
+        }),
+      });
+      const result = await response.json().catch(() => ({}));
+
+      if (!response.ok || !result.ok) {
+        throw new Error(result.error || "No se pudo enviar el manifiesto.");
+      }
+
+      setManifestStatus("sent");
+      setManifestEmail("");
+      setManifestCompany("");
+    } catch (error) {
+      setManifestStatus("idle");
+      setManifestError(error.message || "No se pudo enviar el manifiesto.");
+    }
+  };
+
   return (
     <>
       <section class="services-section home-section bg-white">
@@ -40,7 +99,7 @@ export default function Services() {
               <div class="services-army-hitbox" aria-hidden="true"></div>
               <img
                 src={withBase("/images/ejercito-blanco_upscaled_2x.png")}
-                alt="Formacion historica del ejercito"
+                alt="Formacion historica del ejercito español"
                 class="services-army-image services-army-image--default"
                 loading="lazy"
                 decoding="async"
@@ -54,8 +113,8 @@ export default function Services() {
                 decoding="async"
               />
             </div>
-            <div class="services-foundation-grid fade-in-up">
-            {FOUNDATION_CARDS.map((card) => (
+            <div class="services-foundation-grid services-foundation-grid--before-button fade-in-up">
+            {FOUNDATION_CARDS.slice(0, 1).map((card) => (
               <article class="services-foundation-card" key={card.title}>
                 <h3 class="services-foundation-card__title">
                   <TextHoverEffect text={card.title} duration={0.72} />
@@ -66,7 +125,7 @@ export default function Services() {
           </div>
           </div>
 
-          <div class="services-next-button-wrap fade-in-up">
+          <div class="services-next-button-wrap services-next-button-wrap--between-foundation fade-in-up">
             <svg class="services-next-liquid-filter" aria-hidden="true" focusable="false">
               <filter id="services-next-liquid-glass" x="-20%" y="-20%" width="140%" height="140%" filterUnits="objectBoundingBox">
                 <feTurbulence type="fractalNoise" baseFrequency="0.001 0.005" numOctaves="1" seed="17" result="turbulence"></feTurbulence>
@@ -83,7 +142,13 @@ export default function Services() {
                 <feDisplacementMap in="SourceGraphic" in2="softMap" scale="42" xChannelSelector="R" yChannelSelector="G"></feDisplacementMap>
               </filter>
             </svg>
-            <button class="services-next-button" type="button">
+            <button
+              class="services-next-button"
+              type="button"
+              aria-controls="services-manifest-modal"
+              aria-expanded={isManifestFormOpen}
+              onClick={() => setIsManifestFormOpen(true)}
+            >
               <span class="services-next-liquid-lens" aria-hidden="true"></span>
               <span class="services-next-glass-outline" aria-hidden="true"></span>
               <span class="services-next-edge-sheen" aria-hidden="true"></span>
@@ -117,18 +182,113 @@ export default function Services() {
                 </span>
               ))}
             </button>
-            <div class="services-next-button-shadow" aria-hidden="true"></div>
           </div>
+
+          <div class="services-foundation-grid services-foundation-grid--after-button fade-in-up">
+            {FOUNDATION_CARDS.slice(1).map((card) => (
+              <article class="services-foundation-card" key={card.title}>
+                <h3 class="services-foundation-card__title">
+                  <TextHoverEffect text={card.title} duration={0.72} />
+                </h3>
+                <p class="services-foundation-card__copy">{card.description}</p>
+              </article>
+            ))}
+          </div>
+
+          {isManifestFormOpen && (
+            <dialog
+              class="services-manifest-modal"
+              id="services-manifest-modal"
+              aria-labelledby="services-manifest-modal-title"
+              ref={manifestModalRef}
+              onCancel={(event) => event.preventDefault()}
+            >
+              <form class="services-manifest-modal__panel" method="dialog" onSubmit={handleManifestSubmit}>
+                <h2 class="services-manifest-modal__title" id="services-manifest-modal-title">
+                  {manifestStatus === "sent" ? "Manifiesto enviado" : "Recibe el manifiesto"}
+                </h2>
+                {manifestStatus === "sent" ? (
+                  <>
+                    <p class="services-manifest-modal__message" role="status">
+                      Te hemos enviado el PDF a tu correo. Revisa tambien la carpeta de spam o promociones.
+                    </p>
+                    <button
+                      class="services-manifest-modal__submit"
+                      type="button"
+                      onClick={() => {
+                        manifestModalRef.current?.close();
+                        setIsManifestFormOpen(false);
+                        setManifestStatus("idle");
+                        setManifestError("");
+                      }}
+                    >
+                      Cerrar
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <input
+                      ref={manifestEmailInputRef}
+                      class="services-manifest-modal__field"
+                      type="email"
+                      name="email"
+                      placeholder={"\u00a1Dinos tu correo!"}
+                      aria-label={"\u00a1Dinos tu correo!"}
+                      autocomplete="email"
+                      value={manifestEmail}
+                      onInput={(event) => setManifestEmail(event.currentTarget.value)}
+                      required
+                    />
+                    <input
+                      class="services-manifest-modal__trap"
+                      type="text"
+                      name="company"
+                      value={manifestCompany}
+                      onInput={(event) => setManifestCompany(event.currentTarget.value)}
+                      autocomplete="organization"
+                      tabIndex={-1}
+                      aria-hidden="true"
+                    />
+                    {manifestError && (
+                      <p class="services-manifest-modal__error" role="alert">
+                        {manifestError}
+                      </p>
+                    )}
+                    <button
+                      class="services-manifest-modal__submit"
+                      type="submit"
+                      disabled={!isManifestFormReady || manifestStatus === "submitting"}
+                    >
+                      {manifestStatus === "submitting" ? "Enviando..." : "Recibir manifiesto"}
+                    </button>
+                    <button
+                      class="services-manifest-modal__close"
+                      type="button"
+                      onClick={() => {
+                        manifestModalRef.current?.close();
+                        setIsManifestFormOpen(false);
+                        setManifestStatus("idle");
+                        setManifestError("");
+                      }}
+                    >
+                      Cerrar
+                    </button>
+                  </>
+                )}
+              </form>
+            </dialog>
+          )}
 
           <div class="services-grid">
             {SERVICES_ITEMS.map((service) => {
               const cardImageSrc = SERVICE_CARD_IMAGES[service.id];
               const cardMorphSrc = SERVICE_CARD_MORPH_IMAGES[service.id];
+              const serviceStatLabel = service.statLabel || service.id;
 
               if (service.highlights?.length) {
                 return (
                   <article
-                    class={`service-cta-card fade-in-up${cardImageSrc ? " service-cta-card--image-bg" : ""}`}
+                    class={`service-cta-card fade-in-up${cardImageSrc ? " service-cta-card--image-bg" : ""}${service.priceBadge ? " service-cta-card--has-price" : ""}`}
                     data-stat-counter-group
                     style={cardImageSrc ? {
                       "--service-card-image": `url("${withBase(cardImageSrc)}")`,
@@ -141,14 +301,17 @@ export default function Services() {
                     <span class="service-cta-card__grid-pattern" aria-hidden="true"></span>
                     {cardMorphSrc && <span class="service-cta-card__morph-bg" aria-hidden="true"></span>}
                     <span class="service-cta-card__bg" aria-hidden="true"></span>
+                    {service.priceBadge && (
+                      <span class="service-cta-card__price-flag">{service.priceBadge}</span>
+                    )}
                     <div class="service-cta-card__body">
                       <span
                         class="service-number service-cta-card__number"
                         data-stat-counter
-                        data-stat-value={service.id}
+                        data-stat-value={serviceStatLabel}
                         data-stat-duration="920"
                       >
-                        {service.id}
+                        {serviceStatLabel}
                       </span>
                       <h3 class="service-cta-card__title">
                         <TextHoverEffect text={service.title} duration={0.78} />
@@ -485,6 +648,40 @@ export default function Services() {
           transition: color 0.3s ease, text-shadow 0.3s ease;
         }
 
+        .service-cta-card__price-flag {
+          position: absolute;
+          top: 0;
+          right: clamp(var(--space-2), 2.6vw, var(--space-4));
+          z-index: 5;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          min-width: clamp(5.2rem, 10vw, 7.2rem);
+          min-height: clamp(3.1rem, 5.6vw, 4.25rem);
+          padding: 0.55rem 0.78rem 0.92rem;
+          clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 78%, 0 100%);
+          background:
+            linear-gradient(135deg, rgba(255, 255, 255, 0.36), transparent 34%),
+            linear-gradient(180deg, #f5d46a 0%, #d5a329 56%, #9a6a08 100%);
+          color: #1a1203;
+          box-shadow:
+            0 12px 24px rgba(77, 49, 0, 0.24),
+            inset 1px 1px 0 rgba(255, 255, 255, 0.54),
+            inset -1px -1px 0 rgba(90, 55, 0, 0.26);
+          font-family: var(--font-display);
+          font-size: clamp(0.74rem, 1.55vw, 0.92rem);
+          font-weight: 900;
+          line-height: 1.05;
+          text-align: center;
+          text-transform: uppercase;
+          text-wrap: balance;
+          transform: translateY(-1px);
+          transition:
+            color 0.3s ease,
+            filter 0.3s ease,
+            transform 0.3s ease;
+        }
+
         .service-cta-card__title {
           margin: 0;
           font-family: var(--font-display);
@@ -648,11 +845,171 @@ export default function Services() {
           --services-next-hover-time: 700ms;
           --services-next-hover-ease: cubic-bezier(0.175, 0.885, 0.32, 2.2);
           display: flex;
+          flex-direction: column;
+          align-items: center;
           justify-content: center;
+          gap: clamp(0.7rem, 1.6vw, 1rem);
           margin: var(--space-4) 0 var(--space-8);
           position: relative;
-          border-radius: 999px;
+          border-radius: 2rem;
           transition: transform var(--services-next-hover-time) var(--services-next-hover-ease);
+        }
+
+        .services-manifest-modal {
+          position: fixed;
+          inset: 50% auto auto 50%;
+          transform: translate(-50%, -50%);
+          width: min(calc(100vw - 2rem), 520px);
+          max-height: calc(100dvh - 2rem);
+          margin: 0;
+          border: 0;
+          border-radius: 24px;
+          background: transparent;
+          color: inherit;
+          padding: 0;
+          overflow: visible;
+          z-index: 10000;
+        }
+
+        .services-manifest-modal:not([open]) {
+          display: none !important;
+        }
+
+        .services-manifest-modal::backdrop {
+          background:
+            radial-gradient(circle at 50% 44%, rgba(193, 18, 31, 0.2), transparent 32rem),
+            rgba(0, 0, 0, 0.78);
+          backdrop-filter: blur(8px);
+        }
+
+        .services-manifest-modal__panel {
+          display: grid;
+          gap: 1rem;
+          width: 100%;
+          border: 1px solid rgba(255, 255, 255, 0.26);
+          border-radius: 24px;
+          background:
+            linear-gradient(145deg, rgba(18, 18, 18, 0.96), rgba(64, 10, 15, 0.94)),
+            #111;
+          box-shadow:
+            0 28px 80px rgba(0, 0, 0, 0.52),
+            0 0 0 6px rgba(193, 18, 31, 0.12),
+            inset 1px 1px 0 rgba(255, 255, 255, 0.12);
+          padding: clamp(1.2rem, 4vw, 2rem);
+        }
+
+        .services-manifest-modal__title {
+          color: var(--color-white-pure);
+          font-family: var(--font-serif);
+          font-size: clamp(2rem, 7vw, 3.15rem);
+          line-height: 1;
+          margin: 0 0 0.35rem;
+          text-align: center;
+        }
+
+        .services-manifest-modal__field {
+          width: 100%;
+          min-height: clamp(3.45rem, 6vw, 4.1rem);
+          border: 2px solid rgba(193, 18, 31, 0.82);
+          border-radius: 18px;
+          background: rgba(255, 249, 241, 0.98);
+          color: #1a0f0c;
+          box-shadow:
+            0 12px 28px rgba(0, 0, 0, 0.28),
+            inset 1px 1px 0 rgba(255, 255, 255, 0.86);
+          font: inherit;
+          font-size: clamp(1.04rem, 1.7vw, 1.24rem);
+          font-weight: 800;
+          letter-spacing: 0;
+          line-height: 1.2;
+          outline: none;
+          padding: 1rem 1.2rem;
+          text-align: center;
+        }
+
+        .services-manifest-modal__field::placeholder {
+          color: rgba(26, 15, 12, 0.76);
+          opacity: 1;
+        }
+
+        .services-manifest-modal__field:focus {
+          border-color: var(--color-red-accent);
+          box-shadow:
+            0 0 0 7px rgba(193, 18, 31, 0.24),
+            0 18px 42px rgba(0, 0, 0, 0.34),
+            inset 1px 1px 0 rgba(255, 255, 255, 0.9);
+        }
+
+        .services-manifest-modal__trap {
+          position: absolute;
+          width: 1px;
+          height: 1px;
+          margin: -1px;
+          border: 0;
+          padding: 0;
+          clip: rect(0 0 0 0);
+          clip-path: inset(50%);
+          overflow: hidden;
+          white-space: nowrap;
+        }
+
+        .services-manifest-modal__error,
+        .services-manifest-modal__message {
+          margin: 0;
+          color: rgba(255, 255, 255, 0.86);
+          font-size: 0.92rem;
+          font-weight: 700;
+          line-height: 1.35;
+          text-align: center;
+        }
+
+        .services-manifest-modal__message {
+          font-size: clamp(1rem, 1.7vw, 1.18rem);
+        }
+
+        .services-manifest-modal__submit {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: 100%;
+          min-height: 3.35rem;
+          margin-top: 0.2rem;
+          border: 0;
+          border-radius: 999px;
+          background: var(--color-red-spanish);
+          color: var(--color-white-pure);
+          cursor: pointer;
+          font: inherit;
+          font-weight: 800;
+          letter-spacing: 0;
+          transition: opacity 0.2s ease, filter 0.2s ease, transform 0.2s ease;
+        }
+
+        .services-manifest-modal__submit:disabled {
+          cursor: not-allowed;
+          filter: grayscale(1);
+          opacity: 0.46;
+          transform: none;
+        }
+
+        .services-manifest-modal__submit:not(:disabled):hover {
+          transform: translateY(-1px);
+        }
+
+        .services-manifest-modal__close {
+          justify-self: center;
+          border: 0;
+          background: transparent;
+          color: rgba(255, 255, 255, 0.74);
+          cursor: pointer;
+          font: inherit;
+          font-size: 0.92rem;
+          font-weight: 800;
+          padding: 0.2rem 0.6rem;
+        }
+
+        .services-manifest-modal__close:hover {
+          color: var(--color-white-pure);
         }
 
         .service-cta-card:nth-child(1) {
@@ -721,12 +1078,21 @@ export default function Services() {
         }
 
         .service-cta-card--image-bg:hover .service-cta-card__number,
+        .service-cta-card--image-bg:hover .service-cta-card__price-flag,
         .service-cta-card--image-bg:hover .service-cta-card__title,
         .service-cta-card--image-bg:hover .text-hover-effect__base,
         .service-cta-card--image-bg:focus-within .service-cta-card__number,
+        .service-cta-card--image-bg:focus-within .service-cta-card__price-flag,
         .service-cta-card--image-bg:focus-within .service-cta-card__title,
         .service-cta-card--image-bg:focus-within .text-hover-effect__base {
           color: var(--color-white-pure);
+        }
+
+        .service-cta-card--image-bg:hover .service-cta-card__price-flag,
+        .service-cta-card--image-bg:focus-within .service-cta-card__price-flag {
+          color: #1a1203;
+          filter: saturate(1.12) brightness(1.04);
+          transform: translateY(-1px) scale(1.03);
         }
 
         .service-cta-card--image-bg:hover .text-hover-effect__gradient,
@@ -769,59 +1135,6 @@ export default function Services() {
 
         .services-next-button-wrap:has(.services-next-button:active) {
           transform: rotate3d(1, 0, 0, 12deg);
-        }
-
-        .services-next-button-shadow {
-          --shadow-cutoff-fix: 2em;
-          position: absolute;
-          top: calc(0% - var(--shadow-cutoff-fix) / 2);
-          left: calc(50% - var(--shadow-cutoff-fix) / 2);
-          z-index: 0;
-          width: calc(100% + var(--shadow-cutoff-fix));
-          height: calc(100% + var(--shadow-cutoff-fix));
-          max-width: 520px;
-          filter: blur(clamp(2px, 0.125em, 12px));
-          overflow: visible;
-          pointer-events: none;
-          transform: translateX(-50%);
-          transition: filter var(--services-next-hover-time) var(--services-next-hover-ease);
-        }
-
-        .services-next-button-shadow::after {
-          content: "";
-          position: absolute;
-          top: calc(var(--shadow-cutoff-fix) - 0.5em);
-          left: calc(var(--shadow-cutoff-fix) - 0.875em);
-          width: calc(100% - var(--shadow-cutoff-fix) - 0.25em);
-          height: calc(100% - var(--shadow-cutoff-fix) - 0.25em);
-          border-radius: 999px;
-          padding: 0.125em;
-          box-sizing: border-box;
-          background: linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(193, 18, 31, 0.16));
-          mask:
-            linear-gradient(#000 0 0) content-box,
-            linear-gradient(#000 0 0);
-          mask-composite: exclude;
-          opacity: 0.54;
-          transition: top var(--services-next-hover-time) var(--services-next-hover-ease), opacity var(--services-next-hover-time) var(--services-next-hover-ease);
-        }
-
-        .services-next-button-wrap:has(.services-next-button:hover) .services-next-button-shadow {
-          filter: blur(clamp(2px, 0.0625em, 6px));
-        }
-
-        .services-next-button-wrap:has(.services-next-button:hover) .services-next-button-shadow::after {
-          top: calc(var(--shadow-cutoff-fix) - 0.875em);
-          opacity: 1;
-        }
-
-        .services-next-button-wrap:has(.services-next-button:active) .services-next-button-shadow {
-          filter: blur(clamp(2px, 0.125em, 12px));
-        }
-
-        .services-next-button-wrap:has(.services-next-button:active) .services-next-button-shadow::after {
-          top: calc(var(--shadow-cutoff-fix) - 0.5em);
-          opacity: 0.75;
         }
 
         .services-next-liquid-filter {
@@ -1622,6 +1935,17 @@ export default function Services() {
             padding: var(--space-3) calc(var(--space-unit) * 2.5);
           }
 
+          .service-cta-card--has-price {
+            padding-top: calc(var(--space-3) + 1rem);
+          }
+
+          .service-cta-card__price-flag {
+            right: calc(var(--space-unit) * 2);
+            min-width: 4.9rem;
+            min-height: 3rem;
+            font-size: 0.72rem;
+          }
+
           .service-cta-card__button {
             width: 100%;
           }
@@ -1643,6 +1967,23 @@ export default function Services() {
           .service-image img {
             height: clamp(260px, 76vw, 360px);
           }
+        }
+
+        .services-foundation-grid--before-button {
+          margin-bottom: 0;
+        }
+
+        .services-foundation-grid--after-button {
+          margin-top: 0;
+          margin-bottom: var(--space-4);
+        }
+
+        .services-foundation-grid--after-button .services-foundation-card {
+          padding-top: clamp(var(--space-2), 2vw, var(--space-4));
+        }
+
+        .services-next-button-wrap--between-foundation {
+          margin: clamp(var(--space-2), 1.8vw, var(--space-4)) 0;
         }
 
         @keyframes services-next-opacity {

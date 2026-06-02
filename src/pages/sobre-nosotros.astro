@@ -1,0 +1,418 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Navigation from "../components/Navigation.jsx";
+import { withBase } from "../utils/basePath";
+
+const heroLetters = withBase("/images/memorial-letters.webp");
+const heroImage = withBase("/images/memorial-foreground.png");
+const accordionItems = [
+  {
+    title: "Como trabajamos",
+    body:
+      "Leemos con metodo, contrastamos fuentes y convertimos el archivo en piezas claras: efemerides, ensayos, rutas y notas de presente. Cada texto busca separar memoria de ruido.",
+  },
+  {
+    title: "Que nos mueve",
+    body:
+      "Nos mueve una idea sencilla: el Imperio Espanol merece una lectura exigente, sin nostalgia facil y sin consigna. Queremos recuperar contexto, instituciones, disciplina y legado.",
+  },
+  {
+    title: "Donde creamos",
+    body:
+      "La web sostiene el archivo; la comunidad abre la conversacion. Entre articulos, manifiesto, biblioteca y mentidero construimos una mesa comun para estudiar la historia del Siglo de Oro de Espana.",
+  },
+];
+---
+
+<Layout
+  title="Memorial"
+  description="Sobre Imperio Espanol: archivo vivo, comunidad y memoria historica con metodo."
+>
+  <Navigation />
+  <script is:inline>
+    document.body.classList.add("preloader-done", "memorial-nav-ready");
+  </script>
+
+  <main class="memorial-page">
+    <section class="memorial-hero" aria-labelledby="memorial-title">
+      <h1 id="memorial-title" class="memorial-title">
+        <img src={heroLetters} alt="MEMORIAL" loading="eager" decoding="async" />
+      </h1>
+      <div class="memorial-figure" aria-label="Formacion historica del Imperio Espanol">
+        <img src={heroImage} alt="" loading="eager" decoding="async" />
+      </div>
+    </section>
+
+    <section class="memorial-intro" aria-label="Introduccion">
+      <p>
+        Contactanos en nuestro apartado de contacto
+      </p>
+      <a class="memorial-contact" href={withBase("/contacto")}>CONTACTO</a>
+    </section>
+
+    <section class="memorial-copy" aria-label="Sobre nosotros">
+      <p>
+        Imperio Espanol nace como un archivo vivo de ideas y memoria. No queremos
+        levantar una vitrina inmovil, sino una mesa de trabajo donde historia,
+        presente y comunidad puedan encontrarse con sobriedad.
+      </p>
+      <p>
+        Nuestro oficio es leer el largo plazo: instituciones, decisiones, rutas,
+        victorias, heridas y permanencias. Lo hacemos con articulos breves,
+        rutas tematicas, biblioteca, manifiesto y debate compartido.
+      </p>
+      <p>
+        Aqui la memoria no es decorado. Es criterio. Sirve para pensar el
+        presente sin ruido, para ordenar preguntas y para recordar que una
+        comunidad tambien se construye alrededor de lo que decide estudiar.
+      </p>
+    </section>
+
+    <section class="memorial-accordions" aria-label="Ejes del proyecto">
+      {accordionItems.map((item) => (
+        <details class="memorial-accordion">
+          <summary>
+            <span>{item.title}</span>
+            <span class="memorial-plus" aria-hidden="true">+</span>
+          </summary>
+          <p>{item.body}</p>
+        </details>
+      ))}
+    </section>
+  </main>
+</Layout>
+
+<style>
+  .memorial-page {
+    min-height: 100vh;
+    padding: clamp(6.2rem, 9vw, 8rem) clamp(1rem, 4vw, 5.2rem) clamp(2rem, 5vw, 4rem);
+    background:
+      radial-gradient(circle at 20% 18%, rgba(0, 0, 0, 0.035) 0 1px, transparent 1px),
+      radial-gradient(circle at 72% 40%, rgba(0, 0, 0, 0.03) 0 1px, transparent 1px),
+      #fbfbfa;
+    background-size: 13px 13px, 19px 19px, auto;
+    color: #050505;
+    overflow: hidden;
+  }
+
+  :global(body.memorial-nav-ready #main-nav) {
+    --nav-links-progress: 1 !important;
+    --nav-gradient-top-alpha: 0.92 !important;
+    --nav-gradient-bottom-alpha: 0.78 !important;
+    --nav-gradient-stop: 100% !important;
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  :global(body.memorial-nav-ready #main-nav .main-nav__links) {
+    opacity: 1 !important;
+    pointer-events: auto;
+  }
+
+  :global(body.memorial-nav-ready #main-nav .main-nav__links-wrap) {
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto;
+  }
+
+  :global(body.memorial-nav-ready #main-nav .main-nav__link) {
+    color: rgba(17, 17, 17, 0.98);
+  }
+
+  :global(body.memorial-nav-ready #main-nav .nav-links-cluster) {
+    gap: clamp(0.7rem, 1.8vw, 2.2rem);
+  }
+
+  :global(body.memorial-nav-ready #main-nav .nav-link) {
+    --nav-hover-mark-size: clamp(0.78em, 0.7em + 0.18vw, 1em);
+    --nav-hover-mark-gap: clamp(0.26rem, 0.46vw, 0.58rem);
+    --nav-hover-mark-offset: clamp(0.14rem, 0.24vw, 0.32rem);
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 calc(var(--nav-hover-mark-gap) + var(--nav-hover-mark-size) * 0.55);
+  }
+
+  :global(body.memorial-nav-ready #main-nav .nav-link::before),
+  :global(body.memorial-nav-ready #main-nav .nav-link::after) {
+    content: "[";
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translate(calc(var(--nav-hover-mark-offset) * -1), -50%);
+    color: var(--color-red-accent);
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    font-size: var(--nav-hover-mark-size);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    line-height: 1;
+    pointer-events: none;
+  }
+
+  :global(body.memorial-nav-ready #main-nav .nav-link::after) {
+    content: "]";
+    left: auto;
+    right: 0;
+    transform: translate(var(--nav-hover-mark-offset), -50%);
+  }
+
+  :global(body.memorial-nav-ready #main-nav .nav-link:hover),
+  :global(body.memorial-nav-ready #main-nav .nav-link:focus-visible) {
+    color: var(--color-red-accent);
+  }
+
+  :global(body.memorial-nav-ready #main-nav .nav-link:hover::before),
+  :global(body.memorial-nav-ready #main-nav .nav-link:hover::after),
+  :global(body.memorial-nav-ready #main-nav .nav-link:focus-visible::before),
+  :global(body.memorial-nav-ready #main-nav .nav-link:focus-visible::after) {
+    opacity: 1;
+    transform: translate(0, -50%);
+  }
+
+  :global(body.memorial-nav-ready #main-nav:not(.main-nav--menu-revealed) .menu-button) {
+    color: #111;
+    mix-blend-mode: normal;
+    transition-delay: 0s;
+  }
+
+  .memorial-hero {
+    position: relative;
+    min-height: clamp(22rem, 50vw, 43rem);
+    margin-top: clamp(0.5rem, 1vw, 1rem);
+  }
+
+  .memorial-title {
+    position: relative;
+    z-index: 1;
+    width: min(96vw, 1400px);
+    margin: 0 auto;
+    line-height: 0;
+    transition: z-index 0s linear;
+  }
+
+  .memorial-title:hover,
+  .memorial-title:focus-within {
+    z-index: 3;
+  }
+
+  .memorial-title img {
+    width: 100%;
+    height: auto;
+    max-height: clamp(5rem, 13vw, 11.8rem);
+    object-fit: contain;
+    transform-origin: center;
+    transition: transform 0.42s cubic-bezier(0.2, 1.28, 0.32, 1);
+    will-change: transform;
+  }
+
+  .memorial-title:hover img,
+  .memorial-title:focus-within img {
+    transform: scale(1.035);
+  }
+
+  .memorial-figure {
+    position: absolute;
+    left: 50%;
+    top: clamp(-1.2rem, 1.8vw, 1.8rem);
+    z-index: 2;
+    width: min(98vw, 1448px);
+    transform: translateX(-50%);
+    pointer-events: none;
+  }
+
+  .memorial-figure::before,
+  .memorial-figure::after {
+    content: none;
+  }
+
+  .memorial-figure img {
+    width: 100%;
+    height: auto;
+    max-height: clamp(22rem, 48vw, 46rem);
+    object-fit: contain;
+    opacity: 1;
+    filter: none;
+  }
+
+  .memorial-intro {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 1.5rem;
+    align-items: center;
+    margin-top: clamp(-2.4rem, -3vw, -0.7rem);
+  }
+
+  .memorial-intro p {
+    margin: 0;
+    color: #050505;
+    font-family: var(--font-display);
+    font-size: clamp(1rem, 1.3vw, 1.25rem);
+    font-weight: 500;
+  }
+
+  .memorial-intro strong {
+    color: #ff351a;
+    font-family: var(--font-display);
+    font-weight: 900;
+  }
+
+  .memorial-contact {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 3.4rem;
+    padding: 0.85rem 1.85rem;
+    background: #050505;
+    color: #fff;
+    font-family: var(--font-display);
+    font-size: clamp(0.9rem, 1vw, 1.08rem);
+    font-weight: 900;
+    letter-spacing: 0;
+    text-decoration: none;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  .memorial-contact:hover,
+  .memorial-contact:focus-visible {
+    background: #ff351a;
+    color: #fff;
+  }
+
+  .memorial-copy {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(1rem, 3vw, 3rem);
+    margin-top: clamp(2.6rem, 5vw, 4.8rem);
+    padding-top: clamp(1.4rem, 2.2vw, 2rem);
+    border-top: 1px solid rgba(0, 0, 0, 0.18);
+  }
+
+  .memorial-copy p {
+    margin: 0;
+    color: rgba(0, 0, 0, 0.74);
+    font-size: clamp(1.04rem, 1.32vw, 1.24rem);
+    line-height: 1.42;
+  }
+
+  .memorial-accordions {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(1.2rem, 3.4vw, 3.2rem);
+    margin-top: clamp(2rem, 4vw, 3.4rem);
+  }
+
+  .memorial-accordion {
+    border-top: 1px solid rgba(0, 0, 0, 0.28);
+    color: #050505;
+    transition: border-color 0.2s ease;
+  }
+
+  .memorial-accordion[open] {
+    border-top-color: #ff351a;
+  }
+
+  .memorial-accordion summary {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 1rem;
+    align-items: center;
+    min-height: 4.5rem;
+    cursor: pointer;
+    font-family: var(--font-display);
+    font-size: clamp(1.35rem, 2vw, 2rem);
+    font-weight: 900;
+    letter-spacing: 0;
+    list-style: none;
+    color: #050505;
+    transition: color 0.2s ease;
+  }
+
+  .memorial-accordion summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .memorial-accordion[open] summary {
+    color: #ff351a;
+  }
+
+  .memorial-plus {
+    font-size: clamp(2rem, 2.4vw, 2.8rem);
+    font-weight: 500;
+    line-height: 1;
+    color: currentColor;
+    transition: color 0.2s ease, transform 0.2s ease;
+  }
+
+  .memorial-accordion[open] .memorial-plus {
+    transform: rotate(45deg);
+  }
+
+  .memorial-accordion p {
+    margin: 0 0 1.5rem;
+    color: #ff351a;
+    font-size: 1.02rem;
+    line-height: 1.48;
+    padding-right: clamp(0rem, 2vw, 2.4rem);
+  }
+
+  @media (max-width: 900px) {
+    .memorial-page {
+      overflow: visible;
+    }
+
+    .memorial-hero {
+      min-height: clamp(18rem, 62vw, 31rem);
+    }
+
+    .memorial-title {
+      width: min(100vw, 900px);
+    }
+
+    .memorial-title img {
+      max-height: clamp(3.8rem, 15vw, 7.2rem);
+    }
+
+    .memorial-figure {
+      top: clamp(-0.8rem, 3.4vw, 1.8rem);
+      width: min(112vw, 900px);
+    }
+
+    .memorial-intro,
+    .memorial-copy,
+    .memorial-accordions {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .memorial-contact {
+      width: fit-content;
+    }
+  }
+
+  @media (max-width: 520px) {
+    .memorial-page {
+      padding: 5.6rem 1rem 2rem;
+    }
+
+    .memorial-hero {
+      min-height: 18rem;
+    }
+
+    .memorial-figure {
+      width: 112vw;
+      top: 0rem;
+      transform: translateX(-50%);
+    }
+
+    .memorial-copy {
+      margin-top: 2.2rem;
+    }
+
+    .memorial-accordion summary {
+      min-height: 4rem;
+      font-size: 1.3rem;
+    }
+  }
+</style>

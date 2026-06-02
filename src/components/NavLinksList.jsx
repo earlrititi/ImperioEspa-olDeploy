@@ -14,7 +14,12 @@ export default function NavLinksList({
           {ghost ? (
             <span class={`nav-link ${linkClassName}`.trim()}>{item.label}</span>
           ) : (
-            <a href={item.href} class={`nav-link ${linkClassName}`.trim()}>
+            <a
+              href={item.href}
+              target={item.target}
+              rel={item.rel}
+              class={`nav-link ${linkClassName}`.trim()}
+            >
               {item.label}
             </a>
           )}

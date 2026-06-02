@@ -31,7 +31,337 @@ import PageShell from "../layouts/PageShell.astro";
       <p class="muted">
         Recibe el manifiesto y los primeros textos sin coste. Decide despues tu escalera.
       </p>
-      <a class="btn btn-primary" href="/precios">Ver niveles</a>
+      <button
+        class="btn btn-primary manifesto-open-button"
+        id="manifesto-open-button"
+        type="button"
+        aria-controls="manifesto-modal"
+        aria-expanded="false"
+      >
+        Obtener manifiesto
+      </button>
     </div>
   </section>
+
+  <dialog class="manifesto-modal" id="manifesto-modal" aria-labelledby="manifesto-modal-title" hidden>
+    <form class="manifesto-modal__panel" id="manifesto-modal-form" method="dialog">
+      <h2 class="manifesto-modal__title" id="manifesto-modal-title">Recibe el manifiesto</h2>
+      <input
+        class="manifesto-modal__field"
+        id="manifesto-email"
+        type="email"
+        name="email"
+        placeholder="&iexcl;Dinos tu correo!"
+        aria-label="&iexcl;Dinos tu correo!"
+        autocomplete="email"
+        required
+      />
+      <input
+        class="manifesto-modal__trap"
+        id="manifesto-company"
+        type="text"
+        name="company"
+        autocomplete="organization"
+        tabindex="-1"
+        aria-hidden="true"
+      />
+      <p class="manifesto-modal__error" id="manifesto-error" role="alert" hidden></p>
+      <p class="manifesto-modal__message" id="manifesto-message" role="status" hidden></p>
+      <button class="btn btn-primary manifesto-modal__submit" id="manifesto-submit" type="submit" disabled>
+        Recibir manifiesto
+      </button>
+      <button class="manifesto-modal__close" id="manifesto-close" type="button">
+        Cerrar
+      </button>
+    </form>
+  </dialog>
+
+  <script is:inline>
+  const manifestoOpenButton = document.getElementById("manifesto-open-button");
+  const manifestoModal = document.getElementById("manifesto-modal");
+  const manifestoForm = document.getElementById("manifesto-modal-form");
+  const manifestoEmailInput = document.getElementById("manifesto-email");
+  const manifestoCompanyInput = document.getElementById("manifesto-company");
+  const manifestoSubmit = document.getElementById("manifesto-submit");
+  const manifestoClose = document.getElementById("manifesto-close");
+  const manifestoError = document.getElementById("manifesto-error");
+  const manifestoMessage = document.getElementById("manifesto-message");
+  let manifestoIsSubmitting = false;
+
+  const isManifestoFormReady = () =>
+    Boolean(
+      manifestoEmailInput?.value.trim() &&
+        manifestoEmailInput?.validity.valid
+    );
+
+  const updateManifestoSubmitState = () => {
+    if (!manifestoSubmit) return;
+    manifestoSubmit.disabled = !isManifestoFormReady() || manifestoIsSubmitting;
+  };
+
+  const setManifestoError = (message = "") => {
+    if (!manifestoError) return;
+    manifestoError.textContent = message;
+    manifestoError.hidden = !message;
+  };
+
+  const setManifestoMessage = (message = "") => {
+    if (!manifestoMessage) return;
+    manifestoMessage.textContent = message;
+    manifestoMessage.hidden = !message;
+  };
+
+  const closeManifestoModal = () => {
+    manifestoModal?.close();
+    manifestoModal?.setAttribute("hidden", "");
+    manifestoOpenButton?.setAttribute("aria-expanded", "false");
+  };
+
+  manifestoOpenButton?.addEventListener("click", () => {
+    manifestoModal?.removeAttribute("hidden");
+    manifestoModal?.showModal();
+    manifestoOpenButton.setAttribute("aria-expanded", "true");
+    setManifestoError("");
+    setManifestoMessage("");
+    updateManifestoSubmitState();
+    manifestoEmailInput?.focus();
+  });
+
+  manifestoModal?.addEventListener("cancel", (event) => {
+    event.preventDefault();
+  });
+
+  manifestoClose?.addEventListener("click", closeManifestoModal);
+
+  [manifestoEmailInput].forEach((field) => {
+    field?.addEventListener("input", () => {
+      setManifestoError("");
+      setManifestoMessage("");
+      updateManifestoSubmitState();
+    });
+  });
+
+  manifestoForm?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    if (!isManifestoFormReady() || manifestoIsSubmitting) {
+      updateManifestoSubmitState();
+      return;
+    }
+
+    manifestoIsSubmitting = true;
+    if (manifestoSubmit) {
+      manifestoSubmit.textContent = "Enviando...";
+    }
+    updateManifestoSubmitState();
+    setManifestoError("");
+
+    try {
+      const response = await fetch("/api/manifesto.php", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+        },
+        body: JSON.stringify({
+          email: manifestoEmailInput?.value || "",
+          company: manifestoCompanyInput?.value || "",
+          source: "manifiesto",
+        }),
+      });
+      const result = await response.json().catch(() => ({}));
+
+      if (!response.ok || !result.ok) {
+        throw new Error(result.error || "No se pudo enviar el manifiesto.");
+      }
+
+      setManifestoMessage(result.message || "Te hemos enviado el PDF a tu correo. Revisa tambien spam o promociones.");
+      if (manifestoEmailInput) {
+        manifestoEmailInput.value = "";
+      }
+      if (manifestoCompanyInput) {
+        manifestoCompanyInput.value = "";
+      }
+      if (manifestoOpenButton) {
+        manifestoOpenButton.textContent = "Manifiesto solicitado";
+      }
+    } catch (error) {
+      setManifestoError(error.message || "No se pudo enviar el manifiesto.");
+    } finally {
+      manifestoIsSubmitting = false;
+      if (manifestoSubmit) {
+        manifestoSubmit.textContent = "Recibir manifiesto";
+      }
+      updateManifestoSubmitState();
+    }
+  });
+  </script>
 </PageShell>
+
+<style>
+  .manifesto-open-button {
+    margin-top: 0.2rem;
+  }
+
+  .manifesto-modal {
+    position: fixed;
+    inset: 50% auto auto 50%;
+    transform: translate(-50%, -50%);
+    width: min(calc(100vw - 2rem), 520px);
+    max-height: calc(100dvh - 2rem);
+    margin: 0;
+    border: 0;
+    border-radius: 24px;
+    background: transparent;
+    color: inherit;
+    padding: 0;
+    overflow: visible;
+    z-index: 10000;
+  }
+
+  .manifesto-modal:not([open]) {
+    display: none !important;
+  }
+
+  .manifesto-modal::backdrop {
+    background:
+      radial-gradient(circle at 50% 44%, rgba(255, 191, 140, 0.18), transparent 32rem),
+      rgba(0, 0, 0, 0.78);
+    backdrop-filter: blur(8px);
+  }
+
+  .manifesto-modal__panel {
+    display: grid;
+    gap: 1rem;
+    width: 100%;
+    border: 1px solid rgba(255, 235, 210, 0.28);
+    border-radius: 24px;
+    background:
+      linear-gradient(145deg, rgba(21, 10, 7, 0.96), rgba(46, 16, 13, 0.94)),
+      #160b08;
+    box-shadow:
+      0 28px 80px rgba(0, 0, 0, 0.52),
+      0 0 0 6px rgba(255, 191, 140, 0.08),
+      inset 1px 1px 0 rgba(255, 255, 255, 0.1);
+    padding: clamp(1.2rem, 4vw, 2rem);
+  }
+
+  .manifesto-modal__title {
+    color: var(--accent);
+    font-family: var(--font-serif);
+    font-size: clamp(2rem, 7vw, 3.15rem);
+    line-height: 1;
+    margin: 0 0 0.35rem;
+    text-align: center;
+  }
+
+  .manifesto-modal__field {
+    width: 100%;
+    min-height: clamp(3.45rem, 6vw, 4.1rem);
+    border: 2px solid rgba(255, 191, 140, 0.82);
+    border-radius: 18px;
+    background: rgba(255, 249, 241, 0.98);
+    color: #1a0f0c;
+    box-shadow:
+      0 12px 28px rgba(0, 0, 0, 0.28),
+      inset 1px 1px 0 rgba(255, 255, 255, 0.86);
+    font: inherit;
+    font-size: clamp(1.04rem, 1.7vw, 1.24rem);
+    font-weight: 800;
+    letter-spacing: 0;
+    line-height: 1.2;
+    outline: none;
+    padding: 1rem 1.2rem;
+    text-align: center;
+  }
+
+  .manifesto-modal__field::placeholder {
+    color: rgba(26, 15, 12, 0.76);
+    opacity: 1;
+  }
+
+  .manifesto-modal__field:focus {
+    border-color: var(--accent);
+    box-shadow:
+      0 0 0 7px rgba(255, 191, 140, 0.24),
+      0 18px 42px rgba(0, 0, 0, 0.34),
+      inset 1px 1px 0 rgba(255, 255, 255, 0.9);
+  }
+
+  .manifesto-modal__trap {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    border: 0;
+    padding: 0;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  .manifesto-modal__error {
+    margin: 0;
+    color: rgba(255, 235, 210, 0.9);
+    font-size: 0.92rem;
+    font-weight: 700;
+    line-height: 1.35;
+    text-align: center;
+  }
+
+  .manifesto-modal__message {
+    margin: 0;
+    color: rgba(255, 235, 210, 0.94);
+    font-size: clamp(1rem, 1.7vw, 1.18rem);
+    font-weight: 700;
+    line-height: 1.35;
+    text-align: center;
+  }
+
+  .manifesto-modal__submit {
+    width: 100%;
+    min-height: 3.35rem;
+    margin-top: 0.2rem;
+    font-weight: 800;
+  }
+
+  .manifesto-modal__submit:disabled {
+    cursor: not-allowed;
+    filter: grayscale(1);
+    opacity: 0.46;
+    transform: none;
+    box-shadow: none;
+  }
+
+  .manifesto-modal__submit:not(:disabled) {
+    cursor: pointer;
+    opacity: 1;
+  }
+
+  .manifesto-modal__close {
+    justify-self: center;
+    border: 0;
+    background: transparent;
+    color: rgba(255, 235, 210, 0.82);
+    cursor: pointer;
+    font: inherit;
+    font-size: 0.92rem;
+    font-weight: 800;
+    padding: 0.2rem 0.6rem;
+  }
+
+  .manifesto-modal__close:hover {
+    color: var(--accent);
+  }
+
+  @media (max-width: 640px) {
+    .manifesto-modal {
+      width: min(calc(100vw - 1rem), 440px);
+    }
+
+    .manifesto-modal__panel {
+      border-radius: 20px;
+      padding: 1rem;
+    }
+  }
+</style>

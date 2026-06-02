@@ -432,7 +432,10 @@ export default function HeroImperio() {
           display: inline-flex;
           align-items: center;
           justify-content: center;
-          padding: 0 calc(var(--nav-hover-mark-gap) + var(--nav-hover-mark-size) * 0.55);
+          padding: 0 var(
+            --nav-link-inline-padding,
+            calc(var(--nav-hover-mark-gap) + var(--nav-hover-mark-size) * 0.55)
+          );
         }
 
         .nav-link:hover,
@@ -470,6 +473,58 @@ export default function HeroImperio() {
         .nav-link:focus-visible::after {
           opacity: 1;
           transform: translate(0, -50%);
+        }
+
+        @media (min-width: 769px) and (max-width: 1180px) {
+          .nav-link {
+            --nav-hover-mark-size: 0.72em;
+            --nav-hover-mark-gap: clamp(0.08rem, 0.2vw, 0.18rem);
+            --nav-hover-mark-offset: 0.08rem;
+          }
+        }
+
+        @media (min-width: 769px) and (max-width: 980px) {
+          .hero-nav__shell {
+            min-height: calc(var(--space-unit) * 9);
+            padding: var(--space-1) var(--space-2);
+          }
+
+          .hero-nav__links-wrap {
+            position: static;
+            width: 100%;
+            transform: none;
+          }
+
+          .hero-nav__links-list {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            grid-auto-rows: minmax(30px, auto);
+            gap: 0.28rem 0.48rem;
+            width: 100%;
+            max-width: min(100%, 860px);
+          }
+
+          .hero-nav__links-list li {
+            width: 100%;
+            min-width: 0;
+          }
+
+          .hero-nav__links-list .nav-link {
+            --nav-link-inline-padding: 0.12rem;
+            width: 100%;
+            min-height: 30px;
+            font-size: clamp(0.62rem, 1.2vw, 0.74rem);
+            letter-spacing: 0.02em;
+            line-height: 1.06;
+            text-align: center;
+            white-space: normal;
+          }
+
+          .hero-nav__links-list .nav-link::before,
+          .hero-nav__links-list .nav-link::after,
+          .hero-nav__overlay {
+            display: none;
+          }
         }
 
         @media (max-width: 768px) {

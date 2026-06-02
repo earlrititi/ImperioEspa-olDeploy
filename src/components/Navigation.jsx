@@ -44,6 +44,8 @@ export default function Navigation() {
                 <li key={item.href}>
                   <a
                     href={item.href}
+                    target={item.target}
+                    rel={item.rel}
                     class="nav-link main-nav__link text-sm md:text-base font-medium uppercase tracking-wider transition-colors duration-300"
                   >
                     {item.label}
@@ -103,7 +105,7 @@ export default function Navigation() {
                 class="side-bar__nav-item"
                 style={{ "--side-link-index": index }}
               >
-                <a href={item.href} class="side-bar__link">
+                <a href={item.href} target={item.target} rel={item.rel} class="side-bar__link">
                   {item.label}
                 </a>
               </li>
@@ -493,7 +495,7 @@ export default function Navigation() {
         }
 
         #main-nav.main-nav--menu-revealed .menu-button {
-          color: #fff;
+          color: #000;
           mix-blend-mode: normal;
           transition-delay: 0s;
         }

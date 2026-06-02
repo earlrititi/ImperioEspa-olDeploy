@@ -210,9 +210,9 @@ a {
 
 @media (min-width: 769px) {
   :root {
-    --nav-desktop-font-size: clamp(0.78rem, 0.42rem + 0.56vw, 1rem);
-    --nav-desktop-letter-spacing: clamp(0.035em, 0.01em + 0.045vw, 0.12em);
-    --nav-desktop-gap: clamp(0.22rem, 0.95vw, var(--space-4));
+    --nav-desktop-font-size: clamp(0.74rem, 0.36rem + 0.5vw, 1rem);
+    --nav-desktop-letter-spacing: clamp(0.025em, 0.008em + 0.035vw, 0.1em);
+    --nav-desktop-gap: clamp(0.14rem, 0.7vw, var(--space-3));
   }
 
   .nav-links-cluster {
@@ -229,16 +229,26 @@ a {
 
 @media (min-width: 768px) and (max-width: 980px) {
   .main-nav__floating-links-layer,
-  .main-nav__links-wrap,
-  .hero-nav__links-wrap,
-  .hero-nav__overlay {
+  .main-nav__links-wrap {
     display: none !important;
     visibility: hidden;
     pointer-events: none;
   }
 
   .hero-nav__shell {
-    min-height: calc(var(--space-unit) * 7);
+    min-height: calc(var(--space-unit) * 9);
+  }
+}
+
+@media (min-width: 981px) and (max-width: 1180px) {
+  :root {
+    --nav-desktop-font-size: clamp(0.64rem, 0.36rem + 0.44vw, 0.78rem);
+    --nav-desktop-letter-spacing: 0.018em;
+    --nav-desktop-gap: clamp(0.05rem, 0.28vw, 0.28rem);
+  }
+
+  .nav-links-cluster {
+    max-width: calc(100vw - 11rem);
   }
 }
 
