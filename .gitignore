@@ -19,7 +19,9 @@ tmp-*.png
 
 # environment variables
 .env
+.env.local
 .env.production
+.env.development
 .dev.vars
 private/manifesto-config.php
 public/*.pdf
@@ -31,3 +33,4 @@ public/*.pdf
 
 # jetbrains setting folder
 .idea/
+.vercel

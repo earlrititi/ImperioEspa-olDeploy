@@ -8,7 +8,7 @@ const articles = defineCollection({
     summary: z.string(),
     date: z.string(),
     category: z.enum(["efemeride", "ensayo", "presente"]),
-    tier: z.enum(["gratis", "rodelero", "piquero"]),
+    tier: z.enum(["piquero", "arcabucero", "maestre-de-campo"]),
     seoDescription: z.string().optional(),
     ogImage: z.string().optional(),
   }),

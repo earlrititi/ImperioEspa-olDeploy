@@ -400,7 +400,7 @@ export default function Navigation() {
           display: grid;
           gap: clamp(1rem, 3.5vw, 1.5rem);
           list-style: none;
-          width: min(38vw, 520px);
+          width: min(52vw, 720px);
           margin: 0;
           padding: 0;
           justify-items: end;
@@ -432,13 +432,15 @@ export default function Navigation() {
           display: inline-block;
           color: #fff;
           font-family: var(--font-rosa-black);
-          font-size: clamp(2.1rem, 4.1vw, 3.7rem);
+          font-size: clamp(2.45rem, 4.7vw, 4.45rem);
           font-weight: 900;
           line-height: 0.88;
           letter-spacing: 0.04em;
           text-transform: uppercase;
           text-decoration: none;
           text-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+          max-width: 100%;
+          overflow-wrap: anywhere;
         }
 
         .side-bar__link:hover,
@@ -484,6 +486,13 @@ export default function Navigation() {
           border-bottom-color: transparent;
           backdrop-filter: blur(0px) saturate(1);
           -webkit-backdrop-filter: blur(0px) saturate(1);
+        }
+
+        #main-nav.main-nav--menu-open .main-nav__floating-links-layer,
+        #main-nav.main-nav--menu-open .main-nav__links-wrap {
+          opacity: 0;
+          visibility: hidden;
+          pointer-events: none;
         }
 
         #main-nav.main-nav--menu-fading .main-nav__fx,
@@ -545,7 +554,7 @@ export default function Navigation() {
           .side-bar__link {
             display: block;
             width: 100%;
-            font-size: clamp(1.02rem, 4.7vw, 1.58rem);
+            font-size: clamp(1.18rem, 5.45vw, 1.85rem);
             line-height: 1;
             overflow-wrap: anywhere;
           }
@@ -563,7 +572,7 @@ export default function Navigation() {
           }
 
           .side-bar__link {
-            font-size: clamp(0.9rem, 4.2vw, 1.28rem);
+            font-size: clamp(1rem, 4.7vw, 1.45rem);
             line-height: 1;
           }
         }

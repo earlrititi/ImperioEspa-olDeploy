@@ -1,0 +1,22 @@
+---
+import PageShell from "../layouts/PageShell.astro";
+---
+
+<PageShell
+  title="Gracias por suscribirte"
+  description="Estamos confirmando tu suscripcion de forma segura."
+  eyebrow="Confirmacion"
+  heading="Gracias por suscribirte"
+  summary="Estamos confirmando tu suscripcion de forma segura. Recibiras un email de bienvenida cuando Stripe confirme el pago."
+  noindex
+  narrow
+>
+  <section class="section content">
+    <div class="notice">
+      <p>
+        No cierres tu cuenta ni dupliques el pago. La activacion premium se confirma mediante Stripe Webhook, no desde esta pagina.
+      </p>
+      <a class="btn btn-primary" href="/cuenta">Ir a mi cuenta</a>
+    </div>
+  </section>
+</PageShell>

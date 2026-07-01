@@ -8,7 +8,7 @@ export const SERVICES_ITEMS = [
     imageSrc: withBase("/images/services/consultoria.jpg"),
     imageAlt: "Piquero",
     description:
-      "Una vision audaz como la tuya tiene el poder de alinear comunidades y crear impulso. El piquero era la base de los Tercios: el soldado humilde pero esencial que sostenía las líneas. Esta es la suscripción gratuita para quien quiera comenzar a ser parte del proyecto sin compromiso económico.",
+      "Una vision audaz como la tuya tiene el poder de alinear comunidades y crear impulso. El Piquero era la base de los Tercios: el soldado humilde pero esencial que sostenía las líneas. Esta es la suscripción de entrada para quien quiera comenzar a ser parte del proyecto sin compromiso económico.",
     highlights: [
       "Lectura de artículos limitada",
       "Acceso como lector al mentidero",

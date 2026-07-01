@@ -3,7 +3,7 @@ title: "La disciplina de los archivos"
 summary: "Memoria operativa: por que un archivo no es un museo, sino un metodo de lectura."
 date: "2026-01-27"
 category: "efemeride"
-tier: "gratis"
+tier: "piquero"
 seoDescription: "Efemeride sobre disciplina editorial y archivo vivo."
 ---
 

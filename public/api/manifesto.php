@@ -90,6 +90,96 @@ function encoded_header(string $value): string
     return '=?UTF-8?B?' . base64_encode($value) . '?=';
 }
 
+function smtp_read_response($socket): array
+{
+    $response = '';
+
+    while (($line = fgets($socket, 515)) !== false) {
+        $response .= $line;
+        if (preg_match('/^\d{3}\s/', $line)) {
+            break;
+        }
+    }
+
+    $code = (int) substr($response, 0, 3);
+
+    return ['code' => $code, 'response' => trim($response)];
+}
+
+function smtp_expect($socket, array $expectedCodes): array
+{
+    $result = smtp_read_response($socket);
+
+    if (!in_array($result['code'], $expectedCodes, true)) {
+        return [
+            'ok' => false,
+            'body' => 'SMTP unexpected response: ' . $result['response'],
+        ];
+    }
+
+    return ['ok' => true, 'body' => $result['response']];
+}
+
+function smtp_command($socket, string $command, array $expectedCodes): array
+{
+    fwrite($socket, $command . "\r\n");
+
+    return smtp_expect($socket, $expectedCodes);
+}
+
+function smtp_dot_stuff(string $message): string
+{
+    return preg_replace('/^\./m', '..', $message) ?? $message;
+}
+
+function build_manifesto_email_message(
+    string $to,
+    string $from,
+    string $subject,
+    string $textBody,
+    string $attachmentFile,
+    string $attachmentName
+): array {
+    if (!is_file($attachmentFile) || !is_readable($attachmentFile)) {
+        return ['ok' => false, 'body' => 'Attachment not readable: ' . $attachmentFile];
+    }
+
+    $attachmentBytes = file_get_contents($attachmentFile);
+    if ($attachmentBytes === false) {
+        return ['ok' => false, 'body' => 'Attachment could not be loaded: ' . $attachmentFile];
+    }
+
+    $boundary = 'manifesto_' . bin2hex(random_bytes(16));
+    $encodedSubject = encoded_header($subject);
+    $encodedAttachmentName = encoded_header($attachmentName);
+
+    $headers = [
+        'Date: ' . date(DATE_RFC2822),
+        'From: ' . $from,
+        'To: ' . $to,
+        'Subject: ' . $encodedSubject,
+        'MIME-Version: 1.0',
+        'Content-Type: multipart/mixed; boundary="' . $boundary . '"',
+        'X-Mailer: PHP/' . phpversion(),
+    ];
+
+    $body = "--{$boundary}\r\n";
+    $body .= "Content-Type: text/plain; charset=UTF-8\r\n";
+    $body .= "Content-Transfer-Encoding: 8bit\r\n\r\n";
+    $body .= $textBody . "\r\n\r\n";
+    $body .= "--{$boundary}\r\n";
+    $body .= "Content-Type: application/pdf; name=\"{$encodedAttachmentName}\"\r\n";
+    $body .= "Content-Transfer-Encoding: base64\r\n";
+    $body .= "Content-Disposition: attachment; filename=\"{$encodedAttachmentName}\"\r\n\r\n";
+    $body .= chunk_split(base64_encode($attachmentBytes));
+    $body .= "\r\n--{$boundary}--\r\n";
+
+    return [
+        'ok' => true,
+        'body' => implode("\r\n", $headers) . "\r\n\r\n" . $body,
+    ];
+}
+
 function send_resend_email(array $payload, string $apiKey): array
 {
     $ch = curl_init('https://api.resend.com/emails');
@@ -116,6 +206,130 @@ function send_resend_email(array $payload, string $apiKey): array
         'status' => $status,
         'body' => $body === false ? $error : $body,
     ];
+}
+
+function send_smtp_manifesto_email(
+    string $to,
+    string $from,
+    string $subject,
+    string $textBody,
+    string $attachmentFile,
+    string $attachmentName,
+    string $host,
+    int $port,
+    string $secure,
+    string $username,
+    string $password
+): array {
+    $fromAddress = email_address_from_header($from);
+
+    if (!preg_match(EMAIL_PATTERN, $fromAddress)) {
+        return ['ok' => false, 'body' => 'Invalid from address'];
+    }
+
+    $message = build_manifesto_email_message(
+        $to,
+        $from,
+        $subject,
+        $textBody,
+        $attachmentFile,
+        $attachmentName
+    );
+
+    if (!$message['ok']) {
+        return $message;
+    }
+
+    $secure = strtolower($secure);
+    $transport = $secure === 'ssl' ? "ssl://{$host}" : $host;
+    $socket = fsockopen($transport, $port, $errorNumber, $errorMessage, 20);
+
+    if (!$socket) {
+        return ['ok' => false, 'body' => "SMTP connection failed ({$errorNumber}): {$errorMessage}"];
+    }
+
+    stream_set_timeout($socket, 20);
+
+    $result = smtp_expect($socket, [220]);
+    if (!$result['ok']) {
+        fclose($socket);
+        return $result;
+    }
+
+    $serverName = $_SERVER['SERVER_NAME'] ?? 'localhost';
+    $result = smtp_command($socket, "EHLO {$serverName}", [250]);
+    if (!$result['ok']) {
+        fclose($socket);
+        return $result;
+    }
+
+    if (in_array($secure, ['tls', 'starttls'], true)) {
+        $result = smtp_command($socket, 'STARTTLS', [220]);
+        if (!$result['ok']) {
+            fclose($socket);
+            return $result;
+        }
+
+        $cryptoEnabled = stream_socket_enable_crypto(
+            $socket,
+            true,
+            STREAM_CRYPTO_METHOD_TLS_CLIENT
+        );
+
+        if ($cryptoEnabled !== true) {
+            fclose($socket);
+            return ['ok' => false, 'body' => 'SMTP STARTTLS negotiation failed'];
+        }
+
+        $result = smtp_command($socket, "EHLO {$serverName}", [250]);
+        if (!$result['ok']) {
+            fclose($socket);
+            return $result;
+        }
+    }
+
+    $result = smtp_command($socket, 'AUTH LOGIN', [334]);
+    if (!$result['ok']) {
+        fclose($socket);
+        return $result;
+    }
+
+    $result = smtp_command($socket, base64_encode($username), [334]);
+    if (!$result['ok']) {
+        fclose($socket);
+        return $result;
+    }
+
+    $result = smtp_command($socket, base64_encode($password), [235]);
+    if (!$result['ok']) {
+        fclose($socket);
+        return ['ok' => false, 'body' => 'SMTP authentication failed'];
+    }
+
+    $result = smtp_command($socket, "MAIL FROM:<{$fromAddress}>", [250]);
+    if (!$result['ok']) {
+        fclose($socket);
+        return $result;
+    }
+
+    $result = smtp_command($socket, "RCPT TO:<{$to}>", [250, 251]);
+    if (!$result['ok']) {
+        fclose($socket);
+        return $result;
+    }
+
+    $result = smtp_command($socket, 'DATA', [354]);
+    if (!$result['ok']) {
+        fclose($socket);
+        return $result;
+    }
+
+    fwrite($socket, smtp_dot_stuff($message['body']) . "\r\n.\r\n");
+    $result = smtp_expect($socket, [250]);
+    smtp_command($socket, 'QUIT', [221]);
+    fclose($socket);
+
+    return $result['ok'] ? ['ok' => true, 'body' => 'sent'] : $result;
 }
 
 function send_native_manifesto_email(
@@ -200,7 +414,8 @@ if (!$fromEmail) {
 }
 
 $apiKey = env_value('RESEND_API_KEY');
-$mailProvider = strtolower(env_value('MANIFESTO_MAIL_PROVIDER', $apiKey ? 'resend' : 'native') ?? 'native');
+$smtpPassword = env_value('MANIFESTO_SMTP_PASSWORD');
+$mailProvider = strtolower(env_value('MANIFESTO_MAIL_PROVIDER', $apiKey ? 'resend' : ($smtpPassword ? 'smtp' : 'native')) ?? 'native');
 $attachmentPath = env_value(
     'MANIFESTO_ATTACHMENT_URL',
     env_value('MANIFESTO_ATTACHMENT_PATH', env_value('MANIFESTO_PDF_PATH', '/manifesto-email.pdf'))
@@ -245,6 +460,38 @@ if ($mailProvider === 'resend') {
 
     if (!$result['ok']) {
         error_log('Resend manifesto email failed: ' . (string) $result['body']);
+        respond(502, ['ok' => false, 'error' => 'No se pudo enviar el correo. Intentalo de nuevo.']);
+    }
+
+    respond(200, ['ok' => true, 'message' => 'Te hemos enviado el manifiesto por correo.']);
+}
+
+if ($mailProvider === 'smtp') {
+    $smtpHost = env_value('MANIFESTO_SMTP_HOST', 'smtp.hostinger.com') ?? 'smtp.hostinger.com';
+    $smtpPort = (int) (env_value('MANIFESTO_SMTP_PORT', '465') ?? '465');
+    $smtpSecure = env_value('MANIFESTO_SMTP_SECURE', 'ssl') ?? 'ssl';
+    $smtpUsername = env_value('MANIFESTO_SMTP_USERNAME', email_address_from_header($fromEmail)) ?? '';
+
+    if (!$smtpUsername || !$smtpPassword) {
+        respond(500, ['ok' => false, 'error' => 'El SMTP no esta configurado.']);
+    }
+
+    $result = send_smtp_manifesto_email(
+        $email,
+        $fromEmail,
+        $subject,
+        $textBody,
+        $attachmentFile,
+        'Manifiesto Imperio Espanol.pdf',
+        $smtpHost,
+        $smtpPort,
+        $smtpSecure,
+        $smtpUsername,
+        $smtpPassword
+    );
+
+    if (!$result['ok']) {
+        error_log('SMTP manifesto email failed: ' . (string) $result['body']);
         respond(502, ['ok' => false, 'error' => 'No se pudo enviar el correo. Intentalo de nuevo.']);
     }
 

@@ -12,7 +12,7 @@ const FOUNDATION_CARDS = [
   {
     title: "Forma parte",
     description:
-      "Descarga gratis el manifiesto del Imperio Español. Forma parte de este proyecto que recupera la increíble historia del imperio donde nunca se ponía el sol. Empápate de nuestros artículos exclusivos, información y divulgación, debates en el foro, acceso a preventa de drops en nuestra tienda y muchas más ventajas para suscriptores.",
+      "Descarga el manifiesto del Imperio Español. Forma parte de este proyecto que recupera la increíble historia del imperio donde nunca se ponía el sol. Empápate de nuestros artículos exclusivos, información y divulgación, debates en el foro, acceso a preventa de drops en nuestra tienda y muchas más ventajas para suscriptores.",
   },
 ];
 

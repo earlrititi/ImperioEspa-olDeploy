@@ -1,6 +1,9 @@
 ---
 import PageShell from "../../layouts/PageShell.astro";
 import { getCollection, render } from "astro:content";
+import { getTierLabel } from "../../utils/content";
+
+export const prerender = true;
 
 export async function getStaticPaths() {
   const entries = await getCollection("articles");
@@ -12,6 +15,7 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props;
 const { Content } = await render(entry);
+const tierLabel = getTierLabel(entry.data.tier);
 ---
 
 <PageShell
@@ -24,7 +28,7 @@ const { Content } = await render(entry);
 >
   <div slot="meta" class="meta">
     <span class="badge">{entry.data.category}</span>
-    <span class="badge">{entry.data.tier}</span>
+    <span class="badge">{tierLabel}</span>
     <span>{entry.data.date}</span>
   </div>
 
@@ -32,12 +36,12 @@ const { Content } = await render(entry);
     <Content />
   </section>
 
-  {entry.data.tier !== "gratis" && (
+  {entry.data.tier !== "piquero" && (
     <section class="section content">
       <div class="notice">
         <strong>Contenido para miembros.</strong>
         <p class="muted">
-          Este articulo requiere nivel {entry.data.tier}. Inicia sesion o sube de
+          Este articulo requiere nivel {tierLabel}. Inicia sesion o sube de
           escalera.
         </p>
         <a class="btn btn-primary" href="/precios">Ver precios</a>
