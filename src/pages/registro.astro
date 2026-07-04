@@ -1,19 +1,25 @@
 ---
 import PageShell from "../layouts/PageShell.astro";
+
+const query = Astro.url.searchParams.toString();
+const loginHref = query ? `/login?${query}` : "/login";
 ---
 
 <PageShell
   title="Registro"
-  description="Registro para Imperio Español."
+  description="Registro para Imperio Espanol."
   eyebrow="Registro"
   heading="Crear cuenta"
   summary="Completa tu email para recibir acceso."
   narrow
 >
   <Fragment slot="header">
-    <p class="muted">ASUNCION: alta real en Sprint 3.</p>
     <div class="card">
-      <a class="btn btn-primary" href="/contacto">Solicitar acceso</a>
+      <p>
+        El acceso gratuito PIQUERO se crea con enlace magico. Si el correo no existe todavia,
+        Supabase creara tu perfil al confirmar el enlace.
+      </p>
+      <a class="btn btn-primary" href={loginHref}>Crear cuenta PIQUERO</a>
     </div>
   </Fragment>
 </PageShell>

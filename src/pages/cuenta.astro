@@ -1,5 +1,30 @@
 ---
 import PageShell from "../layouts/PageShell.astro";
+import { getSubscriptionByUserId, isActivePaidSubscription } from "../lib/subscriptions";
+import { createSupabaseServerClient } from "../lib/supabase/server";
+
+const supabase = createSupabaseServerClient({
+  cookies: Astro.cookies,
+  request: Astro.request,
+});
+const {
+  data: { user },
+} = await supabase.auth.getUser();
+
+if (!user) {
+  return Astro.redirect("/login?next=/cuenta");
+}
+
+const subscription = await getSubscriptionByUserId(user.id);
+const hasPaidAccess = isActivePaidSubscription({
+  plan: subscription?.plan,
+  status: subscription?.status,
+});
+const accessLabel = hasPaidAccess
+  ? subscription?.plan === "maestre_campo"
+    ? "MAESTRE DE CAMPO"
+    : "ARCABUCERO"
+  : "PIQUERO";
 ---
 
 <PageShell
@@ -10,17 +35,27 @@ import PageShell from "../layouts/PageShell.astro";
   summary="Gestiona tu acceso, suscripcion y perfil."
 >
   <Fragment slot="header">
-    <p class="muted">ASUNCION: login y membresia se integran en Sprint 3.</p>
     <div class="grid">
       <div class="card">
-        <h3>Suscripcion</h3>
-        <p>Gestiona nivel, facturas y metodo de pago.</p>
+        <h3>Acceso</h3>
+        <p>{accessLabel}</p>
+        <p class="muted">{user.email}</p>
       </div>
       <div class="card">
-        <h3>Perfil</h3>
-        <p>Preferencias, notificaciones y acceso a Discord.</p>
+        <h3>Suscripcion</h3>
+        {hasPaidAccess ? (
+          <p>Tu suscripcion esta activa.</p>
+        ) : (
+          <p>Tu cuenta gratuita PIQUERO esta activa.</p>
+        )}
       </div>
     </div>
-    <a class="btn btn-primary" href="/login">Iniciar sesion</a>
+    <div class="meta">
+      <a class="btn btn-primary" href="/premium">Entrar a premium</a>
+      <a class="btn btn-ghost" href="/suscribirse">Ver planes</a>
+      <form method="post" action="/api/auth/logout">
+        <button class="btn btn-ghost" type="submit">Cerrar sesion</button>
+      </form>
+    </div>
   </Fragment>
 </PageShell>

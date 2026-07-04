@@ -18,6 +18,7 @@ const staticRoutes = [
   "/login",
   "/registro",
   "/perfil",
+  "/premium",
   "/suscripcion",
   "/contacto",
   "/legal",

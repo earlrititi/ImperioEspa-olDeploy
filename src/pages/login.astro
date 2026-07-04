@@ -1,19 +1,88 @@
 ---
 import PageShell from "../layouts/PageShell.astro";
+
+const error = Astro.url.searchParams.get("error");
+const sent = Astro.url.searchParams.get("sent") === "1";
+const next = Astro.url.searchParams.get("next") || "/cuenta";
+const siteUrl = (import.meta.env.PUBLIC_SITE_URL || Astro.url.origin).replace(/\/$/, "");
+
+if (Astro.request.method === "POST") {
+  const formData = await Astro.request.formData();
+  const email = String(formData.get("email") ?? "").trim().toLowerCase();
+  const redirectTo = `${siteUrl}/api/auth/callback?next=${encodeURIComponent(next)}`;
+  const { createSupabaseServerClient } = await import("../lib/supabase/server");
+  const supabase = createSupabaseServerClient({
+    cookies: Astro.cookies,
+    request: Astro.request,
+  });
+  const { error: signInError } = await supabase.auth.signInWithOtp({
+    email,
+    options: {
+      emailRedirectTo: redirectTo,
+      shouldCreateUser: true,
+    },
+  });
+
+  if (signInError) {
+    return Astro.redirect(`/login?error=otp&next=${encodeURIComponent(next)}`);
+  }
+
+  return Astro.redirect(`/login?sent=1&next=${encodeURIComponent(next)}`);
+}
 ---
 
 <PageShell
   title="Login"
-  description="Accede a tu cuenta de Imperio Español."
+  description="Accede a tu cuenta de Imperio Espanol."
   eyebrow="Acceso"
   heading="Iniciar sesion"
   summary="Introduce tu email para recibir enlace magico."
   narrow
 >
   <Fragment slot="header">
-    <p class="muted">ASUNCION: formulario real conectado en Sprint 3.</p>
-    <div class="card">
-      <a class="btn btn-primary" href="/contacto">Solicitar acceso</a>
-    </div>
+    {sent && (
+      <div class="notice">
+        <strong>Revisa tu correo.</strong>
+        <p class="muted">Te hemos enviado un enlace de acceso. Puede tardar unos minutos.</p>
+      </div>
+    )}
+    {error && (
+      <div class="notice">
+        <strong>No se pudo completar el acceso.</strong>
+        <p class="muted">Solicita un nuevo enlace e intentalo otra vez.</p>
+      </div>
+    )}
+    <form class="card auth-form" method="post">
+      <label class="auth-form__label" for="email">Correo electronico</label>
+      <input
+        class="auth-form__field"
+        id="email"
+        name="email"
+        type="email"
+        autocomplete="email"
+        required
+      />
+      <button class="btn btn-primary" type="submit">Enviar enlace magico</button>
+    </form>
+    <p class="muted">Si no tienes cuenta, se creara automaticamente como PIQUERO.</p>
   </Fragment>
 </PageShell>
+
+<style>
+  .auth-form {
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  .auth-form__label {
+    font-weight: 700;
+  }
+
+  .auth-form__field {
+    min-height: 44px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 0.75rem 0.9rem;
+    font: inherit;
+  }
+</style>

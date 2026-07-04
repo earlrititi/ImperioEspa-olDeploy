@@ -1,0 +1,52 @@
+---
+import PageShell from "../../layouts/PageShell.astro";
+import { getSubscriptionByUserId, isActivePaidSubscription } from "../../lib/subscriptions";
+import { createSupabaseServerClient } from "../../lib/supabase/server";
+
+const supabase = createSupabaseServerClient({
+  cookies: Astro.cookies,
+  request: Astro.request,
+});
+const {
+  data: { user },
+} = await supabase.auth.getUser();
+
+if (!user) {
+  return Astro.redirect("/login?next=/premium");
+}
+
+const subscription = await getSubscriptionByUserId(user.id);
+const hasPaidAccess = isActivePaidSubscription({
+  plan: subscription?.plan,
+  status: subscription?.status,
+});
+
+if (!hasPaidAccess) {
+  return Astro.redirect("/suscribirse");
+}
+---
+
+<PageShell
+  title="Premium"
+  description="Archivo premium de Imperio Espanol."
+  eyebrow="Premium"
+  heading="Archivo premium"
+  summary="Acceso reservado para ARCABUCERO y MAESTRE DE CAMPO."
+>
+  <section class="section">
+    <div class="grid">
+      <article class="card">
+        <h2>Cronicas completas</h2>
+        <p>Lecturas sin cortes y rutas de archivo para miembros de pago.</p>
+      </article>
+      <article class="card">
+        <h2>Rutas de lectura</h2>
+        <p>Secuencias editoriales para profundizar por campanas, siglos y figuras.</p>
+      </article>
+      <article class="card">
+        <h2>Archivo reservado</h2>
+        <p>Material ampliado que se activara progresivamente desde esta zona.</p>
+      </article>
+    </div>
+  </section>
+</PageShell>
