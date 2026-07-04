@@ -512,12 +512,17 @@ h3 {
 
 .section {
   padding: var(--space-8) 0;
-  opacity: 0;
-  transform: translateY(18px);
+  opacity: 1;
+  transform: none;
   transition: opacity 0.6s ease, transform 0.6s ease;
 }
 
-.section.is-visible {
+html.has-islands .section {
+  opacity: 0;
+  transform: translateY(18px);
+}
+
+html.has-islands .section.is-visible {
   opacity: 1;
   transform: translateY(0);
 }
