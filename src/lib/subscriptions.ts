@@ -1,5 +1,3 @@
-import { supabaseAdmin } from "./supabase/admin";
-
 export type FreePlanName = "piquero";
 export type PaidPlanName = "arcabucero" | "maestre_campo";
 export type ContentPaidTierName = "arcabucero" | "maestre-de-campo";
@@ -20,6 +18,12 @@ export type SubscriptionRecord = {
   created_at: string;
   updated_at: string;
 };
+
+async function getSupabaseAdmin() {
+  const { supabaseAdmin } = await import("./supabase/admin");
+
+  return supabaseAdmin;
+}
 
 export function normalizePaidPlan(plan: string | null | undefined) {
   if (plan === "maestre-de-campo") {
@@ -89,6 +93,7 @@ export function canAccessContentTier(
 }
 
 export async function findUserIdByEmail(email: string) {
+  const supabaseAdmin = await getSupabaseAdmin();
   const { data, error } = await supabaseAdmin
     .from("profiles")
     .select("id")
@@ -115,6 +120,7 @@ export async function upsertSubscription(params: {
   currentPeriodEnd?: Date | null;
   cancelAtPeriodEnd?: boolean | null;
 }) {
+  const supabaseAdmin = await getSupabaseAdmin();
   const payload = {
     user_id: params.userId ?? null,
     email: params.email?.toLowerCase() ?? null,
@@ -146,6 +152,7 @@ export async function upsertSubscription(params: {
 }
 
 export async function getSubscriptionByUserId(userId: string) {
+  const supabaseAdmin = await getSupabaseAdmin();
   const { data, error } = await supabaseAdmin
     .from("subscriptions")
     .select("*")
@@ -163,6 +170,7 @@ export async function getSubscriptionByUserId(userId: string) {
 }
 
 export async function getSubscriptionByEmail(email: string) {
+  const supabaseAdmin = await getSupabaseAdmin();
   const { data, error } = await supabaseAdmin
     .from("subscriptions")
     .select("*")
