@@ -3,7 +3,7 @@ import { getRequiredEnv } from "./env";
 export type CheckoutPlan = "arcabucero-monthly" | "maestre-campo-monthly";
 
 type CheckoutPlanConfig = {
-  priceId: string;
+  priceEnvName: string;
   plan: "arcabucero" | "maestre_campo";
   billingInterval: "month";
   label: string;
@@ -11,13 +11,13 @@ type CheckoutPlanConfig = {
 
 export const checkoutPlans: Record<CheckoutPlan, CheckoutPlanConfig> = {
   "arcabucero-monthly": {
-    priceId: getRequiredEnv("STRIPE_PRICE_ARCABUCERO_MONTHLY"),
+    priceEnvName: "STRIPE_PRICE_ARCABUCERO_MONTHLY",
     plan: "arcabucero",
     billingInterval: "month",
     label: "ARCABUCERO mensual",
   },
   "maestre-campo-monthly": {
-    priceId: getRequiredEnv("STRIPE_PRICE_MAESTRE_CAMPO_MONTHLY"),
+    priceEnvName: "STRIPE_PRICE_MAESTRE_CAMPO_MONTHLY",
     plan: "maestre_campo",
     billingInterval: "month",
     label: "MAESTRE DE CAMPO mensual",
@@ -33,5 +33,10 @@ export function getCheckoutPlan(input: unknown) {
     return null;
   }
 
-  return checkoutPlans[input as CheckoutPlan];
+  const plan = checkoutPlans[input as CheckoutPlan];
+
+  return {
+    ...plan,
+    priceId: getRequiredEnv(plan.priceEnvName),
+  };
 }

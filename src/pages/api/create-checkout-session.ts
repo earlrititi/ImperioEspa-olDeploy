@@ -1,6 +1,5 @@
 import type { APIRoute } from "astro";
 import { getRequiredEnv } from "../../lib/env";
-import { stripe } from "../../lib/stripe";
 import { getCheckoutPlan } from "../../lib/stripe-prices";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -47,6 +46,7 @@ export const POST: APIRoute = async ({ request }) => {
         ? body.email.trim().toLowerCase()
         : undefined;
 
+    const { stripe } = await import("../../lib/stripe");
     const session = await stripe.checkout.sessions.create({
       mode: "subscription",
       customer_email: email,

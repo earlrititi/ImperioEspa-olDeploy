@@ -2,7 +2,6 @@ import type { APIRoute } from "astro";
 import { getRequiredEnv } from "../../lib/env";
 import { getSubscriptionByUserId } from "../../lib/subscriptions";
 import { createSupabaseServerClient } from "../../lib/supabase/server";
-import { stripe } from "../../lib/stripe";
 
 export const prerender = false;
 
@@ -29,6 +28,7 @@ export const POST: APIRoute = async ({ cookies, request }) => {
   }
 
   const siteUrl = getRequiredEnv("PUBLIC_SITE_URL").replace(/\/$/, "");
+  const { stripe } = await import("../../lib/stripe");
   const session = await stripe.billingPortal.sessions.create({
     customer: subscription.stripe_customer_id,
     return_url: `${siteUrl}/cuenta`,

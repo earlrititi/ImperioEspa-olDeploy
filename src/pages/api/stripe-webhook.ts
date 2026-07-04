@@ -2,20 +2,12 @@ import type { APIRoute } from "astro";
 import type Stripe from "stripe";
 import { getRequiredEnv } from "../../lib/env";
 import {
-  sendPaidWelcomeEmail,
-  sendPaymentFailedEmail,
-  sendSubscriptionCancelledEmail,
-} from "../../lib/emails";
-import {
   findUserIdByEmail,
   type PaidPlanName,
   upsertSubscription,
 } from "../../lib/subscriptions";
-import { stripe } from "../../lib/stripe";
 
 export const prerender = false;
-
-const webhookSecret = getRequiredEnv("STRIPE_WEBHOOK_SECRET");
 
 function getObjectId(value: string | { id: string } | null | undefined) {
   return typeof value === "string" ? value : value?.id ?? null;
@@ -42,7 +34,7 @@ function getSubscriptionPeriod(subscription: Stripe.Subscription) {
   };
 }
 
-async function getCustomerEmail(customerId: string) {
+async function getCustomerEmail(customerId: string, stripe: Stripe) {
   const customer = await stripe.customers.retrieve(customerId);
 
   if (customer.deleted) {
@@ -54,10 +46,13 @@ async function getCustomerEmail(customerId: string) {
 
 async function upsertFromSubscription(
   subscription: Stripe.Subscription,
+  stripe: Stripe,
   forcedStatus?: string
 ) {
   const stripeCustomerId = getObjectId(subscription.customer);
-  const email = stripeCustomerId ? await getCustomerEmail(stripeCustomerId) : null;
+  const email = stripeCustomerId
+    ? await getCustomerEmail(stripeCustomerId, stripe)
+    : null;
   const userId = email ? await findUserIdByEmail(email) : null;
   const plan = getPlanFromMetadata(subscription.metadata);
   const { currentPeriodStart, currentPeriodEnd } =
@@ -88,6 +83,8 @@ export const POST: APIRoute = async ({ request }) => {
 
   const rawBody = await request.text();
   let event: Stripe.Event;
+  const webhookSecret = getRequiredEnv("STRIPE_WEBHOOK_SECRET");
+  const { stripe } = await import("../../lib/stripe");
 
   try {
     event = stripe.webhooks.constructEvent(rawBody, signature, webhookSecret);
@@ -120,6 +117,7 @@ export const POST: APIRoute = async ({ request }) => {
         }
 
         if (email) {
+          const { sendPaidWelcomeEmail } = await import("../../lib/emails");
           await sendPaidWelcomeEmail({
             to: email,
             planName: getPlanLabel(plan),
@@ -131,17 +129,19 @@ export const POST: APIRoute = async ({ request }) => {
 
       case "customer.subscription.created":
       case "customer.subscription.updated": {
-        await upsertFromSubscription(event.data.object as Stripe.Subscription);
+        await upsertFromSubscription(event.data.object as Stripe.Subscription, stripe);
         break;
       }
 
       case "customer.subscription.deleted": {
         const { email } = await upsertFromSubscription(
           event.data.object as Stripe.Subscription,
+          stripe,
           "canceled"
         );
 
         if (email) {
+          const { sendSubscriptionCancelledEmail } = await import("../../lib/emails");
           await sendSubscriptionCancelledEmail({ to: email });
         }
 
@@ -157,9 +157,10 @@ export const POST: APIRoute = async ({ request }) => {
         const customerId = getObjectId(invoice.customer);
 
         if (customerId) {
-          const email = await getCustomerEmail(customerId);
+          const email = await getCustomerEmail(customerId, stripe);
 
           if (email) {
+            const { sendPaymentFailedEmail } = await import("../../lib/emails");
             await sendPaymentFailedEmail({ to: email });
           }
         }
