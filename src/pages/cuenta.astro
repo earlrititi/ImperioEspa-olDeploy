@@ -53,9 +53,54 @@ const accessLabel = hasPaidAccess
     <div class="meta">
       <a class="btn btn-primary" href="/premium">Entrar a premium</a>
       <a class="btn btn-ghost" href="/suscribirse">Ver planes</a>
+      {subscription?.stripe_customer_id && (
+        <button class="btn btn-ghost" id="billing-portal-button" type="button">
+          Gestionar facturacion
+        </button>
+      )}
       <form method="post" action="/api/auth/logout">
         <button class="btn btn-ghost" type="submit">Cerrar sesion</button>
       </form>
     </div>
+    <p class="muted" id="billing-portal-status" role="status" aria-live="polite"></p>
   </Fragment>
 </PageShell>
+
+<script>
+  const portalButton = document.getElementById("billing-portal-button");
+  const portalStatus = document.getElementById("billing-portal-status");
+
+  portalButton?.addEventListener("click", async () => {
+    const originalText = portalButton.textContent || "Gestionar facturacion";
+    portalButton.setAttribute("disabled", "true");
+    portalButton.textContent = "Abriendo portal...";
+
+    if (portalStatus) {
+      portalStatus.textContent = "";
+    }
+
+    try {
+      const response = await fetch("/api/create-customer-portal-session", {
+        method: "POST",
+      });
+      const data = await response.json().catch(() => ({}));
+
+      if (data.url) {
+        window.location.href = data.url;
+        return;
+      }
+
+      if (portalStatus) {
+        portalStatus.textContent = data.error || "No se pudo abrir el portal.";
+      }
+    } catch (error) {
+      console.error(error);
+      if (portalStatus) {
+        portalStatus.textContent = "No se pudo abrir el portal.";
+      }
+    } finally {
+      portalButton.removeAttribute("disabled");
+      portalButton.textContent = originalText;
+    }
+  });
+</script>
