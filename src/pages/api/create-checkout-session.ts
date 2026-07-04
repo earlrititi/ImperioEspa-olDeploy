@@ -77,6 +77,22 @@ export const POST: APIRoute = async ({ request }) => {
   } catch (error) {
     console.error("create-checkout-session error:", error);
 
+    if (
+      error instanceof Error &&
+      error.message.startsWith("Missing required environment variable:")
+    ) {
+      return new Response(
+        JSON.stringify({
+          error: "Missing server configuration",
+          variable: error.message.replace("Missing required environment variable: ", ""),
+        }),
+        {
+          status: 500,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    }
+
     return new Response(
       JSON.stringify({ error: "Unable to create checkout session" }),
       {
