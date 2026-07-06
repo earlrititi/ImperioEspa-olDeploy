@@ -21,6 +21,30 @@ function getPlanLabel(plan: PaidPlanName) {
   return plan === "maestre_campo" ? "MAESTRE DE CAMPO" : "ARCABUCERO";
 }
 
+async function safeFindUserIdByEmail(email: string | null) {
+  if (!email) {
+    return null;
+  }
+
+  try {
+    return await findUserIdByEmail(email);
+  } catch (error) {
+    console.error("Stripe webhook profile lookup failed:", error);
+    return null;
+  }
+}
+
+async function safeSendWebhookEmail(
+  label: string,
+  sendEmail: () => Promise<unknown>
+) {
+  try {
+    await sendEmail();
+  } catch (error) {
+    console.error(`Stripe webhook email failed (${label}):`, error);
+  }
+}
+
 function getSubscriptionPeriod(subscription: Stripe.Subscription) {
   const firstItem = subscription.items.data[0];
 
@@ -53,7 +77,7 @@ async function upsertFromSubscription(
   const email = stripeCustomerId
     ? await getCustomerEmail(stripeCustomerId, stripe)
     : null;
-  const userId = email ? await findUserIdByEmail(email) : null;
+  const userId = await safeFindUserIdByEmail(email);
   const plan = getPlanFromMetadata(subscription.metadata);
   const { currentPeriodStart, currentPeriodEnd } =
     getSubscriptionPeriod(subscription);
@@ -101,7 +125,7 @@ export const POST: APIRoute = async ({ request }) => {
         const customerId = getObjectId(session.customer);
         const email =
           session.customer_details?.email ?? session.customer_email ?? null;
-        const userId = email ? await findUserIdByEmail(email) : null;
+        const userId = await safeFindUserIdByEmail(email);
         const plan = getPlanFromMetadata(session.metadata);
 
         if (subscriptionId) {
@@ -118,9 +142,11 @@ export const POST: APIRoute = async ({ request }) => {
 
         if (email) {
           const { sendPaidWelcomeEmail } = await import("../../lib/emails");
-          await sendPaidWelcomeEmail({
-            to: email,
-            planName: getPlanLabel(plan),
+          await safeSendWebhookEmail("paid welcome", () => {
+            return sendPaidWelcomeEmail({
+              to: email,
+              planName: getPlanLabel(plan),
+            });
           });
         }
 
@@ -142,7 +168,9 @@ export const POST: APIRoute = async ({ request }) => {
 
         if (email) {
           const { sendSubscriptionCancelledEmail } = await import("../../lib/emails");
-          await sendSubscriptionCancelledEmail({ to: email });
+          await safeSendWebhookEmail("subscription cancelled", () => {
+            return sendSubscriptionCancelledEmail({ to: email });
+          });
         }
 
         break;
@@ -161,7 +189,9 @@ export const POST: APIRoute = async ({ request }) => {
 
           if (email) {
             const { sendPaymentFailedEmail } = await import("../../lib/emails");
-            await sendPaymentFailedEmail({ to: email });
+            await safeSendWebhookEmail("payment failed", () => {
+              return sendPaymentFailedEmail({ to: email });
+            });
           }
         }
 
