@@ -166,7 +166,84 @@ export async function getSubscriptionByUserId(userId: string) {
     throw error;
   }
 
-  return data;
+  if (data) {
+    return data;
+  }
+
+  const { data: profile, error: profileError } = await supabaseAdmin
+    .from("profiles")
+    .select("email")
+    .eq("id", userId)
+    .maybeSingle<{ email: string | null }>();
+
+  if (profileError) {
+    console.error("getSubscriptionByUserId profile lookup error:", profileError);
+    throw profileError;
+  }
+
+  const email = profile?.email?.toLowerCase();
+
+  if (!email) {
+    return null;
+  }
+
+  const { data: unlinkedSubscription, error: unlinkedError } =
+    await supabaseAdmin
+      .from("subscriptions")
+      .select("*")
+      .eq("email", email)
+      .is("user_id", null)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle<SubscriptionRecord>();
+
+  if (unlinkedError) {
+    console.error(
+      "getSubscriptionByUserId unlinked subscription lookup error:",
+      unlinkedError
+    );
+    throw unlinkedError;
+  }
+
+  if (!unlinkedSubscription) {
+    return null;
+  }
+
+  const { data: linkedSubscription, error: linkError } = await supabaseAdmin
+    .from("subscriptions")
+    .update({ user_id: userId })
+    .eq("id", unlinkedSubscription.id)
+    .is("user_id", null)
+    .select("*")
+    .maybeSingle<SubscriptionRecord>();
+
+  if (linkError) {
+    console.error("getSubscriptionByUserId link error:", linkError);
+    throw linkError;
+  }
+
+  if (linkedSubscription) {
+    return linkedSubscription;
+  }
+
+  const { data: concurrentlyLinked, error: concurrentError } =
+    await supabaseAdmin
+      .from("subscriptions")
+      .select("*")
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle<SubscriptionRecord>();
+
+  if (concurrentError) {
+    console.error(
+      "getSubscriptionByUserId concurrent link lookup error:",
+      concurrentError
+    );
+    throw concurrentError;
+  }
+
+  return concurrentlyLinked;
 }
 
 export async function getSubscriptionByEmail(email: string) {
