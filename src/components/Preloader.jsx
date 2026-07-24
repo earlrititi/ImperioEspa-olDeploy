@@ -3,6 +3,7 @@ import {
   HERO_IMAGE_DEFAULT_SRC,
   HERO_IMAGE_MOBILE_SRC,
   HERO_VIEW_TRANSITION_NAME,
+  PRELOADER_SESSION_KEY,
   PRELOADER_SEQUENCE_IMAGES,
 } from "../config/hero";
 
@@ -36,6 +37,12 @@ export default function Preloader() {
       return undefined;
     }
 
+    if (document.body.classList.contains("preloader-session-skip")) {
+      preloader.style.display = "none";
+      document.body.style.overflow = "auto";
+      return undefined;
+    }
+
     const finalEntryDuration = Math.round(TIMING.fade * 1.25);
     const shrinkIndex = sequenceImages.indexOf(shrinkImage);
     const shrinkStart = shrinkIndex * TIMING.step + TIMING.fade;
@@ -60,6 +67,11 @@ export default function Preloader() {
       const applyHandoffState = () => {
         // Cuando la 6 ya esta a pantalla completa, intercambiamos al hero.
         // Como usan el mismo asset, el cambio de una capa a otra es invisible.
+        try {
+          window.sessionStorage.setItem(PRELOADER_SESSION_KEY, "1");
+        } catch {
+          // El preloader sigue funcionando aunque el navegador bloquee el storage.
+        }
         document.body.classList.add("preloader-done");
         preloader.classList.add("preloader--done");
         window.dispatchEvent(new Event("preloader:done"));

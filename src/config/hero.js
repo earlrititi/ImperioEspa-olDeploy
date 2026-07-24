@@ -1,6 +1,7 @@
 import { withBase } from "../utils/basePath";
 
 export const HERO_VIEW_TRANSITION_NAME = "imperio-preloader-hero";
+export const PRELOADER_SESSION_KEY = "imperio-preloader-seen";
 export const HERO_IMAGE_DEFAULT_SRC = withBase("/images/preloader/Preload_6_def_upscaled_2x.webp");
 export const HERO_IMAGE_MOBILE_SRC = withBase(
   "/images/preloader/Preload%20movil/06_preloader_phone.webp"

@@ -178,6 +178,10 @@ main {
   padding: var(--space-10) calc(var(--space-unit) * 2.5) var(--space-12);
 }
 
+body.preloader-session-skip #preloader {
+  display: none !important;
+}
+
 img {
   max-width: 100%;
   display: block;

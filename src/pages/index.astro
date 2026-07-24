@@ -5,7 +5,10 @@ import Navigation from "../components/Navigation.jsx";
 import Preloader from "../components/Preloader.jsx";
 import ProjectsGrid from "../components/ProjectsGrid.jsx";
 import Services from "../components/Services.jsx";
+import { PRELOADER_SESSION_KEY } from "../config/hero";
 import Layout from "../layouts/Layout.astro";
+
+const preloaderSessionKey = PRELOADER_SESSION_KEY;
 ---
 
 <Layout
@@ -13,6 +16,15 @@ import Layout from "../layouts/Layout.astro";
   description="Archivo vivo de ideas y memoria sobre el Imperio Español."
 >
   <div class="home-page">
+    <script is:inline define:vars={{ preloaderSessionKey }}>
+      try {
+        if (window.sessionStorage.getItem(preloaderSessionKey) === "1") {
+          document.body.classList.add("preloader-done", "preloader-session-skip");
+        }
+      } catch {
+        // La primera carga conserva el comportamiento normal sin sessionStorage.
+      }
+    </script>
     <Preloader client:load />
     <Navigation />
     <HeroImperio client:load />
