@@ -1,9 +1,9 @@
 import { withBase } from "../utils/basePath";
 
 export const HERO_VIEW_TRANSITION_NAME = "imperio-preloader-hero";
-export const HERO_IMAGE_DEFAULT_SRC = withBase("/images/preloader/Preload_6_def_upscaled_2x.png");
+export const HERO_IMAGE_DEFAULT_SRC = withBase("/images/preloader/Preload_6_def_upscaled_2x.webp");
 export const HERO_IMAGE_MOBILE_SRC = withBase(
-  "/images/preloader/Preload%20movil/06_preloader_phone.png"
+  "/images/preloader/Preload%20movil/06_preloader_phone.webp"
 );
 
 export const HERO_LAYER_VARS = {
@@ -55,38 +55,38 @@ export const LATIN_LAYER_ANIMATION = {
 
 export const PRELOADER_SEQUENCE_IMAGES = [
   {
-    src: withBase("/images/preloader/Preload_1_def_upscaled_2x.png"),
-    mobileSrc: withBase("/images/preloader/Preload%20movil/01_preloader_phone.png"),
+    src: withBase("/images/preloader/Preload_1_def_upscaled_2x.webp"),
+    mobileSrc: withBase("/images/preloader/Preload%20movil/01_preloader_phone.webp"),
     alt: "Cargando 1",
     scaleEnd: "1",
   },
   {
-    src: withBase("/images/preloader/Preload_2_def_upscaled_2x.png"),
-    mobileSrc: withBase("/images/preloader/Preload%20movil/02_preloader_phone.png"),
+    src: withBase("/images/preloader/Preload_2_def_upscaled_2x.webp"),
+    mobileSrc: withBase("/images/preloader/Preload%20movil/02_preloader_phone.webp"),
     alt: "Cargando 2",
     scaleEnd: "0.988",
   },
   {
-    src: withBase("/images/preloader/Preload_Archivo.png"),
-    mobileSrc: withBase("/images/preloader/Preload%20movil/preload_archivo_phone.png"),
+    src: withBase("/images/preloader/Preload_Archivo.webp"),
+    mobileSrc: withBase("/images/preloader/Preload%20movil/preload_archivo_phone.webp"),
     alt: "Cargando archivo",
     scaleEnd: "0.976",
   },
   {
-    src: withBase("/images/preloader/Preload_4_def_upscaled_2x.png"),
-    mobileSrc: withBase("/images/preloader/Preload%20movil/04_preloader_phone.png"),
+    src: withBase("/images/preloader/Preload_4_def_upscaled_2x.webp"),
+    mobileSrc: withBase("/images/preloader/Preload%20movil/04_preloader_phone.webp"),
     alt: "Cargando 4",
     scaleEnd: "0.964",
   },
   {
-    src: withBase("/images/preloader/Preload_5_def_upscaled_2x.png"),
-    mobileSrc: withBase("/images/preloader/Preload%20movil/05_preloader_phone.png"),
+    src: withBase("/images/preloader/Preload_5_def_upscaled_2x.webp"),
+    mobileSrc: withBase("/images/preloader/Preload%20movil/05_preloader_phone.webp"),
     alt: "Cargando 5",
     scaleEnd: "0.952",
   },
   {
-    src: withBase("/images/preloader/Preload_3_def_upscaled_2x.png"),
-    mobileSrc: withBase("/images/preloader/Preload%20movil/03_preloader_phone.png"),
+    src: withBase("/images/preloader/Preload_3_def_upscaled_2x.webp"),
+    mobileSrc: withBase("/images/preloader/Preload%20movil/03_preloader_phone.webp"),
     alt: "Cargando 6",
     scaleEnd: "0.94",
     shrinkTrigger: true,

@@ -22,14 +22,14 @@ const NEXT_BUTTON_STAR_PATH =
 const NEXT_BUTTON_STARS = [1, 2, 3, 4, 5, 6];
 const NEXT_BUTTON_LABEL = "OBT\u00c9N EL MANIFIESTO";
 const SERVICE_CARD_IMAGES = {
-  "01": "/images/card-1.png",
-  "02": "/images/card-2.png",
-  "03": "/images/card-3.png",
+  "01": "/images/card-1.webp",
+  "02": "/images/card-2.webp",
+  "03": "/images/card-3.webp",
 };
 const SERVICE_CARD_MORPH_IMAGES = {
-  "01": "/images/card-1-morph.png",
-  "02": "/images/card-2-morph.png",
-  "03": "/images/card-3-morph.png",
+  "01": "/images/card-1-morph.webp",
+  "02": "/images/card-2-morph.webp",
+  "03": "/images/card-3-morph.webp",
 };
 
 export default function Services() {
@@ -98,14 +98,14 @@ export default function Services() {
             <div class="services-army-swap">
               <div class="services-army-hitbox" aria-hidden="true"></div>
               <img
-                src={withBase("/images/ejercito-blanco_upscaled_2x.png")}
+                src={withBase("/images/ejercito-blanco_upscaled_2x.webp")}
                 alt="Formacion historica del ejercito español"
                 class="services-army-image services-army-image--default"
                 loading="lazy"
                 decoding="async"
               />
               <img
-                src={withBase("/images/ejercito-rojo.png")}
+                src={withBase("/images/ejercito-rojo.webp")}
                 alt=""
                 aria-hidden="true"
                 class="services-army-image services-army-image--hover"
