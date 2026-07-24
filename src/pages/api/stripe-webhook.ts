@@ -128,6 +128,24 @@ export const POST: APIRoute = async ({ request }) => {
         const userId = await safeFindUserIdByEmail(email);
         const plan = getPlanFromMetadata(session.metadata);
 
+        if (
+          session.mode === "payment" &&
+          session.metadata?.product === "camiseta-imperial"
+        ) {
+          if (email) {
+            const { sendMerchPurchaseEmail } = await import("../../lib/emails");
+            await safeSendWebhookEmail("merchandise purchase", () => {
+              return sendMerchPurchaseEmail({
+                to: email,
+                productName: "Camiseta Imperial",
+                size: session.metadata?.size ?? "",
+              });
+            });
+          }
+
+          break;
+        }
+
         if (subscriptionId) {
           await upsertSubscription({
             userId,
@@ -140,7 +158,7 @@ export const POST: APIRoute = async ({ request }) => {
           });
         }
 
-        if (email) {
+        if (email && subscriptionId) {
           const { sendPaidWelcomeEmail } = await import("../../lib/emails");
           await safeSendWebhookEmail("paid welcome", () => {
             return sendPaidWelcomeEmail({

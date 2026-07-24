@@ -87,3 +87,27 @@ export async function sendSubscriptionCancelledEmail(params: { to: string }) {
     text: "Tu suscripcion ha sido cancelada correctamente. Tu cuenta PIQUERO seguira disponible como acceso gratuito.",
   });
 }
+
+export async function sendMerchPurchaseEmail(params: {
+  to: string;
+  productName: string;
+  size: string;
+}) {
+  const { to, productName, size } = params;
+  const sizeCopy = size ? `, talla ${size}` : "";
+
+  return resend.emails.send({
+    from,
+    to,
+    subject: "Hemos recibido tu pedido",
+    html: `
+      <div style="font-family: Georgia, serif; line-height: 1.6; color: #111;">
+        <h1>Pedido confirmado</h1>
+        <p>Hemos recibido el pago de <strong>${productName}${sizeCopy}</strong>.</p>
+        <p>Prepararemos el pedido y te informaremos cuando salga hacia su destino.</p>
+        <p><strong>Plus Ultra.</strong></p>
+      </div>
+    `,
+    text: `Pedido confirmado. Hemos recibido el pago de ${productName}${sizeCopy}. Prepararemos el pedido y te informaremos cuando salga hacia su destino. Plus Ultra.`,
+  });
+}

@@ -6,6 +6,8 @@ const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export const prerender = false;
 
+const SHIRT_SIZES = new Set(["S", "M", "L", "XL"]);
+
 function siteUrl() {
   return getRequiredEnv("PUBLIC_SITE_URL").replace(/\/$/, "");
 }
@@ -32,14 +34,6 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     const body = await request.json().catch(() => null);
-    const selectedPlan = getCheckoutPlan(body?.plan);
-
-    if (!selectedPlan) {
-      return new Response(JSON.stringify({ error: "Invalid plan" }), {
-        status: 400,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
 
     const email =
       typeof body?.email === "string" && EMAIL_PATTERN.test(body.email.trim())
@@ -47,6 +41,76 @@ export const POST: APIRoute = async ({ request }) => {
         : undefined;
 
     const { stripe } = await import("../../lib/stripe");
+
+    if (body?.product === "camiseta-imperial") {
+      const size = typeof body?.size === "string" ? body.size.toUpperCase() : "";
+
+      if (!SHIRT_SIZES.has(size)) {
+        return new Response(JSON.stringify({ error: "Selecciona una talla valida" }), {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        });
+      }
+
+      const session = await stripe.checkout.sessions.create({
+        mode: "payment",
+        locale: "es",
+        customer_creation: "always",
+        customer_email: email,
+        billing_address_collection: "required",
+        shipping_address_collection: {
+          allowed_countries: ["ES"],
+        },
+        phone_number_collection: {
+          enabled: true,
+        },
+        line_items: [
+          {
+            quantity: 1,
+            price_data: {
+              currency: "eur",
+              unit_amount: 2999,
+              product_data: {
+                name: "Camiseta Imperial",
+                description: `Camiseta Imperial - talla ${size}`,
+                metadata: {
+                  product: "camiseta-imperial",
+                },
+              },
+            },
+          },
+        ],
+        success_url: `${publicSiteUrl}/gracias-compra?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${publicSiteUrl}/tienda#camiseta`,
+        metadata: {
+          purchaseType: "merchandise",
+          product: "camiseta-imperial",
+          size,
+        },
+        payment_intent_data: {
+          metadata: {
+            purchaseType: "merchandise",
+            product: "camiseta-imperial",
+            size,
+          },
+        },
+      });
+
+      return new Response(JSON.stringify({ url: session.url }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    const selectedPlan = getCheckoutPlan(body?.plan);
+
+    if (!selectedPlan) {
+      return new Response(JSON.stringify({ error: "Invalid plan or product" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
     const session = await stripe.checkout.sessions.create({
       mode: "subscription",
       customer_email: email,

@@ -1,0 +1,22 @@
+---
+import PageShell from "../layouts/PageShell.astro";
+---
+
+<PageShell
+  title="Pedido confirmado"
+  description="Tu pedido se ha registrado correctamente."
+  eyebrow="Confirmacion"
+  heading="Pedido confirmado"
+  summary="Stripe ha procesado el pago. Recibiras por correo la confirmacion y las novedades del envio."
+  narrow
+>
+  <section class="section content">
+    <div class="notice">
+      <p>
+        Conserva el correo de confirmacion como referencia del pedido. La direccion y la
+        talla elegidas quedan asociadas al pago en Stripe.
+      </p>
+      <a class="btn btn-primary" href="/tienda">Volver a la tienda</a>
+    </div>
+  </section>
+</PageShell>
