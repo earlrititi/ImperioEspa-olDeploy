@@ -7,9 +7,9 @@ export const NAV_ITEMS = [
     target: "_blank",
     rel: "noopener noreferrer",
   },
-  { href: withBase("/articulos"), label: "Papeles y Tratados" },
-  { href: withBase("/biblioteca"), label: "Libreria" },
-  { href: withBase("/foro"), label: "Mentidero" },
+  { href: withBase("/papeles-y-tratados"), label: "Papeles y Tratados" },
+  { href: withBase("/libreria"), label: "Libreria" },
+  { href: withBase("/mentidero"), label: "Mentidero" },
   { href: withBase("/tienda"), label: "Casa de Mercaderias" },
   { href: withBase("/contacto"), label: "Audiencia" },
 ];

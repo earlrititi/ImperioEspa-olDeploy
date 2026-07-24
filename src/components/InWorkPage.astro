@@ -1,0 +1,160 @@
+---
+import { PRELOADER_SESSION_KEY } from "../config/hero";
+import Layout from "../layouts/Layout.astro";
+import { withBase } from "../utils/basePath";
+
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props as Props;
+const preloaderSessionKey = PRELOADER_SESSION_KEY;
+const homeUrl = withBase("/");
+---
+
+<Layout
+  title={title}
+  description={`${title}, seccion en preparacion de Imperio Espanol.`}
+  noindex
+>
+  <main class="in-work-page">
+    <img
+      class="in-work-page__background"
+      src={withBase("/images/in-work.webp")}
+      alt="Esta seccion de la web esta a la espera de finalizar su publicacion. Por favor, se paciente; el Imperio no se construyo en un dia."
+      fetchpriority="high"
+      decoding="async"
+    />
+
+    <a
+      class="in-work-page__control in-work-page__control--crest"
+      href={homeUrl}
+      aria-label="Volver al inicio"
+      title="Volver al inicio"
+      data-in-work-home
+    >
+      <img
+        src={withBase("/images/logo-redv2.png")}
+        alt=""
+        aria-hidden="true"
+      />
+    </a>
+
+    <a
+      class="in-work-page__control in-work-page__control--back"
+      href={homeUrl}
+      aria-label="Volver al inicio"
+      title="Volver al inicio"
+      data-in-work-home
+    >
+      <span aria-hidden="true">&larr;</span>
+    </a>
+  </main>
+
+  <script is:inline define:vars={{ preloaderSessionKey }}>
+    document.querySelectorAll("[data-in-work-home]").forEach((link) => {
+      link.addEventListener("click", () => {
+        try {
+          window.sessionStorage.setItem(preloaderSessionKey, "1");
+        } catch {
+          // El enlace sigue funcionando si el navegador bloquea el storage.
+        }
+      });
+    });
+  </script>
+</Layout>
+
+<style>
+  :global(body:has(.in-work-page)) {
+    overflow: hidden;
+  }
+
+  :global(body:has(.in-work-page) #imperio-scrollbar) {
+    display: none;
+  }
+
+  .in-work-page {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    min-height: 100svh;
+    padding: 0;
+    overflow: hidden;
+    background: #ead8b8;
+    isolation: isolate;
+  }
+
+  .in-work-page__background {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  .in-work-page__control {
+    position: absolute;
+    left: max(clamp(1rem, 2.5vw, 2.5rem), env(safe-area-inset-left));
+    z-index: 2;
+    display: grid;
+    place-items: center;
+    width: clamp(3rem, 4.5vw, 4.75rem);
+    height: clamp(3rem, 4.5vw, 4.75rem);
+    color: #fff;
+    background: transparent;
+    border: 0;
+    text-decoration: none;
+    filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.88));
+    transition: opacity 160ms ease, transform 160ms ease;
+  }
+
+  .in-work-page__control:hover,
+  .in-work-page__control:focus-visible {
+    opacity: 0.78;
+    transform: translateX(-2px);
+  }
+
+  .in-work-page__control:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 5px;
+  }
+
+  .in-work-page__control--crest {
+    top: max(clamp(1rem, 2.5vw, 2.5rem), env(safe-area-inset-top));
+  }
+
+  .in-work-page__control--crest img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: brightness(0) invert(1);
+  }
+
+  .in-work-page__control--back {
+    bottom: max(clamp(1rem, 2.5vw, 2.5rem), env(safe-area-inset-bottom));
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: clamp(2.75rem, 5vw, 5rem);
+    font-weight: 300;
+    line-height: 1;
+  }
+
+  @media (max-width: 600px) {
+    .in-work-page__control {
+      width: 3.25rem;
+      height: 3.25rem;
+    }
+
+    .in-work-page__control--back {
+      font-size: 3.4rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .in-work-page__control {
+      transition: none;
+    }
+  }
+</style>
