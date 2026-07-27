@@ -21,15 +21,19 @@ const NEXT_BUTTON_STAR_PATH =
 
 const NEXT_BUTTON_STARS = [1, 2, 3, 4, 5, 6];
 const NEXT_BUTTON_LABEL = "OBT\u00c9N EL MANIFIESTO";
-const SERVICE_CARD_IMAGES = {
-  "01": "/images/card-1.webp",
-  "02": "/images/card-2.webp",
-  "03": "/images/card-3.webp",
-};
-const SERVICE_CARD_MORPH_IMAGES = {
-  "01": "/images/card-1-morph.webp",
-  "02": "/images/card-2-morph.webp",
-  "03": "/images/card-3-morph.webp",
+const SERVICE_CARD_MEDIA = {
+  "01": {
+    base: "card-1",
+    morph: "card-1-morph",
+  },
+  "02": {
+    base: "card-2",
+    morph: "card-2-morph",
+  },
+  "03": {
+    base: "card-3",
+    morph: "card-3-morph",
+  },
 };
 
 export default function Services() {
@@ -41,6 +45,52 @@ export default function Services() {
   const manifestModalRef = useRef(null);
   const manifestEmailInputRef = useRef(null);
   const isManifestFormReady = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(manifestEmail.trim());
+
+  useEffect(() => {
+    const cards = Array.from(
+      document.querySelectorAll("[data-service-card-morph]")
+    );
+    const cleanups = [];
+
+    cards.forEach((card) => {
+      let requested = false;
+
+      const requestMorph = () => {
+        if (requested) return;
+        requested = true;
+
+        card.querySelectorAll("[data-morph-srcset]").forEach((source) => {
+          const srcset = source.getAttribute("data-morph-srcset");
+          if (srcset) source.setAttribute("srcset", srcset);
+          source.removeAttribute("data-morph-srcset");
+        });
+
+        const image = card.querySelector("[data-morph-src]");
+        const src = image?.getAttribute("data-morph-src");
+        if (!image || !src) return;
+
+        image.fetchPriority = "high";
+        image.setAttribute("src", src);
+        image.removeAttribute("data-morph-src");
+        image
+          .decode()
+          .catch(() => undefined)
+          .finally(() => card.classList.add("service-cta-card--morph-ready"));
+      };
+
+      card.addEventListener("pointerenter", requestMorph, { once: true });
+      card.addEventListener("focusin", requestMorph, { once: true });
+      card.addEventListener("pointerdown", requestMorph, { once: true });
+
+      cleanups.push(() => {
+        card.removeEventListener("pointerenter", requestMorph);
+        card.removeEventListener("focusin", requestMorph);
+        card.removeEventListener("pointerdown", requestMorph);
+      });
+    });
+
+    return () => cleanups.forEach((cleanup) => cleanup());
+  }, []);
 
   useEffect(() => {
     if (!isManifestFormOpen) return;
@@ -281,8 +331,29 @@ export default function Services() {
 
           <div class="services-grid">
             {SERVICES_ITEMS.map((service) => {
-              const cardImageSrc = SERVICE_CARD_IMAGES[service.id];
-              const cardMorphSrc = SERVICE_CARD_MORPH_IMAGES[service.id];
+              const cardMedia = SERVICE_CARD_MEDIA[service.id];
+              const cardImageSrc = cardMedia
+                ? `/images/${cardMedia.base}.webp`
+                : null;
+              const cardImageAvifSrcSet = cardMedia
+                ? [768, 1440]
+                    .map(
+                      (width) =>
+                        `${withBase(`/images/${cardMedia.base}-${width}.avif`)} ${width}w`
+                    )
+                    .join(", ")
+                : null;
+              const cardMorphSrc = cardMedia
+                ? `/images/${cardMedia.morph}.webp`
+                : null;
+              const cardMorphAvifSrcSet = cardMedia
+                ? [768, 1440]
+                    .map(
+                      (width) =>
+                        `${withBase(`/images/${cardMedia.morph}-${width}.avif`)} ${width}w`
+                    )
+                    .join(", ")
+                : null;
               const serviceStatLabel = service.statLabel || service.id;
 
               if (service.highlights?.length) {
@@ -290,16 +361,51 @@ export default function Services() {
                   <article
                     class={`service-cta-card fade-in-up${cardImageSrc ? " service-cta-card--image-bg" : ""}${service.priceBadge ? " service-cta-card--has-price" : ""}`}
                     data-stat-counter-group
-                    style={cardImageSrc ? {
-                      "--service-card-image": `url("${withBase(cardImageSrc)}")`,
-                      "--service-card-morph-image": cardMorphSrc ? `url("${withBase(cardMorphSrc)}")` : undefined,
-                    } : undefined}
+                    data-service-card-morph={cardMorphSrc || undefined}
                     key={service.id}
                   >
+                    {cardImageSrc && (
+                      <span class="service-cta-card__media" aria-hidden="true">
+                        <picture class="service-cta-card__media-picture service-cta-card__media-picture--base">
+                          <source
+                            type="image/avif"
+                            srcSet={cardImageAvifSrcSet}
+                            sizes="(max-width: 767px) calc(100vw - 32px), min(1100px, calc(100vw - 64px))"
+                          />
+                          <img
+                            class="service-cta-card__media-image"
+                            src={withBase(cardImageSrc)}
+                            alt=""
+                            width="1672"
+                            height="941"
+                            loading="lazy"
+                            decoding="async"
+                            fetchpriority="low"
+                          />
+                        </picture>
+                        {cardMorphSrc && (
+                          <picture class="service-cta-card__media-picture service-cta-card__media-picture--morph">
+                            <source
+                              type="image/avif"
+                              data-morph-srcset={cardMorphAvifSrcSet}
+                              sizes="(max-width: 767px) calc(100vw - 32px), min(1100px, calc(100vw - 64px))"
+                            />
+                            <img
+                              class="service-cta-card__media-image"
+                              data-morph-src={withBase(cardMorphSrc)}
+                              alt=""
+                              width="1672"
+                              height="941"
+                              decoding="async"
+                              fetchpriority="low"
+                            />
+                          </picture>
+                        )}
+                      </span>
+                    )}
                     <span class="service-cta-card__stat-rail" aria-hidden="true"></span>
                     <span class="service-cta-card__event-bg" aria-hidden="true"></span>
                     <span class="service-cta-card__grid-pattern" aria-hidden="true"></span>
-                    {cardMorphSrc && <span class="service-cta-card__morph-bg" aria-hidden="true"></span>}
                     <span class="service-cta-card__bg" aria-hidden="true"></span>
                     {service.priceBadge && (
                       <span class="service-cta-card__price-flag">{service.priceBadge}</span>
@@ -466,14 +572,13 @@ export default function Services() {
             0 0 22px rgba(0, 0, 0, 0.08),
             0 0 0 1px hsl(var(--service-glow-hsl) / 0.12),
             inset 1px 1px 0 rgba(255, 255, 255, 0.54);
-          backdrop-filter: blur(16px);
-          -webkit-backdrop-filter: blur(16px);
+          content-visibility: auto;
+          contain-intrinsic-size: auto 220px;
           transition:
             transform 0.7s cubic-bezier(0.175, 0.885, 0.32, 2.2),
             min-height 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.2),
             border-color 0.3s ease,
-            box-shadow 0.7s cubic-bezier(0.175, 0.885, 0.32, 2.2),
-            background 0.7s cubic-bezier(0.175, 0.885, 0.32, 2.2);
+            box-shadow 0.7s cubic-bezier(0.175, 0.885, 0.32, 2.2);
         }
 
         .service-cta-card::before {
@@ -496,10 +601,62 @@ export default function Services() {
         .service-cta-card__stat-rail,
         .service-cta-card__bg,
         .service-cta-card__event-bg,
-        .service-cta-card__morph-bg,
         .service-cta-card__grid-pattern {
           position: absolute;
           pointer-events: none;
+        }
+
+        .service-cta-card__media {
+          position: absolute;
+          inset: 0;
+          z-index: 0;
+          overflow: hidden;
+          border-radius: inherit;
+          opacity: 0;
+          pointer-events: none;
+          transform: scale(1.018);
+          transition:
+            opacity 0.28s ease,
+            transform 0.72s cubic-bezier(0.175, 0.885, 0.32, 1.08);
+        }
+
+        .service-cta-card__media::after {
+          content: "";
+          position: absolute;
+          inset: 0;
+          z-index: 2;
+          background: linear-gradient(
+            180deg,
+            rgba(0, 0, 0, 0.08),
+            rgba(0, 0, 0, 0.5)
+          );
+        }
+
+        .service-cta-card__media-picture,
+        .service-cta-card__media-image {
+          position: absolute;
+          inset: 0;
+          display: block;
+          width: 100%;
+          height: 100%;
+        }
+
+        .service-cta-card__media-picture--base {
+          z-index: 0;
+        }
+
+        .service-cta-card__media-picture--morph {
+          z-index: 1;
+          opacity: 0;
+          transform: scale(1.025);
+          transition:
+            opacity 0.42s ease,
+            transform 0.72s cubic-bezier(0.175, 0.885, 0.32, 1.08);
+        }
+
+        .service-cta-card__media-image {
+          object-fit: cover;
+          object-position: center;
         }
 
         .service-cta-card__stat-rail {
@@ -532,7 +689,6 @@ export default function Services() {
           transform: scale(1);
           transform-origin: center;
           transition: transform 0.5s ease, opacity 0.3s ease;
-          will-change: transform;
         }
 
         .service-cta-card__grid-pattern {
@@ -547,23 +703,6 @@ export default function Services() {
           transition: opacity 0.3s ease;
         }
 
-        .service-cta-card__morph-bg {
-          inset: 0;
-          z-index: 0;
-          border-radius: inherit;
-          background:
-            linear-gradient(180deg, rgba(0, 0, 0, 0.04), rgba(0, 0, 0, 0.44)),
-            var(--service-card-morph-image) center / cover no-repeat;
-          opacity: 0;
-          transform: scale(1.045);
-          filter: saturate(1.05) contrast(1.03);
-          transition:
-            opacity 0.42s ease,
-            transform 0.72s cubic-bezier(0.175, 0.885, 0.32, 1.08),
-            filter 0.72s ease;
-          will-change: opacity, transform;
-        }
-
         .service-cta-card__bg {
           inset: 0;
           z-index: 1;
@@ -575,8 +714,6 @@ export default function Services() {
           outline: 0;
           overflow: hidden;
           opacity: 1;
-          backdrop-filter: blur(3px);
-          -webkit-backdrop-filter: blur(3px);
           filter: none;
           box-shadow: none;
           transform: none;
@@ -1053,9 +1190,7 @@ export default function Services() {
           --service-card-check-color: var(--color-white-pure);
           --service-button-text-color: hsl(var(--service-glow-hsl));
           color: var(--color-white-pure);
-          background:
-            linear-gradient(180deg, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.5)),
-            var(--service-card-image) center / cover no-repeat;
+          background: #161616;
         }
 
         .service-cta-card--image-bg .service-cta-card__grid-pattern {
@@ -1069,12 +1204,18 @@ export default function Services() {
           opacity: 0;
         }
 
-        .service-cta-card--image-bg:hover .service-cta-card__morph-bg,
-        .service-cta-card--image-bg:focus-within .service-cta-card__morph-bg {
+        .service-cta-card--image-bg:hover .service-cta-card__media,
+        .service-cta-card--image-bg:focus-within .service-cta-card__media {
           opacity: 1;
           transform: scale(1);
-          filter: saturate(1.08) contrast(1.05);
-          transition-delay: 1.3s;
+        }
+
+        .service-cta-card--image-bg.service-cta-card--morph-ready:hover
+          .service-cta-card__media-picture--morph,
+        .service-cta-card--image-bg.service-cta-card--morph-ready:focus-within
+          .service-cta-card__media-picture--morph {
+          opacity: 1;
+          transform: scale(1);
         }
 
         .service-cta-card--image-bg:hover .service-cta-card__number,
@@ -2130,6 +2271,8 @@ export default function Services() {
           .service-cta-card__stat-rail,
           .service-cta-card__bg,
           .service-cta-card__event-bg,
+          .service-cta-card__media,
+          .service-cta-card__media-picture--morph,
           .service-cta-card__grid-pattern {
             animation: none;
             transition: none;
