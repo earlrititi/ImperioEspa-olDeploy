@@ -78,13 +78,36 @@ export default function Services() {
           .finally(() => card.classList.add("service-cta-card--morph-ready"));
       };
 
-      card.addEventListener("pointerenter", requestMorph, { once: true });
-      card.addEventListener("focusin", requestMorph, { once: true });
-      card.addEventListener("pointerdown", requestMorph, { once: true });
+      const activateMorph = () => {
+        requestMorph();
+        card.classList.add("service-cta-card--morph-active");
+      };
+
+      const deactivateMorph = () => {
+        card.classList.remove("service-cta-card--morph-active");
+      };
+
+      const deactivateMorphOnFocusOut = (event) => {
+        if (!card.contains(event.relatedTarget)) {
+          deactivateMorph();
+        }
+      };
+
+      card.addEventListener("pointerenter", activateMorph);
+      card.addEventListener("pointerleave", deactivateMorph);
+      card.addEventListener("focusin", activateMorph);
+      card.addEventListener("focusout", deactivateMorphOnFocusOut);
+      card.addEventListener("pointerdown", requestMorph);
 
       cleanups.push(() => {
-        card.removeEventListener("pointerenter", requestMorph);
-        card.removeEventListener("focusin", requestMorph);
+        card.classList.remove(
+          "service-cta-card--morph-active",
+          "service-cta-card--morph-ready"
+        );
+        card.removeEventListener("pointerenter", activateMorph);
+        card.removeEventListener("pointerleave", deactivateMorph);
+        card.removeEventListener("focusin", activateMorph);
+        card.removeEventListener("focusout", deactivateMorphOnFocusOut);
         card.removeEventListener("pointerdown", requestMorph);
       });
     });
@@ -1210,12 +1233,9 @@ export default function Services() {
           transform: scale(1);
         }
 
-        .service-cta-card--image-bg.service-cta-card--morph-ready:hover
-          .service-cta-card__media-picture--morph,
-        .service-cta-card--image-bg.service-cta-card--morph-ready:focus-within
+        .service-cta-card--image-bg.service-cta-card--morph-ready.service-cta-card--morph-active
           .service-cta-card__media-picture--morph {
-          opacity: 1;
-          transform: scale(1);
+          animation: service-card-morph-cycle 1.72s ease forwards;
         }
 
         .service-cta-card--image-bg:hover .service-cta-card__number,
@@ -2139,6 +2159,19 @@ export default function Services() {
           }
         }
 
+        @keyframes service-card-morph-cycle {
+          0%,
+          75% {
+            opacity: 0;
+            transform: scale(1.025);
+          }
+
+          100% {
+            opacity: 1;
+            transform: scale(1);
+          }
+        }
+
         @keyframes services-next-ripple {
           0% {
             outline: 0em solid transparent;
@@ -2280,6 +2313,13 @@ export default function Services() {
 
           .service-cta-card:hover {
             transform: none;
+          }
+
+          .service-cta-card--image-bg.service-cta-card--morph-ready.service-cta-card--morph-active
+            .service-cta-card__media-picture--morph {
+            opacity: 1;
+            transform: none;
+            animation: none;
           }
         }
       `}</style>
