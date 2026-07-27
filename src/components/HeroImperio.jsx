@@ -399,6 +399,13 @@ export default function HeroImperio() {
           pointer-events: none;
         }
 
+        body.side-menu-open .hero-imperio__nav,
+        body.side-menu-open .hero-nav__overlay {
+          opacity: 0 !important;
+          visibility: hidden;
+          pointer-events: none !important;
+        }
+
         .hero-imperio--wordmark-ready .hero-imperio__wordmark {
           opacity: 1;
           transform: translateY(0);
@@ -620,6 +627,5 @@ export default function HeroImperio() {
     </>
   );
 }
-
 
 

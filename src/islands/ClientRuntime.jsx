@@ -26,6 +26,7 @@ export default function ClientRuntime() {
       ...elements,
       onMenuStateChange(isOpen) {
         document.body.style.overflow = isOpen ? "hidden" : "auto";
+        document.body.classList.toggle("side-menu-open", isOpen);
         if (!isOpen) {
           scrollbar.update();
         }
@@ -81,6 +82,7 @@ export default function ClientRuntime() {
 
     return () => {
       document.body.style.overflow = "auto";
+      document.body.classList.remove("side-menu-open");
       nav.stop();
       menu.cleanup();
       reveal.disconnect();
