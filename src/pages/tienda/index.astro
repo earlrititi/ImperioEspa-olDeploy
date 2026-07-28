@@ -559,7 +559,7 @@ import Layout from "../../layouts/Layout.astro";
   .product-shirt-scene__gate {
     z-index: 2;
     transform: translateY(var(--shirt-gate-offset, 0%));
-    transition: transform 1400ms cubic-bezier(0.22, 1, 0.36, 1);
+    transition: transform 1400ms linear;
     will-change: transform;
   }
 
@@ -579,7 +579,7 @@ import Layout from "../../layouts/Layout.astro";
 
   .product-card--shirt:hover,
   .product-card--shirt:focus-within {
-    --shirt-gate-offset: -48%;
+    --shirt-gate-offset: -36%;
   }
 
   .product-card--shirt:hover .product-shirt-scene__gate,
