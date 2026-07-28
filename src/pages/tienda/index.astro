@@ -81,6 +81,14 @@ import Layout from "../../layouts/Layout.astro";
                 />
               </div>
             </div>
+            <div class="product-shirt-reveal" aria-hidden="true">
+              <img
+                src="/images/museo-camiseta-front.webp"
+                alt=""
+                width="1400"
+                height="1150"
+              />
+            </div>
           </div>
           <div class="product-purchase">
             <p class="product-price">27,99 EUR</p>
@@ -478,6 +486,8 @@ import Layout from "../../layouts/Layout.astro";
   }
 
   .product-visual--shirt {
+    --shirt-gate-duration: 8000ms;
+    --shirt-gate-delay: 1000ms;
     position: relative;
     background: #efefeb;
   }
@@ -558,8 +568,49 @@ import Layout from "../../layouts/Layout.astro";
 
   .product-card--shirt:hover .product-shirt-scene__gate,
   .product-card--shirt:focus-within .product-shirt-scene__gate {
-    transition-duration: 8000ms;
-    transition-delay: 1000ms;
+    transition-duration: var(--shirt-gate-duration);
+    transition-delay: var(--shirt-gate-delay);
+  }
+
+  .product-shirt-reveal {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    overflow: hidden;
+    background: #17120d;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 500ms ease;
+  }
+
+  .product-shirt-reveal img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    object-fit: cover;
+    object-position: center;
+    transform: scale(1);
+    transition: transform 700ms ease;
+    will-change: transform;
+  }
+
+  .product-card--shirt:hover .product-shirt-reveal,
+  .product-card--shirt:focus-within .product-shirt-reveal {
+    opacity: 1;
+    transition-duration: 900ms;
+    transition-delay: calc(
+      var(--shirt-gate-delay) + var(--shirt-gate-duration)
+    );
+  }
+
+  .product-card--shirt:hover .product-shirt-reveal img,
+  .product-card--shirt:focus-within .product-shirt-reveal img {
+    transform: scale(1.22);
+    transition-duration: 2600ms;
+    transition-delay: calc(
+      var(--shirt-gate-delay) + var(--shirt-gate-duration)
+    );
   }
 
   .product-visual--tier {
@@ -798,7 +849,9 @@ import Layout from "../../layouts/Layout.astro";
     .store-account,
     .product-shirt-placeholder,
     .product-shirt-scene,
-    .product-shirt-scene__gate {
+    .product-shirt-scene__gate,
+    .product-shirt-reveal,
+    .product-shirt-reveal img {
       transition: none;
     }
   }
