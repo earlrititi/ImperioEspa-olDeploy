@@ -44,12 +44,16 @@ const preloaderSessionKey = PRELOADER_SESSION_KEY;
 <style>
   .global-home-mark {
     position: fixed;
-    top: max(clamp(1rem, 2.25vw, 2rem), env(safe-area-inset-top));
-    left: max(clamp(1rem, 2.25vw, 2rem), env(safe-area-inset-left));
+    top: max(
+      calc(var(--space-unit) * 4 - 1.475rem),
+      env(safe-area-inset-top)
+    );
+    left: max(4px, env(safe-area-inset-left));
     z-index: 175;
-    display: grid;
-    place-items: center;
-    width: clamp(3rem, 4.4vw, 4.5rem);
+    display: inline-flex;
+    align-items: center;
+    width: auto;
+    height: 2.95rem;
     aspect-ratio: 602 / 477;
     color: inherit;
     background: transparent;
@@ -89,9 +93,14 @@ const preloaderSessionKey = PRELOADER_SESSION_KEY;
     filter: brightness(0) invert(1);
   }
 
-  @media (max-width: 600px) {
+  @media (max-width: 767px) {
     .global-home-mark {
-      width: 3.25rem;
+      top: max(
+        clamp(0.475rem, calc(1.75rem - 5vw), 0.7rem),
+        env(safe-area-inset-top)
+      );
+      width: auto;
+      height: clamp(2.1rem, 10vw, 2.55rem);
     }
   }
 

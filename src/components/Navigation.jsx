@@ -124,7 +124,7 @@ export default function Navigation() {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          padding-inline: var(--home-nav-logo-x, 16px);
+          padding-inline: var(--home-nav-logo-x, 4px);
           padding-block: var(--space-1);
         }
 
