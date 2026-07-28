@@ -80,14 +80,14 @@ import Layout from "../../layouts/Layout.astro";
                   height="800"
                 />
               </div>
-            </div>
-            <div class="product-shirt-reveal" aria-hidden="true">
-              <img
-                src="/images/museo-camiseta-front.webp"
-                alt=""
-                width="1400"
-                height="1150"
-              />
+              <div class="product-shirt-reveal" aria-hidden="true">
+                <img
+                  src="/images/museo-camiseta-front.webp"
+                  alt=""
+                  width="1400"
+                  height="1150"
+                />
+              </div>
             </div>
           </div>
           <div class="product-purchase">
@@ -519,6 +519,7 @@ import Layout from "../../layouts/Layout.astro";
     position: absolute;
     top: 50%;
     left: 50%;
+    z-index: 2;
     width: 100%;
     aspect-ratio: 3 / 4;
     transform: translate(-50%, -50%);
@@ -575,12 +576,14 @@ import Layout from "../../layouts/Layout.astro";
   .product-shirt-reveal {
     position: absolute;
     inset: 0;
-    z-index: 3;
+    z-index: 1;
     overflow: hidden;
     background: #17120d;
-    opacity: 0;
+    clip-path: inset(47.3% 32.7% 22.1% 32.8%);
     pointer-events: none;
-    transition: opacity 500ms ease;
+    transition:
+      clip-path 500ms ease,
+      z-index 0s linear;
   }
 
   .product-shirt-reveal img {
@@ -597,11 +600,12 @@ import Layout from "../../layouts/Layout.astro";
 
   .product-card--shirt:hover .product-shirt-reveal,
   .product-card--shirt:focus-within .product-shirt-reveal {
-    opacity: 1;
-    transition-duration: 900ms;
-    transition-delay: calc(
-      var(--shirt-gate-delay) + var(--shirt-gate-duration)
-    );
+    z-index: 3;
+    clip-path: inset(0);
+    transition-duration: 2600ms, 0s;
+    transition-delay:
+      calc(var(--shirt-gate-delay) + var(--shirt-gate-duration)),
+      calc(var(--shirt-gate-delay) + var(--shirt-gate-duration));
   }
 
   .product-card--shirt:hover .product-shirt-reveal img,
