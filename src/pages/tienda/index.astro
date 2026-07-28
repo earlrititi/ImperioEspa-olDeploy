@@ -9,9 +9,7 @@ import Layout from "../../layouts/Layout.astro";
   <main class="storefront">
     <section class="store-catalog" id="catalogo">
       <header class="store-header">
-        <a class="store-mark" href="/" aria-label="Volver al inicio" title="Volver al inicio">
-          <img src="/images/logo-redv2.png" alt="" width="64" height="54" />
-        </a>
+        <span class="store-mark-spacer" aria-hidden="true"></span>
 
         <nav class="store-nav" aria-label="Navegacion de la tienda">
           <a href="#mercancias">Mercancias</a>
@@ -312,15 +310,9 @@ import Layout from "../../layouts/Layout.astro";
     border-bottom: 1px solid #2b2b2b;
   }
 
-  .store-mark {
+  .store-mark-spacer {
     width: 58px;
     justify-self: start;
-  }
-
-  .store-mark img {
-    width: 100%;
-    height: auto;
-    filter: grayscale(1) brightness(0) invert(1);
   }
 
   .store-nav {
@@ -659,7 +651,7 @@ import Layout from "../../layouts/Layout.astro";
       min-height: 72px;
     }
 
-    .store-mark {
+    .store-mark-spacer {
       width: 48px;
     }
 

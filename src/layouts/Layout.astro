@@ -1,6 +1,7 @@
 ---
 import "../styles/global.css";
 import ClientRuntime from "../islands/ClientRuntime.jsx";
+import GlobalHomeMark from "../components/GlobalHomeMark.astro";
 import { ANALYTICS } from "../config/analytics";
 import { SITE } from "../config/site";
 import { withBase } from "../utils/basePath";
@@ -89,6 +90,7 @@ const ogImageUrl = new URL(withBase(ogImage), deploymentOrigin).toString();
         ></iframe>
       </noscript>
     )}
+    <GlobalHomeMark />
     <slot />
     <div id="imperio-scrollbar" aria-hidden="true">
       <div id="imperio-scrollbar-track">

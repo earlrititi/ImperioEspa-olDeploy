@@ -27,20 +27,6 @@ const homeUrl = withBase("/");
     />
 
     <a
-      class="in-work-page__control in-work-page__control--crest"
-      href={homeUrl}
-      aria-label="Volver al inicio"
-      title="Volver al inicio"
-      data-in-work-home
-    >
-      <img
-        src={withBase("/images/logo-redv2.png")}
-        alt=""
-        aria-hidden="true"
-      />
-    </a>
-
-    <a
       class="in-work-page__control in-work-page__control--back"
       href={homeUrl}
       aria-label="Volver al inicio"
@@ -120,17 +106,6 @@ const homeUrl = withBase("/");
   .in-work-page__control:focus-visible {
     outline: 2px solid #fff;
     outline-offset: 5px;
-  }
-
-  .in-work-page__control--crest {
-    top: max(clamp(1rem, 2.5vw, 2.5rem), env(safe-area-inset-top));
-  }
-
-  .in-work-page__control--crest img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    filter: brightness(0) invert(1);
   }
 
   .in-work-page__control--back {

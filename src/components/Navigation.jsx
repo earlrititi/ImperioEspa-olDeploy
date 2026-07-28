@@ -30,6 +30,7 @@ export default function Navigation() {
             href={withBase("/")}
             aria-label="Ir al inicio"
             class="main-nav__brand text-2xl font-bold tracking-tight hover:text-[var(--color-red-accent)] transition-colors"
+            data-return-to-hero
           >
             <img
               src={withBase("/images/logo-redv2.png")}

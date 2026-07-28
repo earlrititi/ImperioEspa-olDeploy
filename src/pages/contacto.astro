@@ -20,12 +20,7 @@ const email = "hola@imperioes.com";
     <div class="contact-grain" aria-hidden="true"></div>
     <div class="contact-illustration" aria-hidden="true"></div>
 
-    <header class="contact-header" aria-label="Imperio Espanol">
-      <a class="contact-brand" href={withBase("/")}>
-        <span>IMPERIO</span>
-        <strong>ESPANOL</strong>
-      </a>
-    </header>
+    <div class="contact-header-spacer" aria-hidden="true"></div>
 
     <section class="contact-layout" aria-labelledby="contact-title">
       <div class="contact-title-wrap">
@@ -118,7 +113,6 @@ const email = "hola@imperioes.com";
   }
 
   :global(body.contact-nav-ready #main-nav .main-nav__fx),
-  :global(body.contact-nav-ready #main-nav .main-nav__brand),
   :global(body.contact-nav-ready #main-nav .main-nav__links-wrap),
   :global(body.contact-nav-ready #main-nav .main-nav__floating-links-layer) {
     opacity: 0;
@@ -129,6 +123,10 @@ const email = "hola@imperioes.com";
   :global(body.contact-nav-ready #main-nav .menu-button) {
     color: #ff341f;
     mix-blend-mode: normal;
+  }
+
+  :global(body.contact-nav-ready #main-nav .main-nav__logo) {
+    filter: brightness(0) invert(1);
   }
 
   :global(body.contact-nav-ready #main-nav.main-nav--menu-revealed .menu-button) {
@@ -181,39 +179,14 @@ const email = "hola@imperioes.com";
     mix-blend-mode: screen;
   }
 
-  .contact-header,
+  .contact-header-spacer,
   .contact-layout {
     position: relative;
     z-index: 2;
   }
 
-  .contact-header {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
+  .contact-header-spacer {
     min-height: clamp(4.5rem, 8vw, 6.2rem);
-  }
-
-  .contact-brand {
-    display: inline-grid;
-    gap: 0.05rem;
-    width: fit-content;
-    color: #fff;
-    font-family: var(--font-display);
-    font-weight: 900;
-    letter-spacing: 0;
-    line-height: 0.86;
-    text-decoration: none;
-  }
-
-  .contact-brand span {
-    font-size: clamp(0.58rem, 1vw, 0.76rem);
-    font-weight: 700;
-  }
-
-  .contact-brand strong {
-    font-size: clamp(1.38rem, 2.4vw, 2.05rem);
-    font-weight: 900;
   }
 
   .contact-layout {
@@ -449,9 +422,8 @@ const email = "hola@imperioes.com";
       padding: 1rem 1rem 2.4rem;
     }
 
-    .contact-header {
+    .contact-header-spacer {
       min-height: 4.75rem;
-      padding-right: 3.35rem;
     }
 
     .contact-layout {
