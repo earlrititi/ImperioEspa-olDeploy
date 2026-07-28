@@ -491,6 +491,7 @@ import Layout from "../../layouts/Layout.astro";
   .product-visual--shirt {
     --shirt-gate-duration: 8000ms;
     --shirt-gate-delay: 1200ms;
+    --shirt-zoom-duration: 3200ms;
     position: relative;
     background: #efefeb;
   }
@@ -525,7 +526,10 @@ import Layout from "../../layouts/Layout.astro";
     z-index: 2;
     width: 100%;
     aspect-ratio: 3 / 4;
+    transform-origin: 50% 62%;
     transform: translate(-50%, -50%);
+    transition: transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: transform;
   }
 
   .product-shirt-scene__gate,
@@ -540,7 +544,7 @@ import Layout from "../../layouts/Layout.astro";
   .product-shirt-scene__gate-track {
     position: absolute;
     z-index: 1;
-    top: 50%;
+    top: 49%;
     left: 28.333%;
     width: 43.333%;
     aspect-ratio: 260 / 288;
@@ -599,9 +603,11 @@ import Layout from "../../layouts/Layout.astro";
     z-index: 1;
     overflow: hidden;
     background: #17120d;
+    opacity: 0;
     clip-path: inset(47.3% 32.7% 22.1% 32.8%);
     pointer-events: none;
     transition:
+      opacity 180ms linear,
       clip-path 500ms ease,
       z-index 0s linear;
   }
@@ -613,25 +619,36 @@ import Layout from "../../layouts/Layout.astro";
     max-width: none;
     object-fit: cover;
     object-position: center;
-    transform: scale(1);
+    transform: scale(0.5);
     transition: transform 700ms ease;
     will-change: transform;
+  }
+
+  .product-card--shirt:hover .product-shirt-scene__frame,
+  .product-card--shirt:focus-within .product-shirt-scene__frame {
+    transform: translate(-50%, -50%) scale(2.85);
+    transition-duration: var(--shirt-zoom-duration);
+    transition-delay: calc(
+      var(--shirt-gate-delay) + var(--shirt-gate-duration)
+    );
   }
 
   .product-card--shirt:hover .product-shirt-reveal,
   .product-card--shirt:focus-within .product-shirt-reveal {
     z-index: 3;
+    opacity: 1;
     clip-path: inset(0);
-    transition-duration: 2600ms, 0s;
+    transition-duration: 180ms, var(--shirt-zoom-duration), 0s;
     transition-delay:
+      calc(var(--shirt-gate-delay) + var(--shirt-gate-duration)),
       calc(var(--shirt-gate-delay) + var(--shirt-gate-duration)),
       calc(var(--shirt-gate-delay) + var(--shirt-gate-duration));
   }
 
   .product-card--shirt:hover .product-shirt-reveal img,
   .product-card--shirt:focus-within .product-shirt-reveal img {
-    transform: scale(1.22);
-    transition-duration: 2600ms;
+    transform: scale(1);
+    transition-duration: var(--shirt-zoom-duration);
     transition-delay: calc(
       var(--shirt-gate-delay) + var(--shirt-gate-duration)
     );
@@ -873,6 +890,7 @@ import Layout from "../../layouts/Layout.astro";
     .store-account,
     .product-shirt-placeholder,
     .product-shirt-scene,
+    .product-shirt-scene__frame,
     .product-shirt-scene__gate-track,
     .product-shirt-reveal,
     .product-shirt-reveal img {
