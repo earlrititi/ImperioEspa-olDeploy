@@ -190,13 +190,7 @@ export default function Navigation() {
           width: auto;
           height: 2.7rem;
           opacity: var(--home-nav-logo-opacity, 1);
-          filter: none;
-          transition: opacity 0.3s ease, transform 0.3s ease, filter 0.18s linear;
-        }
-
-        #main-nav.main-nav--hamburger-dark .main-nav__logo,
-        #main-nav.main-nav--menu-revealed .main-nav__logo {
-          filter: brightness(0) invert(1);
+          transition: opacity 0.3s ease, transform 0.3s ease;
         }
 
         .main-nav__floating-links-layer {
