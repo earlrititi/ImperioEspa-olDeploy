@@ -65,16 +65,20 @@ import Layout from "../../layouts/Layout.astro";
             </div>
             <div class="product-shirt-scene" aria-hidden="true">
               <div class="product-shirt-scene__frame">
-                <div class="product-shirt-scene__gate-track">
-                  <span class="product-shirt-scene__gate-cover"></span>
-                  <img
-                    class="product-shirt-scene__gate"
-                    src="/images/verja.webp"
-                    alt=""
-                    width="260"
-                    height="288"
-                  />
-                </div>
+                <img
+                  class="product-shirt-scene__start"
+                  src="/images/camiseta-escaparate-start.webp"
+                  alt=""
+                  width="600"
+                  height="800"
+                />
+                <img
+                  class="product-shirt-scene__gate"
+                  src="/images/verja.webp"
+                  alt=""
+                  width="600"
+                  height="800"
+                />
                 <img
                   class="product-shirt-scene__facade"
                   src="/images/escaparate.webp"
@@ -83,7 +87,7 @@ import Layout from "../../layouts/Layout.astro";
                   height="800"
                 />
               </div>
-              <div class="product-shirt-reveal" aria-hidden="true">
+              <div class="product-shirt-final" aria-hidden="true">
                 <img
                   src="/images/museo-camiseta-front.webp"
                   alt=""
@@ -492,6 +496,9 @@ import Layout from "../../layouts/Layout.astro";
     --shirt-gate-duration: 8000ms;
     --shirt-gate-delay: 1200ms;
     --shirt-zoom-duration: 3200ms;
+    --shirt-zoom-gap: 600ms;
+    --shirt-final-lead: 1400ms;
+    --shirt-final-duration: 1800ms;
     position: relative;
     background: #efefeb;
   }
@@ -532,48 +539,32 @@ import Layout from "../../layouts/Layout.astro";
     will-change: transform;
   }
 
+  .product-shirt-scene__start,
   .product-shirt-scene__gate,
   .product-shirt-scene__facade {
     position: absolute;
+    inset: 0;
     display: block;
+    width: 100%;
+    height: 100%;
     max-width: none;
     user-select: none;
     pointer-events: none;
   }
 
-  .product-shirt-scene__gate-track {
-    position: absolute;
+  .product-shirt-scene__start {
     z-index: 1;
-    top: 49%;
-    left: 28.333%;
-    width: 43.333%;
-    aspect-ratio: 260 / 288;
+  }
+
+  .product-shirt-scene__gate {
+    z-index: 2;
     transform: translateY(var(--shirt-gate-offset, 0%));
     transition: transform 1400ms cubic-bezier(0.22, 1, 0.36, 1);
     will-change: transform;
   }
 
-  .product-shirt-scene__gate-cover {
-    position: absolute;
-    right: 0;
-    bottom: calc(100% - 6px);
-    left: 0;
-    height: 50%;
-    background: #050505;
-    pointer-events: none;
-  }
-
-  .product-shirt-scene__gate {
-    inset: 0;
-    width: 100%;
-    height: 100%;
-  }
-
   .product-shirt-scene__facade {
-    z-index: 2;
-    inset: 0;
-    width: 100%;
-    height: 100%;
+    z-index: 3;
   }
 
   .product-card--shirt:hover .product-shirt-placeholder,
@@ -588,38 +579,34 @@ import Layout from "../../layouts/Layout.astro";
 
   .product-card--shirt:hover,
   .product-card--shirt:focus-within {
-    --shirt-gate-offset: -130%;
+    --shirt-gate-offset: -48%;
   }
 
-  .product-card--shirt:hover .product-shirt-scene__gate-track,
-  .product-card--shirt:focus-within .product-shirt-scene__gate-track {
+  .product-card--shirt:hover .product-shirt-scene__gate,
+  .product-card--shirt:focus-within .product-shirt-scene__gate {
     transition-duration: var(--shirt-gate-duration);
     transition-delay: var(--shirt-gate-delay);
   }
 
-  .product-shirt-reveal {
+  .product-shirt-final {
     position: absolute;
     inset: 0;
-    z-index: 1;
+    z-index: 3;
     overflow: hidden;
     background: #17120d;
     opacity: 0;
-    clip-path: inset(47.3% 32.7% 22.1% 32.8%);
     pointer-events: none;
-    transition:
-      opacity 180ms linear,
-      clip-path 500ms ease,
-      z-index 0s linear;
+    transition: opacity 500ms ease;
   }
 
-  .product-shirt-reveal img {
+  .product-shirt-final img {
     display: block;
     width: 100%;
     height: 100%;
     max-width: none;
     object-fit: cover;
     object-position: center;
-    transform: scale(0.5);
+    transform: scale(0.82);
     transition: transform 700ms ease;
     will-change: transform;
   }
@@ -629,28 +616,28 @@ import Layout from "../../layouts/Layout.astro";
     transform: translate(-50%, -50%) scale(2.85);
     transition-duration: var(--shirt-zoom-duration);
     transition-delay: calc(
-      var(--shirt-gate-delay) + var(--shirt-gate-duration)
+      var(--shirt-gate-delay) + var(--shirt-gate-duration) +
+        var(--shirt-zoom-gap)
     );
   }
 
-  .product-card--shirt:hover .product-shirt-reveal,
-  .product-card--shirt:focus-within .product-shirt-reveal {
-    z-index: 3;
+  .product-card--shirt:hover .product-shirt-final,
+  .product-card--shirt:focus-within .product-shirt-final {
     opacity: 1;
-    clip-path: inset(0);
-    transition-duration: 180ms, var(--shirt-zoom-duration), 0s;
-    transition-delay:
-      calc(var(--shirt-gate-delay) + var(--shirt-gate-duration)),
-      calc(var(--shirt-gate-delay) + var(--shirt-gate-duration)),
-      calc(var(--shirt-gate-delay) + var(--shirt-gate-duration));
+    transition-duration: var(--shirt-final-duration);
+    transition-delay: calc(
+      var(--shirt-gate-delay) + var(--shirt-gate-duration) +
+        var(--shirt-zoom-gap) + var(--shirt-final-lead)
+    );
   }
 
-  .product-card--shirt:hover .product-shirt-reveal img,
-  .product-card--shirt:focus-within .product-shirt-reveal img {
+  .product-card--shirt:hover .product-shirt-final img,
+  .product-card--shirt:focus-within .product-shirt-final img {
     transform: scale(1);
-    transition-duration: var(--shirt-zoom-duration);
+    transition-duration: var(--shirt-final-duration);
     transition-delay: calc(
-      var(--shirt-gate-delay) + var(--shirt-gate-duration)
+      var(--shirt-gate-delay) + var(--shirt-gate-duration) +
+        var(--shirt-zoom-gap) + var(--shirt-final-lead)
     );
   }
 
@@ -891,9 +878,9 @@ import Layout from "../../layouts/Layout.astro";
     .product-shirt-placeholder,
     .product-shirt-scene,
     .product-shirt-scene__frame,
-    .product-shirt-scene__gate-track,
-    .product-shirt-reveal,
-    .product-shirt-reveal img {
+    .product-shirt-scene__gate,
+    .product-shirt-final,
+    .product-shirt-final img {
       transition: none;
     }
   }
