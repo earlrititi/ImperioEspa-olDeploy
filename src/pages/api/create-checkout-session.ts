@@ -69,7 +69,7 @@ export const POST: APIRoute = async ({ request }) => {
             quantity: 1,
             price_data: {
               currency: "eur",
-              unit_amount: 2999,
+              unit_amount: 2799,
               product_data: {
                 name: "Camiseta Imperial",
                 description: `Camiseta Imperial - talla ${size}`,
