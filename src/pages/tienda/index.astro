@@ -556,6 +556,12 @@ import Layout from "../../layouts/Layout.astro";
     --shirt-gate-offset: -130%;
   }
 
+  .product-card--shirt:hover .product-shirt-scene__gate,
+  .product-card--shirt:focus-within .product-shirt-scene__gate {
+    transition-duration: 1800ms;
+    transition-delay: 350ms;
+  }
+
   .product-visual--tier {
     display: grid;
     align-content: space-between;
