@@ -490,7 +490,7 @@ import Layout from "../../layouts/Layout.astro";
 
   .product-visual--shirt {
     --shirt-gate-duration: 8000ms;
-    --shirt-gate-delay: 1000ms;
+    --shirt-gate-delay: 1200ms;
     position: relative;
     background: #efefeb;
   }
@@ -552,7 +552,7 @@ import Layout from "../../layouts/Layout.astro";
   .product-shirt-scene__gate-cover {
     position: absolute;
     right: 0;
-    bottom: 100%;
+    bottom: calc(100% - 6px);
     left: 0;
     height: 50%;
     background: #050505;
