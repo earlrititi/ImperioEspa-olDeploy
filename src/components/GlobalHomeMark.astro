@@ -83,13 +83,11 @@ const preloaderSessionKey = PRELOADER_SESSION_KEY;
     display: none;
   }
 
-  :global(body:has(.in-work-page) .global-home-mark),
-  :global(body:has(.storefront) .global-home-mark) {
+  :global(body:has(.in-work-page) .global-home-mark) {
     filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.88));
   }
 
-  :global(body:has(.in-work-page) .global-home-mark__image),
-  :global(body:has(.storefront) .global-home-mark__image) {
+  :global(body:has(.in-work-page) .global-home-mark__image) {
     filter: brightness(0) invert(1);
   }
 
