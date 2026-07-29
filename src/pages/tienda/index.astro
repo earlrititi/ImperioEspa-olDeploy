@@ -694,8 +694,19 @@ import Layout from "../../layouts/Layout.astro";
   }
 
   .product-shirt-gallery-next span {
+    display: block;
     font-size: 1.4rem;
     line-height: 1;
+    transition: transform 180ms ease;
+  }
+
+  .product-shirt-final.is-showing-back .product-shirt-gallery-next {
+    right: auto;
+    left: clamp(0.65rem, 2vw, 1.15rem);
+  }
+
+  .product-shirt-final.is-showing-back .product-shirt-gallery-next span {
+    transform: rotate(180deg);
   }
 
   .product-shirt-gallery-next:hover,
