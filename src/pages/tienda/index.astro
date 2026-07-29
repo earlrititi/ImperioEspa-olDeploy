@@ -53,13 +53,22 @@ import Layout from "../../layouts/Layout.astro";
           class="product-card product-card--shirt"
           data-category="indumentaria"
           data-search="camiseta imperial indumentaria ropa"
+          data-shirt-card
           id="camiseta"
         >
           <div class="product-meta">
             <span>Indumentaria</span>
             <strong>CAMISETA IMPERIAL</strong>
           </div>
-          <div class="product-visual product-visual--shirt">
+          <div
+            class="product-visual product-visual--shirt"
+            role="button"
+            tabindex="0"
+            aria-haspopup="dialog"
+            aria-controls="camiseta-imperial-detalle"
+            aria-label="Ampliar Camiseta Imperial"
+            data-shirt-detail-open
+          >
             <div class="product-shirt-placeholder" aria-hidden="true">
               <img src="/images/logo-redv2.png" alt="" width="180" height="153" />
             </div>
@@ -233,9 +242,105 @@ import Layout from "../../layouts/Layout.astro";
       </div>
     </section>
   </main>
+
+  <dialog
+    class="shirt-detail"
+    id="camiseta-imperial-detalle"
+    aria-labelledby="camiseta-imperial-detalle-titulo"
+    data-shirt-detail
+  >
+    <div class="shirt-detail__shell">
+      <header class="shirt-detail__header">
+        <div>
+          <span>Indumentaria</span>
+          <h2 id="camiseta-imperial-detalle-titulo">CAMISETA IMPERIAL</h2>
+        </div>
+
+        <div class="shirt-detail__tools" aria-label="Controles de imagen">
+          <button
+            type="button"
+            aria-label="Alejar imagen"
+            title="Alejar imagen"
+            data-shirt-zoom-out
+          >
+            <i data-lucide="zoom-out" aria-hidden="true"></i>
+          </button>
+          <button
+            type="button"
+            aria-label="Ampliar imagen"
+            title="Ampliar imagen"
+            data-shirt-zoom-in
+          >
+            <i data-lucide="zoom-in" aria-hidden="true"></i>
+          </button>
+          <button
+            type="button"
+            aria-label="Cerrar vista ampliada"
+            title="Cerrar"
+            data-shirt-detail-close
+          >
+            <i data-lucide="x" aria-hidden="true"></i>
+          </button>
+        </div>
+      </header>
+
+      <div class="shirt-detail__stage">
+        <div class="shirt-detail__media" data-shirt-detail-media>
+          <img
+            class="shirt-detail__image shirt-detail__image--front"
+            src="/images/camiseta-imperio-frontal.webp"
+            alt="Camiseta Imperial vista por delante"
+            width="944"
+            height="1181"
+            decoding="async"
+          />
+          <img
+            class="shirt-detail__image shirt-detail__image--back"
+            src="/images/camiseta-imperio-atras.webp"
+            alt="Camiseta Imperial vista por detras"
+            width="1077"
+            height="1211"
+            decoding="async"
+          />
+        </div>
+
+        <button
+          class="shirt-detail__arrow"
+          type="button"
+          aria-label="Mostrar parte trasera de la camiseta"
+          aria-pressed="false"
+          data-shirt-detail-toggle
+        >
+          <i data-lucide="chevron-right" aria-hidden="true"></i>
+        </button>
+      </div>
+
+      <footer class="shirt-detail__footer">
+        <span data-shirt-detail-side>Frontal</span>
+        <span data-shirt-zoom-value>100%</span>
+      </footer>
+    </div>
+  </dialog>
 </Layout>
 
 <script>
+  import {
+    ChevronRight,
+    X,
+    ZoomIn,
+    ZoomOut,
+    createIcons,
+  } from "lucide";
+
+  createIcons({
+    icons: {
+      ChevronRight,
+      X,
+      ZoomIn,
+      ZoomOut,
+    },
+  });
+
   const filterButtons = Array.from(document.querySelectorAll("[data-filter]"));
   const productCards = Array.from(document.querySelectorAll("[data-category]"));
   const searchInput = document.querySelector("[data-product-search]");
@@ -348,11 +453,123 @@ import Layout from "../../layouts/Layout.astro";
       );
     });
   });
+
+  const shirtCard = document.querySelector("[data-shirt-card]");
+  const shirtDetailOpen = document.querySelector("[data-shirt-detail-open]");
+  const shirtDetail = document.querySelector("[data-shirt-detail]");
+  const shirtDetailMedia = document.querySelector("[data-shirt-detail-media]");
+  const shirtDetailToggle = document.querySelector("[data-shirt-detail-toggle]");
+  const shirtDetailClose = document.querySelector("[data-shirt-detail-close]");
+  const shirtZoomIn = document.querySelector("[data-shirt-zoom-in]");
+  const shirtZoomOut = document.querySelector("[data-shirt-zoom-out]");
+  const shirtDetailSide = document.querySelector("[data-shirt-detail-side]");
+  const shirtZoomValue = document.querySelector("[data-shirt-zoom-value]");
+  const shirtZoomLevels = [1, 1.25, 1.5, 1.75, 2];
+  let shirtZoomIndex = 0;
+  let shirtDetailShowingBack = false;
+
+  function updateShirtDetail() {
+    if (!(shirtDetail instanceof HTMLDialogElement)) return;
+
+    const zoom = shirtZoomLevels[shirtZoomIndex];
+    shirtDetail.classList.toggle("is-showing-back", shirtDetailShowingBack);
+
+    if (shirtDetailMedia instanceof HTMLElement) {
+      shirtDetailMedia.style.setProperty("--shirt-detail-scale", String(zoom));
+    }
+
+    if (shirtDetailToggle instanceof HTMLButtonElement) {
+      shirtDetailToggle.setAttribute("aria-pressed", String(shirtDetailShowingBack));
+      shirtDetailToggle.setAttribute(
+        "aria-label",
+        shirtDetailShowingBack
+          ? "Mostrar parte delantera de la camiseta"
+          : "Mostrar parte trasera de la camiseta"
+      );
+    }
+
+    if (shirtZoomOut instanceof HTMLButtonElement) {
+      shirtZoomOut.disabled = shirtZoomIndex === 0;
+    }
+
+    if (shirtZoomIn instanceof HTMLButtonElement) {
+      shirtZoomIn.disabled = shirtZoomIndex === shirtZoomLevels.length - 1;
+    }
+
+    if (shirtDetailSide) {
+      shirtDetailSide.textContent = shirtDetailShowingBack ? "Trasera" : "Frontal";
+    }
+
+    if (shirtZoomValue) {
+      shirtZoomValue.textContent = `${Math.round(zoom * 100)}%`;
+    }
+  }
+
+  function openShirtDetail() {
+    if (!(shirtDetail instanceof HTMLDialogElement) || shirtDetail.open) return;
+
+    const cardGallery = shirtCard?.querySelector("[data-shirt-gallery]");
+    shirtDetailShowingBack =
+      cardGallery instanceof HTMLElement &&
+      cardGallery.classList.contains("is-showing-back");
+    shirtZoomIndex = 0;
+    updateShirtDetail();
+    shirtDetail.showModal();
+    document.documentElement.classList.add("has-shirt-detail-open");
+  }
+
+  function closeShirtDetail() {
+    if (!(shirtDetail instanceof HTMLDialogElement) || !shirtDetail.open) return;
+    shirtDetail.close();
+  }
+
+  shirtCard?.addEventListener("click", (event) => {
+    if (!(event.target instanceof Element)) return;
+    if (event.target.closest("button, a, input, select, label")) return;
+    openShirtDetail();
+  });
+
+  shirtDetailOpen?.addEventListener("keydown", (event) => {
+    if (!(event instanceof KeyboardEvent)) return;
+    if (event.key !== "Enter" && event.key !== " ") return;
+    event.preventDefault();
+    openShirtDetail();
+  });
+
+  shirtDetailToggle?.addEventListener("click", () => {
+    shirtDetailShowingBack = !shirtDetailShowingBack;
+    shirtZoomIndex = 0;
+    updateShirtDetail();
+  });
+
+  shirtZoomIn?.addEventListener("click", () => {
+    shirtZoomIndex = Math.min(shirtZoomIndex + 1, shirtZoomLevels.length - 1);
+    updateShirtDetail();
+  });
+
+  shirtZoomOut?.addEventListener("click", () => {
+    shirtZoomIndex = Math.max(shirtZoomIndex - 1, 0);
+    updateShirtDetail();
+  });
+
+  shirtDetailClose?.addEventListener("click", closeShirtDetail);
+
+  shirtDetail?.addEventListener("click", (event) => {
+    if (event.target === shirtDetail) closeShirtDetail();
+  });
+
+  shirtDetail?.addEventListener("close", () => {
+    document.documentElement.classList.remove("has-shirt-detail-open");
+  });
 </script>
 
 <style>
   :global(body) {
     background: #0a0a0a;
+  }
+
+  :global(html.has-shirt-detail-open) {
+    overflow: hidden;
   }
 
   :global(#imperio-scrollbar-track) {
@@ -536,6 +753,7 @@ import Layout from "../../layouts/Layout.astro";
     --shirt-final-duration: 3400ms;
     position: relative;
     background: #efefeb;
+    cursor: zoom-in;
   }
 
   .product-shirt-placeholder {
@@ -772,6 +990,186 @@ import Layout from "../../layouts/Layout.astro";
       );
   }
 
+  .shirt-detail {
+    width: min(94vw, 1440px);
+    height: min(92svh, 980px);
+    max-width: none;
+    max-height: none;
+    padding: 0;
+    border: 1px solid #303030;
+    border-radius: 6px;
+    color: #f7f7f4;
+    background: #111;
+    overflow: hidden;
+  }
+
+  .shirt-detail::backdrop {
+    background: rgba(0, 0, 0, 0.84);
+    backdrop-filter: blur(5px);
+  }
+
+  .shirt-detail__shell {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    width: 100%;
+    height: 100%;
+  }
+
+  .shirt-detail__header,
+  .shirt-detail__footer {
+    position: relative;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #111;
+  }
+
+  .shirt-detail__header {
+    min-height: 76px;
+    padding: 0.9rem clamp(1rem, 2vw, 1.8rem);
+    border-bottom: 1px solid #2b2b2b;
+  }
+
+  .shirt-detail__header span,
+  .shirt-detail__footer {
+    color: #858585;
+    font: 500 0.75rem/1.2 var(--font-body);
+  }
+
+  .shirt-detail__header h2 {
+    margin: 0.2rem 0 0;
+    color: #f7f7f4;
+    font: 600 clamp(0.95rem, 1.4vw, 1.2rem)/1.2 var(--font-body);
+  }
+
+  .shirt-detail__tools {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .shirt-detail__tools button,
+  .shirt-detail__arrow {
+    display: grid;
+    place-items: center;
+    padding: 0;
+    border: 0;
+    color: #f7f7f4;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  .shirt-detail__tools button {
+    width: 42px;
+    height: 42px;
+  }
+
+  .shirt-detail__tools button:hover,
+  .shirt-detail__tools button:focus-visible,
+  .shirt-detail__arrow:hover,
+  .shirt-detail__arrow:focus-visible {
+    color: #f23b20;
+  }
+
+  .shirt-detail__tools button:focus-visible,
+  .shirt-detail__arrow:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+  }
+
+  .shirt-detail__tools button:disabled {
+    color: #555;
+    cursor: default;
+  }
+
+  .shirt-detail__tools svg {
+    width: 21px;
+    height: 21px;
+    stroke-width: 1.8;
+  }
+
+  .shirt-detail__stage {
+    position: relative;
+    min-height: 0;
+    overflow: hidden;
+    background: #ededeb;
+  }
+
+  .shirt-detail__media {
+    --shirt-detail-scale: 1;
+    position: absolute;
+    inset: 0;
+    transform: scale(var(--shirt-detail-scale));
+    transform-origin: center;
+    transition: transform 280ms cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: transform;
+  }
+
+  .shirt-detail__image {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    padding: clamp(1rem, 2vw, 2rem) clamp(3.5rem, 7vw, 7rem);
+    object-fit: contain;
+    object-position: center;
+    transition: opacity 260ms ease;
+    user-select: none;
+    pointer-events: none;
+  }
+
+  .shirt-detail__image--front {
+    opacity: 1;
+  }
+
+  .shirt-detail__image--back {
+    opacity: 0;
+  }
+
+  .shirt-detail.is-showing-back .shirt-detail__image--front {
+    opacity: 0;
+  }
+
+  .shirt-detail.is-showing-back .shirt-detail__image--back {
+    opacity: 1;
+  }
+
+  .shirt-detail__arrow {
+    position: absolute;
+    top: 50%;
+    right: clamp(0.8rem, 2vw, 1.8rem);
+    z-index: 4;
+    width: 52px;
+    height: 64px;
+    color: #111;
+    transform: translateY(-50%);
+  }
+
+  .shirt-detail__arrow svg {
+    width: 36px;
+    height: 36px;
+    stroke-width: 1.5;
+    transition: transform 180ms ease;
+  }
+
+  .shirt-detail.is-showing-back .shirt-detail__arrow {
+    right: auto;
+    left: clamp(0.8rem, 2vw, 1.8rem);
+  }
+
+  .shirt-detail.is-showing-back .shirt-detail__arrow svg {
+    transform: rotate(180deg);
+  }
+
+  .shirt-detail__footer {
+    min-height: 38px;
+    padding: 0 clamp(1rem, 2vw, 1.8rem);
+    border-top: 1px solid #2b2b2b;
+    text-transform: uppercase;
+  }
+
   .product-visual--tier {
     display: grid;
     align-content: space-between;
@@ -994,6 +1392,48 @@ import Layout from "../../layouts/Layout.astro";
       aspect-ratio: 1 / 1.12;
     }
 
+    .shirt-detail {
+      width: 96vw;
+      height: 92svh;
+    }
+
+    .shirt-detail__header {
+      min-height: 68px;
+      padding: 0.7rem 0.8rem 0.7rem 1rem;
+    }
+
+    .shirt-detail__header span {
+      display: none;
+    }
+
+    .shirt-detail__header h2 {
+      margin: 0;
+      font-size: 0.86rem;
+    }
+
+    .shirt-detail__tools {
+      gap: 0;
+    }
+
+    .shirt-detail__tools button {
+      width: 40px;
+      height: 40px;
+    }
+
+    .shirt-detail__image {
+      padding: 1rem 2.7rem;
+    }
+
+    .shirt-detail__arrow {
+      right: 0.25rem;
+      width: 46px;
+      height: 58px;
+    }
+
+    .shirt-detail.is-showing-back .shirt-detail__arrow {
+      left: 0.25rem;
+    }
+
     .subscription-story h2 {
       font-size: clamp(3rem, 16vw, 5.5rem);
     }
@@ -1012,7 +1452,10 @@ import Layout from "../../layouts/Layout.astro";
     .product-shirt-scene__gate,
     .product-shirt-final,
     .product-shirt-final__image,
-    .product-shirt-gallery-next {
+    .product-shirt-gallery-next,
+    .shirt-detail__media,
+    .shirt-detail__image,
+    .shirt-detail__arrow svg {
       transition: none;
     }
   }
