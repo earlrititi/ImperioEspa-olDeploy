@@ -5,6 +5,7 @@ export const SERVICES_ITEMS = [
     id: "01",
     statLabel: "Nivel 1",
     title: "Piquero",
+    actionHref: withBase("/registro"),
     imageSrc: withBase("/images/services/consultoria.jpg"),
     imageAlt: "Piquero",
     description:
@@ -22,6 +23,7 @@ export const SERVICES_ITEMS = [
     id: "02",
     statLabel: "Nivel 2",
     title: "Arcabucero",
+    checkoutPlan: "arcabucero-monthly",
     priceBadge: "3 €/mes",
     imageSrc: withBase("/images/services/planificacion.jpg"),
     imageAlt: "Planificacion",
@@ -39,6 +41,7 @@ export const SERVICES_ITEMS = [
     id: "03",
     statLabel: "Nivel 3",
     title: "Maestre de Campo",
+    checkoutPlan: "maestre-campo-monthly",
     priceBadge: "6 €/mes",
     imageSrc: withBase("/images/services/arquitectura.jpg"),
     imageAlt: "Maestre de Campo",

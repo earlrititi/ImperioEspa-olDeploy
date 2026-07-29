@@ -42,6 +42,8 @@ export default function Services() {
   const [manifestCompany, setManifestCompany] = useState("");
   const [manifestStatus, setManifestStatus] = useState("idle");
   const [manifestError, setManifestError] = useState("");
+  const [checkoutPlan, setCheckoutPlan] = useState("");
+  const [checkoutError, setCheckoutError] = useState("");
   const manifestModalRef = useRef(null);
   const manifestEmailInputRef = useRef(null);
   const isManifestFormReady = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(manifestEmail.trim());
@@ -157,6 +159,46 @@ export default function Services() {
       setManifestStatus("idle");
       setManifestError(error.message || "No se pudo enviar el manifiesto.");
     }
+  };
+
+  const openSubscriptionCheckout = async (plan) => {
+    if (!plan || checkoutPlan) return;
+
+    setCheckoutPlan(plan);
+    setCheckoutError("");
+
+    try {
+      const response = await fetch(withBase("/api/create-checkout-session"), {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+        },
+        body: JSON.stringify({ plan }),
+      });
+      const result = await response.json().catch(() => ({}));
+
+      if (!response.ok || !result.url) {
+        throw new Error(result.error || "No se pudo iniciar la suscripción.");
+      }
+
+      window.location.assign(result.url);
+    } catch (error) {
+      setCheckoutPlan("");
+      setCheckoutError(
+        error instanceof Error
+          ? error.message
+          : "No se pudo iniciar la suscripción."
+      );
+    }
+  };
+
+  const activateService = (service) => {
+    if (service.actionHref) {
+      window.location.assign(service.actionHref);
+      return;
+    }
+
+    openSubscriptionCheckout(service.checkoutPlan);
   };
 
   return (
@@ -385,6 +427,10 @@ export default function Services() {
                     class={`service-cta-card fade-in-up${cardImageSrc ? " service-cta-card--image-bg" : ""}${service.priceBadge ? " service-cta-card--has-price" : ""}`}
                     data-stat-counter-group
                     data-service-card-morph={cardMorphSrc || undefined}
+                    onClick={(event) => {
+                      if (event.target.closest("a, button")) return;
+                      activateService(service);
+                    }}
                     key={service.id}
                   >
                     {cardImageSrc && (
@@ -446,10 +492,29 @@ export default function Services() {
                         <TextHoverEffect text={service.title} duration={0.78} />
                       </h3>
                       <p class="service-cta-card__copy">{service.description}</p>
-                      <button class="service-cta-card__button" type="button">
-                        <span>Empezar</span>
-                        <span class="service-cta-card__button-arrow" aria-hidden="true">-></span>
-                      </button>
+                      {service.actionHref ? (
+                        <a
+                          class="service-cta-card__button"
+                          href={service.actionHref}
+                        >
+                          <span>Empezar</span>
+                          <span class="service-cta-card__button-arrow" aria-hidden="true">-&gt;</span>
+                        </a>
+                      ) : (
+                        <button
+                          class="service-cta-card__button"
+                          type="button"
+                          disabled={Boolean(checkoutPlan)}
+                          onClick={() => openSubscriptionCheckout(service.checkoutPlan)}
+                        >
+                          <span>
+                            {checkoutPlan === service.checkoutPlan
+                              ? "Abriendo Stripe..."
+                              : "Suscribirme"}
+                          </span>
+                          <span class="service-cta-card__button-arrow" aria-hidden="true">-&gt;</span>
+                        </button>
+                      )}
                     </div>
                     <ul class="service-cta-card__list" aria-label={`Puntos clave de ${service.title}`}>
                       {service.highlights.map((highlight) => (
@@ -497,6 +562,11 @@ export default function Services() {
               );
             })}
           </div>
+          {checkoutError && (
+            <p class="services-checkout-status" role="alert">
+              {checkoutError}
+            </p>
+          )}
         </div>
       </section>
 
@@ -559,6 +629,13 @@ export default function Services() {
           position: relative;
         }
 
+        .services-checkout-status {
+          margin: var(--space-3) 0 0;
+          color: #8e1117;
+          font-weight: 700;
+          text-align: center;
+        }
+
         .service-cta-card {
           --service-glow-hsl: 356 78% 49%;
           --service-card-bg-start: rgba(255, 255, 255, 0.78);
@@ -597,6 +674,7 @@ export default function Services() {
             inset 1px 1px 0 rgba(255, 255, 255, 0.54);
           content-visibility: auto;
           contain-intrinsic-size: auto 220px;
+          cursor: pointer;
           transition:
             transform 0.7s cubic-bezier(0.175, 0.885, 0.32, 2.2),
             min-height 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.2),
@@ -931,6 +1009,12 @@ export default function Services() {
 
         .service-cta-card__button:hover {
           transform: translateY(-1px);
+        }
+
+        .service-cta-card__button:disabled {
+          cursor: wait;
+          opacity: 0.68;
+          transform: none;
         }
 
         .service-cta-card__button:active {
