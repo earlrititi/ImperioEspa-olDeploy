@@ -2140,6 +2140,14 @@ export default function Services() {
 
           .services-title {
             letter-spacing: 0;
+            line-height: 1.12;
+            overflow: visible;
+          }
+
+          .services-title__primary,
+          .services-title__secondary {
+            padding-top: 0.14em;
+            overflow: visible;
           }
 
           .services-army-swap {
