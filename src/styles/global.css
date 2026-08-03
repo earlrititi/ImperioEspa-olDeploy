@@ -894,7 +894,7 @@ html.has-islands .section.is-visible {
   inset: 0;
   pointer-events: none;
   opacity: 0;
-  clip-path: inset(0 100% 0 0);
+  clip-path: inset(-0.08em 100% -0.18em 0);
   transition:
     clip-path var(--text-hover-duration) var(--text-hover-ease),
     opacity 0.2s ease;
@@ -932,7 +932,7 @@ html.has-islands .section.is-visible {
 .project-card:hover .text-hover-effect__gradient,
 .project-card:hover .text-hover-effect__outline {
   opacity: 1;
-  clip-path: inset(0 -0.08em 0 -0.08em);
+  clip-path: inset(-0.08em -0.08em -0.18em -0.08em);
 }
 
 .text-hover-effect:hover .text-hover-effect__base,
