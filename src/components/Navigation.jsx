@@ -107,6 +107,7 @@ export default function Navigation() {
                 style={{ "--side-link-index": index }}
               >
                 <a href={item.href} target={item.target} rel={item.rel} class="side-bar__link">
+                  <span class="side-bar__marker" aria-hidden="true">×</span>
                   {item.label}
                 </a>
               </li>
@@ -399,9 +400,9 @@ export default function Navigation() {
 
         .side-bar__nav {
           display: grid;
-          gap: clamp(1rem, 3.5vw, 1.5rem);
+          gap: clamp(0.55rem, 1.4vw, 1.1rem);
           list-style: none;
-          width: min(52vw, 720px);
+          width: min(76vw, 1100px);
           margin: 0;
           padding: 0;
           justify-items: end;
@@ -430,23 +431,48 @@ export default function Navigation() {
         }
 
         .side-bar__link {
+          position: relative;
           display: inline-block;
           color: #fff;
           font-family: var(--font-rosa-black);
-          font-size: clamp(2.45rem, 4.7vw, 4.45rem);
+          font-size: clamp(3rem, 6.25vw, 5.75rem);
           font-weight: 900;
           line-height: 0.88;
-          letter-spacing: 0.04em;
+          letter-spacing: 0;
+          white-space: nowrap;
           text-transform: uppercase;
           text-decoration: none;
           text-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
           max-width: 100%;
-          overflow-wrap: anywhere;
+          transition: color 180ms ease;
+        }
+
+        .side-bar__marker {
+          position: absolute;
+          top: 50%;
+          right: calc(100% + 0.22em);
+          color: #000;
+          font: inherit;
+          font-size: 0.72em;
+          line-height: 1;
+          opacity: 0;
+          transform: translate(0.3em, -50%) scale(0.82);
+          transform-origin: center;
+          pointer-events: none;
+          transition:
+            opacity 180ms ease,
+            transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
         }
 
         .side-bar__link:hover,
         .side-bar__link:focus-visible {
           color: #000;
+        }
+
+        .side-bar__link:hover .side-bar__marker,
+        .side-bar__link:focus-visible .side-bar__marker {
+          opacity: 1;
+          transform: translate(0, -50%) scale(1);
         }
 
         #main-nav {
@@ -555,9 +581,17 @@ export default function Navigation() {
           .side-bar__link {
             display: block;
             width: 100%;
+            padding-left: 0.9em;
             font-size: clamp(1.18rem, 5.45vw, 1.85rem);
             line-height: 1;
+            white-space: normal;
             overflow-wrap: anywhere;
+          }
+
+          .side-bar__marker {
+            right: auto;
+            left: 0;
+            font-size: 0.7em;
           }
         }
 
