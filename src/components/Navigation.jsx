@@ -570,10 +570,11 @@ export default function Navigation() {
           }
 
           .side-bar__nav {
-            width: min(100%, 460px);
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            grid-auto-rows: minmax(54px, auto);
-            gap: clamp(0.45rem, 1.6svh, 0.85rem);
+            width: min(100%, 540px);
+            margin-inline: auto;
+            grid-template-columns: minmax(0, 1fr);
+            grid-auto-rows: auto;
+            gap: clamp(0.45rem, 1.4svh, 0.8rem);
             justify-items: start;
             text-align: left;
           }
@@ -581,9 +582,9 @@ export default function Navigation() {
           .side-bar__link {
             display: block;
             width: 100%;
-            padding-left: 0.9em;
-            font-size: clamp(1.18rem, 5.45vw, 1.85rem);
-            line-height: 1;
+            padding-left: 0.82em;
+            font-size: clamp(2.55rem, 10.8vw, 4.5rem);
+            line-height: 0.9;
             white-space: normal;
             overflow-wrap: anywhere;
           }
@@ -595,7 +596,7 @@ export default function Navigation() {
           }
         }
 
-        @media (max-width: 380px), (max-height: 700px) {
+        @media (max-width: 380px), (max-width: 767px) and (max-height: 700px) {
           .side-bar__panel {
             justify-content: flex-start;
             padding-top: clamp(4.5rem, 11svh, 5.5rem);
@@ -607,8 +608,8 @@ export default function Navigation() {
           }
 
           .side-bar__link {
-            font-size: clamp(1rem, 4.7vw, 1.45rem);
-            line-height: 1;
+            font-size: clamp(2rem, 9.5vw, 3.5rem);
+            line-height: 0.9;
           }
         }
 
