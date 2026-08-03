@@ -583,7 +583,7 @@ export default function Navigation() {
             display: block;
             width: 100%;
             padding-left: 0.82em;
-            font-size: clamp(2.55rem, 10.8vw, 4.5rem);
+            font-size: clamp(1.7rem, 7.2vw, 3rem);
             line-height: 0.9;
             white-space: normal;
             overflow-wrap: anywhere;
@@ -608,7 +608,7 @@ export default function Navigation() {
           }
 
           .side-bar__link {
-            font-size: clamp(2rem, 9.5vw, 3.5rem);
+            font-size: clamp(1.33rem, 6.33vw, 2.33rem);
             line-height: 0.9;
           }
         }
