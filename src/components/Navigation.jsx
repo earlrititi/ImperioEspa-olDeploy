@@ -435,7 +435,7 @@ export default function Navigation() {
           display: inline-block;
           color: #fff;
           font-family: var(--font-rosa-black);
-          font-size: clamp(3rem, 6.25vw, 5.75rem);
+          font-size: clamp(2rem, 4.167vw, 3.833rem);
           font-weight: 900;
           line-height: 0.88;
           letter-spacing: 0;
