@@ -400,7 +400,7 @@ export default function Navigation() {
 
         .side-bar__nav {
           display: grid;
-          gap: clamp(0.55rem, 1.4vw, 1.1rem);
+          gap: clamp(0.8rem, 1.8vw, 1.4rem);
           list-style: none;
           width: min(76vw, 1100px);
           margin: 0;
@@ -574,7 +574,7 @@ export default function Navigation() {
             margin-inline: auto;
             grid-template-columns: minmax(0, 1fr);
             grid-auto-rows: auto;
-            gap: clamp(0.45rem, 1.4svh, 0.8rem);
+            gap: clamp(0.7rem, 2svh, 1.05rem);
             justify-items: start;
             text-align: left;
           }
