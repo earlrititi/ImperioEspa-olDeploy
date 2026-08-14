@@ -5,7 +5,7 @@ import { getCollection, render } from "astro:content";
 export const prerender = true;
 
 export async function getStaticPaths() {
-  const entries = await getCollection("drops");
+  const entries = await getCollection("lanzamientos");
   return entries.map((entry) => ({
     params: { slug: entry.id },
     props: { entry },
@@ -17,7 +17,7 @@ const { Content } = await render(entry);
 ---
 
 <PageShell
-  title={entry.data.title}
+  title={entry.data.seoTitle}
   description={entry.data.seoDescription ?? entry.data.summary}
   heading={entry.data.title}
   summary={entry.data.summary}
@@ -50,9 +50,9 @@ const { Content } = await render(entry);
       ) : (
         <div>
           <p class="muted">
-            ASUNCION: el enlace de pago se activa cuando el drop este listo.
+            ASUNCION: el enlace de pago se activa cuando el lanzamiento esté listo.
           </p>
-          <a class="btn btn-primary" href="/contacto">Avisame del drop</a>
+          <a class="btn btn-primary" href="/contacto">Avísame del lanzamiento</a>
         </div>
       )}
     </div>

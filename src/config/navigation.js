@@ -9,7 +9,7 @@ export const NAV_ITEMS = [
   },
   { href: withBase("/papeles-y-tratados"), label: "Papeles y Tratados" },
   { href: withBase("/libreria"), label: "Libreria" },
-  { href: withBase("/mentidero"), label: "Mentidero" },
-  { href: withBase("/tienda"), label: "Casa de Mercaderias" },
+  { href: withBase("/foro"), label: "Foro" },
+  { href: withBase("/tienda"), label: "Tienda" },
   { href: withBase("/contacto"), label: "Audiencia" },
 ];

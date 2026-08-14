@@ -12,6 +12,9 @@ const base = process.env.GITHUB_PAGES === 'true' ? '/Imperio_web' : '/';
 export default defineConfig({
   base,
   output: 'server',
+  redirects: {
+    '/mentidero': '/foro'
+  },
   integrations: [preact()],
 
   resolve: {

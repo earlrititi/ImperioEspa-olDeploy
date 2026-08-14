@@ -5,6 +5,7 @@ const articles = defineCollection({
   loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/articles" }),
   schema: z.object({
     title: z.string(),
+    seoTitle: z.string().min(50).max(70),
     summary: z.string(),
     date: z.string(),
     category: z.enum(["efemeride", "ensayo", "presente"]),
@@ -14,10 +15,11 @@ const articles = defineCollection({
   }),
 });
 
-const drops = defineCollection({
-  loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/drops" }),
+const lanzamientos = defineCollection({
+  loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/lanzamientos" }),
   schema: z.object({
     title: z.string(),
+    seoTitle: z.string().min(50).max(70),
     summary: z.string(),
     date: z.string(),
     price: z.string(),
@@ -32,6 +34,7 @@ const rutas = defineCollection({
   loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/rutas" }),
   schema: z.object({
     title: z.string(),
+    seoTitle: z.string().min(50).max(70),
     summary: z.string(),
     intro: z.string(),
     items: z
@@ -47,4 +50,4 @@ const rutas = defineCollection({
   }),
 });
 
-export const collections = { articles, drops, rutas };
+export const collections = { articles, lanzamientos, rutas };

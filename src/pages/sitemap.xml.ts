@@ -30,13 +30,13 @@ const toUrl = (path: string) => new URL(path, SITE.url).toString();
 
 export const GET: APIRoute = async () => {
   const articles = await getCollection("articles");
-  const drops = await getCollection("drops");
+  const lanzamientos = await getCollection("lanzamientos");
   const rutas = await getCollection("rutas");
 
   const urls = [
     ...staticRoutes.map(toUrl),
     ...articles.map((entry) => toUrl(`/biblioteca/${entry.id}`)),
-    ...drops.map((entry) => toUrl(`/tienda/${entry.id}`)),
+    ...lanzamientos.map((entry) => toUrl(`/tienda/${entry.id}`)),
     ...rutas.map((entry) => toUrl(`/rutas/${entry.id}`)),
   ];
 

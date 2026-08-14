@@ -12,11 +12,11 @@ export const SERVICES_ITEMS = [
       "Una vision audaz como la tuya tiene el poder de alinear comunidades y crear impulso. El Piquero era la base de los Tercios: el soldado humilde pero esencial que sostenía las líneas. Esta es la suscripción de entrada para quien quiera comenzar a ser parte del proyecto sin compromiso económico.",
     highlights: [
       "Lectura de artículos limitada",
-      "Acceso como lector al mentidero",
+      "Acceso como lector al foro",
       "Miembro newsletter semanal",
       "Manifiesto gratuito",
-      "Acceso anticipado a nuestros drops",
-      "Consenso y decision sobre nuestra hoja de ruta, tanto en la elección de los drops, como en la visión estratégica global del Imperio Español.",
+      "Acceso anticipado a nuestros lanzamientos",
+      "Consenso y decision sobre nuestra hoja de ruta, tanto en la elección de los lanzamientos, como en la visión estratégica global del Imperio Español.",
     ],
   },
   {
@@ -33,7 +33,7 @@ export const SERVICES_ITEMS = [
       "Comentar en el foro de debate",
       "Dos artículos premium al mes",
       "Lectura ilimitada de toda la web",
-      "Acceso anticipado a los drops de la tienda (48 horas antes)",
+      "Acceso anticipado a los lanzamientos de la tienda (48 horas antes)",
     ],
     reverseOnDesktop: true,
   },
@@ -50,7 +50,7 @@ export const SERVICES_ITEMS = [
     highlights: [
       "Participación destacada en el foro y posibilidad de proponer temas de debate o artículos",
       "La Gaceta Imperial - Periódico mensual exclusivo (edición digital)",
-      "Acceso anticipado a los drops de la tienda (48 horas antes) + 25% de descuento permanente",
+      "Acceso anticipado a los lanzamientos de la tienda (48 horas antes) + 25% de descuento permanente",
       "Newsletter semanal",
       "Lectura ilimitada de toda la web"
     ],

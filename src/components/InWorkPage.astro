@@ -5,15 +5,16 @@ import { withBase } from "../utils/basePath";
 
 interface Props {
   title: string;
+  seoTitle?: string;
 }
 
-const { title } = Astro.props as Props;
+const { title, seoTitle } = Astro.props as Props;
 const preloaderSessionKey = PRELOADER_SESSION_KEY;
 const homeUrl = withBase("/");
 ---
 
 <Layout
-  title={title}
+  title={seoTitle ?? title}
   description={`${title}, seccion en preparacion de Imperio Espanol.`}
   noindex
 >

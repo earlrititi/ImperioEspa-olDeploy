@@ -1,5 +1,6 @@
 ---
 title: "Imperios y memoria"
+seoTitle: "Imperios y memoria: ruta de lectura | Imperio Español"
 summary: "Lecturas para entender el largo plazo y la permanencia institucional."
 intro: "Una ruta para leer el largo plazo sin nostalgia: instituciones, disciplina y archivos."
 items:

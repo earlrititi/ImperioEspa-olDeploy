@@ -1,5 +1,6 @@
 ---
 title: "La disciplina de los archivos"
+seoTitle: "La disciplina de los archivos y la memoria | Imperio Español"
 summary: "Memoria operativa: por que un archivo no es un museo, sino un metodo de lectura."
 date: "2026-01-27"
 category: "efemeride"
