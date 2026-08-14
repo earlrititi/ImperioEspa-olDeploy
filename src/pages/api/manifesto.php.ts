@@ -81,8 +81,17 @@ export const POST: APIRoute = async ({ request }) => {
       return jsonResponse({ ok: false, error: "Introduce un correo valido." }, 400);
     }
 
-    const name = safeName(payload.name);
-    const greetingName = name || "lector";
+    const firstName = safeName(payload.firstName);
+    const lastName = safeName(payload.lastName);
+
+    if (!firstName || !lastName) {
+      return jsonResponse(
+        { ok: false, error: "Introduce tu nombre y apellidos." },
+        400
+      );
+    }
+
+    const greetingName = `${firstName} ${lastName}`;
     const source = safeSource(payload.source);
     const from =
       import.meta.env.MANIFESTO_FROM_EMAIL?.trim() ||

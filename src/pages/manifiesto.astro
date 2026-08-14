@@ -48,6 +48,28 @@ import PageShell from "../layouts/PageShell.astro";
       <h2 class="manifesto-modal__title" id="manifesto-modal-title">Recibe el manifiesto</h2>
       <input
         class="manifesto-modal__field"
+        id="manifesto-first-name"
+        type="text"
+        name="firstName"
+        placeholder="Nombre"
+        aria-label="Nombre"
+        autocomplete="given-name"
+        maxlength="80"
+        required
+      />
+      <input
+        class="manifesto-modal__field"
+        id="manifesto-last-name"
+        type="text"
+        name="lastName"
+        placeholder="Apellidos"
+        aria-label="Apellidos"
+        autocomplete="family-name"
+        maxlength="80"
+        required
+      />
+      <input
+        class="manifesto-modal__field"
         id="manifesto-email"
         type="email"
         name="email"
@@ -80,6 +102,8 @@ import PageShell from "../layouts/PageShell.astro";
   const manifestoOpenButton = document.getElementById("manifesto-open-button");
   const manifestoModal = document.getElementById("manifesto-modal");
   const manifestoForm = document.getElementById("manifesto-modal-form");
+  const manifestoFirstNameInput = document.getElementById("manifesto-first-name");
+  const manifestoLastNameInput = document.getElementById("manifesto-last-name");
   const manifestoEmailInput = document.getElementById("manifesto-email");
   const manifestoCompanyInput = document.getElementById("manifesto-company");
   const manifestoSubmit = document.getElementById("manifesto-submit");
@@ -90,7 +114,9 @@ import PageShell from "../layouts/PageShell.astro";
 
   const isManifestoFormReady = () =>
     Boolean(
-      manifestoEmailInput?.value.trim() &&
+      manifestoFirstNameInput?.value.trim() &&
+        manifestoLastNameInput?.value.trim() &&
+        manifestoEmailInput?.value.trim() &&
         manifestoEmailInput?.validity.valid
     );
 
@@ -124,7 +150,7 @@ import PageShell from "../layouts/PageShell.astro";
     setManifestoError("");
     setManifestoMessage("");
     updateManifestoSubmitState();
-    manifestoEmailInput?.focus();
+    manifestoFirstNameInput?.focus();
   });
 
   manifestoModal?.addEventListener("cancel", (event) => {
@@ -133,7 +159,7 @@ import PageShell from "../layouts/PageShell.astro";
 
   manifestoClose?.addEventListener("click", closeManifestoModal);
 
-  [manifestoEmailInput].forEach((field) => {
+  [manifestoFirstNameInput, manifestoLastNameInput, manifestoEmailInput].forEach((field) => {
     field?.addEventListener("input", () => {
       setManifestoError("");
       setManifestoMessage("");
@@ -163,6 +189,8 @@ import PageShell from "../layouts/PageShell.astro";
           "content-type": "application/json",
         },
         body: JSON.stringify({
+          firstName: manifestoFirstNameInput?.value || "",
+          lastName: manifestoLastNameInput?.value || "",
           email: manifestoEmailInput?.value || "",
           company: manifestoCompanyInput?.value || "",
           source: "manifiesto",
@@ -175,6 +203,12 @@ import PageShell from "../layouts/PageShell.astro";
       }
 
       setManifestoMessage(result.message || "Te hemos enviado el PDF a tu correo. Revisa tambien spam o promociones.");
+      if (manifestoFirstNameInput) {
+        manifestoFirstNameInput.value = "";
+      }
+      if (manifestoLastNameInput) {
+        manifestoLastNameInput.value = "";
+      }
       if (manifestoEmailInput) {
         manifestoEmailInput.value = "";
       }
@@ -242,6 +276,8 @@ import PageShell from "../layouts/PageShell.astro";
       0 28px 80px rgba(0, 0, 0, 0.52),
       0 0 0 6px rgba(255, 191, 140, 0.08),
       inset 1px 1px 0 rgba(255, 255, 255, 0.1);
+    max-height: calc(100dvh - 2rem);
+    overflow-y: auto;
     padding: clamp(1.2rem, 4vw, 2rem);
   }
 

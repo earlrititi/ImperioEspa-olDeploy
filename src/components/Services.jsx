@@ -38,6 +38,8 @@ const SERVICE_CARD_MEDIA = {
 
 export default function Services() {
   const [isManifestFormOpen, setIsManifestFormOpen] = useState(false);
+  const [manifestFirstName, setManifestFirstName] = useState("");
+  const [manifestLastName, setManifestLastName] = useState("");
   const [manifestEmail, setManifestEmail] = useState("");
   const [manifestCompany, setManifestCompany] = useState("");
   const [manifestStatus, setManifestStatus] = useState("idle");
@@ -45,8 +47,12 @@ export default function Services() {
   const [checkoutPlan, setCheckoutPlan] = useState("");
   const [checkoutError, setCheckoutError] = useState("");
   const manifestModalRef = useRef(null);
-  const manifestEmailInputRef = useRef(null);
-  const isManifestFormReady = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(manifestEmail.trim());
+  const manifestFirstNameInputRef = useRef(null);
+  const isManifestFormReady = Boolean(
+    manifestFirstName.trim() &&
+      manifestLastName.trim() &&
+      /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(manifestEmail.trim())
+  );
 
   useEffect(() => {
     const cards = Array.from(
@@ -124,7 +130,7 @@ export default function Services() {
       manifestModalRef.current.showModal();
     }
 
-    manifestEmailInputRef.current?.focus();
+    manifestFirstNameInputRef.current?.focus();
   }, [isManifestFormOpen]);
 
   const handleManifestSubmit = async (event) => {
@@ -141,6 +147,8 @@ export default function Services() {
           "content-type": "application/json",
         },
         body: JSON.stringify({
+          firstName: manifestFirstName,
+          lastName: manifestLastName,
           email: manifestEmail,
           company: manifestCompany,
           source: "home",
@@ -153,6 +161,8 @@ export default function Services() {
       }
 
       setManifestStatus("sent");
+      setManifestFirstName("");
+      setManifestLastName("");
       setManifestEmail("");
       setManifestCompany("");
     } catch (error) {
@@ -343,7 +353,31 @@ export default function Services() {
                 ) : (
                   <>
                     <input
-                      ref={manifestEmailInputRef}
+                      ref={manifestFirstNameInputRef}
+                      class="services-manifest-modal__field"
+                      type="text"
+                      name="firstName"
+                      placeholder="Nombre"
+                      aria-label="Nombre"
+                      autocomplete="given-name"
+                      maxlength={80}
+                      value={manifestFirstName}
+                      onInput={(event) => setManifestFirstName(event.currentTarget.value)}
+                      required
+                    />
+                    <input
+                      class="services-manifest-modal__field"
+                      type="text"
+                      name="lastName"
+                      placeholder="Apellidos"
+                      aria-label="Apellidos"
+                      autocomplete="family-name"
+                      maxlength={80}
+                      value={manifestLastName}
+                      onInput={(event) => setManifestLastName(event.currentTarget.value)}
+                      required
+                    />
+                    <input
                       class="services-manifest-modal__field"
                       type="email"
                       name="email"
@@ -1139,6 +1173,8 @@ export default function Services() {
             0 28px 80px rgba(0, 0, 0, 0.52),
             0 0 0 6px rgba(193, 18, 31, 0.12),
             inset 1px 1px 0 rgba(255, 255, 255, 0.12);
+          max-height: calc(100dvh - 2rem);
+          overflow-y: auto;
           padding: clamp(1.2rem, 4vw, 2rem);
         }
 
