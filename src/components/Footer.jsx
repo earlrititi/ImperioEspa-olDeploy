@@ -1,196 +1,138 @@
-import {
-  FOOTER_LEGAL_LINKS,
-  FOOTER_NAV_ITEMS,
-  FOOTER_SOCIAL_LINKS,
-  FOOTER_STUDIOS,
-} from "../config/home";
+const SOCIAL_LINKS = [
+  {
+    className: "image-footer__hotspot--instagram",
+    href: "https://instagram.com",
+    label: "Instagram",
+  },
+  {
+    className: "image-footer__hotspot--facebook",
+    href: "https://facebook.com",
+    label: "Facebook",
+  },
+  {
+    className: "image-footer__hotspot--x",
+    href: "https://x.com",
+    label: "X",
+  },
+];
 
 export default function Footer() {
   return (
-    <footer class="footer home-section home-section--tight bg-white text-black">
-      <div class="home-shell">
-        <div class="footer__grid grid md:grid-cols-4 gap-12 mb-12">
-          <div>
-            <h3 class="footer__section-title text-sm uppercase tracking-wide font-semibold mb-6">
-              Estudios
-            </h3>
+    <footer class="image-footer" aria-label="Pie de pagina">
+      <div class="image-footer__frame">
+        <img
+          class="image-footer__art"
+          src="/images/imperio-espanol-footer.webp"
+          alt="Imperio Espanol. Mapa historico, contacto y redes sociales."
+          width="1920"
+          height="1080"
+          loading="lazy"
+          decoding="async"
+        />
 
-            {FOOTER_STUDIOS.map((studio) => (
-              <div class="footer__address-group" key={studio.city}>
-                <p class="footer__address-label font-semibold mb-2">{studio.city}</p>
-                <a
-                  href={studio.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="text-black/70 hover:text-[var(--color-red-accent)] transition-colors text-sm"
-                >
-                  {studio.lines.map((line, index) => (
-                    <span key={`${studio.city}-${index}`}>
-                      {line}
-                      {index < studio.lines.length - 1 && <br />}
-                    </span>
-                  ))}
-                </a>
-              </div>
-            ))}
-          </div>
+        <nav class="image-footer__links" aria-label="Contacto y redes sociales">
+          <a
+            class="image-footer__hotspot image-footer__hotspot--email"
+            href="mailto:hola@imperioes.com"
+          >
+            <span class="image-footer__sr-only">
+              Escribir a hola@imperioes.com
+            </span>
+          </a>
 
-          <div>
-            <h3 class="footer__section-title text-sm uppercase tracking-wide font-semibold mb-6">
-              Contacto
-            </h3>
-
-            <div class="footer__stack-md space-y-4">
-              <div>
-                <p class="footer__eyebrow text-black/70 text-sm mb-1">Email</p>
-                <a
-                  href="mailto:info@elsigloespanol.com"
-                  class="hover:text-[var(--color-red-accent)] transition-colors"
-                >
-                  info@elsigloespanol.com
-                </a>
-              </div>
-
-              <div>
-                <p class="footer__eyebrow text-black/70 text-sm mb-1">Telefono</p>
-                <a
-                  href="tel:+34912345678"
-                  class="hover:text-[var(--color-red-accent)] transition-colors"
-                >
-                  +34 91 234 5678
-                </a>
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <h3 class="footer__section-title text-sm uppercase tracking-wide font-semibold mb-6">
-              Navegacion
-            </h3>
-
-            <ul class="footer__nav-list space-y-3 text-sm">
-              {FOOTER_NAV_ITEMS.map((item) => (
-                <li key={item.href}>
-                  <a
-                    href={item.href}
-                    class="text-black/70 hover:text-[var(--color-red-accent)] transition-colors"
-                  >
-                    {item.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <h3 class="footer__section-title text-sm uppercase tracking-wide font-semibold mb-6">
-              Siguenos
-            </h3>
-
-            <div class="footer__social flex gap-4">
-              {FOOTER_SOCIAL_LINKS.map((social) => (
-                <a
-                  href={social.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="w-10 h-10 border border-black/20 rounded-full flex items-center justify-center hover:bg-[var(--color-red-accent)] hover:text-white transition-all"
-                  aria-label={social.label}
-                  key={social.label}
-                >
-                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                    <path d={social.iconPath} />
-                  </svg>
-                </a>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        <div class="footer__bottom border-t border-black/10 pt-8 mt-8">
-          <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-black/70">
-            <p>&copy; Imperio Español {new Date().getFullYear()}.</p>
-
-            <div class="footer__legal flex gap-6">
-              {FOOTER_LEGAL_LINKS.map((item) => (
-                <a
-                  href={item.href}
-                  class="hover:text-[var(--color-red-accent)] transition-colors"
-                  key={item.href}
-                >
-                  {item.label}
-                </a>
-              ))}
-            </div>
-
-            <p class="text-xs">
-              Sitio web por{" "}
-              <a href="#" class="hover:text-[var(--color-red-accent)] transition-colors">
-                Imperio Español
-              </a>
-            </p>
-          </div>
-        </div>
+          {SOCIAL_LINKS.map((link) => (
+            <a
+              class={`image-footer__hotspot ${link.className}`}
+              href={link.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={link.label}
+              key={link.label}
+            />
+          ))}
+        </nav>
       </div>
 
       <style>{`
-        .footer__grid {
-          gap: var(--space-6);
-          margin-bottom: var(--space-6);
+        .image-footer {
+          width: 100%;
+          overflow: hidden;
+          background: #f7f5f1;
         }
 
-        .footer__section-title {
-          margin-bottom: var(--space-3);
+        .image-footer__frame {
+          position: relative;
+          width: 100%;
+          aspect-ratio: 1920 / 660;
+          overflow: hidden;
         }
 
-        .footer__address-group {
-          margin-bottom: var(--space-4);
+        .image-footer__art {
+          position: absolute;
+          inset: 0;
+          display: block;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          object-position: center;
         }
 
-        .footer__address-label,
-        .footer__eyebrow {
-          margin-bottom: var(--space-1);
+        .image-footer__links {
+          position: absolute;
+          inset: 0;
+          z-index: 1;
         }
 
-        .footer__stack-md > :not([hidden]) ~ :not([hidden]) {
-          margin-top: var(--space-2);
+        .image-footer__hotspot {
+          position: absolute;
+          display: block;
+          border-radius: 4px;
         }
 
-        .footer__nav-list > :not([hidden]) ~ :not([hidden]) {
-          margin-top: calc(var(--space-unit) * 1.5);
+        .image-footer__hotspot:focus-visible {
+          outline: 3px solid #c1121f;
+          outline-offset: 3px;
+          background: rgb(255 255 255 / 18%);
         }
 
-        .footer__social {
-          gap: var(--space-2);
+        .image-footer__hotspot--email {
+          top: 4%;
+          left: 58%;
+          width: 16%;
+          height: 14%;
         }
 
-        .footer__bottom {
-          padding-top: var(--space-4);
-          margin-top: var(--space-4);
+        .image-footer__hotspot--instagram {
+          top: 11.5%;
+          left: 76.7%;
+          width: 3.1%;
+          height: 9%;
         }
 
-        .footer__legal {
-          gap: var(--space-3);
+        .image-footer__hotspot--facebook {
+          top: 11.5%;
+          left: 80.4%;
+          width: 3.1%;
+          height: 9%;
         }
 
-        @media (max-width: 767px) {
-          .footer {
-            padding-block: var(--space-8) var(--space-6);
-          }
+        .image-footer__hotspot--x {
+          top: 11.5%;
+          left: 84.1%;
+          width: 3.2%;
+          height: 9%;
+        }
 
-          .footer__grid {
-            grid-template-columns: minmax(0, 1fr);
-            gap: var(--space-5);
-          }
-
-          .footer__bottom > div {
-            align-items: flex-start;
-            text-align: left;
-          }
-
-          .footer__legal {
-            flex-direction: column;
-            gap: var(--space-1);
-          }
+        .image-footer__sr-only {
+          position: absolute;
+          width: 1px;
+          height: 1px;
+          padding: 0;
+          margin: -1px;
+          overflow: hidden;
+          clip: rect(0, 0, 0, 0);
+          white-space: nowrap;
+          border: 0;
         }
       `}</style>
     </footer>

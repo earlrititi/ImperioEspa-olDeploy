@@ -1,6 +1,7 @@
 ---
 import "../styles/global.css";
 import ClientRuntime from "../islands/ClientRuntime.jsx";
+import Footer from "../components/Footer.jsx";
 import GlobalHomeMark from "../components/GlobalHomeMark.astro";
 import { ANALYTICS } from "../config/analytics";
 import { SITE } from "../config/site";
@@ -100,6 +101,7 @@ const ogImageUrl = new URL(withBase(ogImage), deploymentOrigin).toString();
     )}
     <GlobalHomeMark />
     <slot />
+    <Footer />
     <div id="imperio-scrollbar" aria-hidden="true">
       <div id="imperio-scrollbar-track">
         <div id="imperio-scrollbar-thumb"></div>
