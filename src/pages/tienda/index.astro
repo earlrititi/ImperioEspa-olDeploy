@@ -373,11 +373,12 @@ import Layout from "../../layouts/Layout.astro";
     shirtDetail.classList.toggle("is-zoomed", shirtZoomIndex > 0);
 
     if (shirtDetailMedia instanceof HTMLElement) {
-      shirtDetailMedia.style.removeProperty("--shirt-detail-scale");
+      shirtDetailMedia.style.setProperty("--shirt-main-scale", String(zoom));
     }
 
     if (shirtZoomLensMedia instanceof HTMLElement) {
-      shirtZoomLensMedia.style.setProperty("--shirt-detail-scale", String(zoom));
+      shirtZoomLensMedia.style.setProperty("--shirt-main-scale", String(zoom));
+      shirtZoomLensMedia.style.setProperty("--shirt-lens-scale", "1.5");
     }
 
     if (shirtZoomIndex > 0) {
@@ -570,7 +571,7 @@ import Layout from "../../layouts/Layout.astro";
 
   .catalog-heading {
     display: grid;
-    grid-template-columns: minmax(0, 0.65fr) minmax(0, 2.35fr);
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
     align-items: end;
     gap: 2rem;
     padding: clamp(3.5rem, 8vw, 8rem) 0 clamp(3rem, 6vw, 6rem);
@@ -586,6 +587,7 @@ import Layout from "../../layouts/Layout.astro";
   }
 
   .catalog-heading h1 {
+    grid-column: 2;
     margin: 0;
     color: #f7f7f4;
     font-family: var(--font-display);
@@ -981,8 +983,13 @@ import Layout from "../../layouts/Layout.astro";
   }
 
   .shirt-detail__media {
+    --shirt-main-scale: 1;
     position: absolute;
     inset: 0;
+    transform: scale(var(--shirt-main-scale));
+    transform-origin: center;
+    transition: transform 280ms cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: transform;
   }
 
   .shirt-detail__lens {
@@ -1016,10 +1023,20 @@ import Layout from "../../layouts/Layout.astro";
   }
 
   .shirt-detail__lens-media {
-    --shirt-detail-scale: 1;
+    --shirt-main-scale: 1;
+    --shirt-lens-scale: 1.5;
     position: absolute;
-    transform: scale(var(--shirt-detail-scale));
+    transform: scale(var(--shirt-lens-scale));
     transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: transform;
+  }
+
+  .shirt-detail__lens-media .shirt-detail__image {
+    transform: scale(var(--shirt-main-scale));
+    transform-origin: center;
+    transition:
+      opacity 260ms ease,
+      transform 280ms cubic-bezier(0.22, 1, 0.36, 1);
     will-change: transform;
   }
 
@@ -1171,7 +1188,9 @@ import Layout from "../../layouts/Layout.astro";
     }
 
     .catalog-heading h1 {
+      grid-column: auto;
       font-size: clamp(3.7rem, 23vw, 6rem);
+      text-align: center;
     }
 
     .product-grid {
