@@ -320,7 +320,7 @@ import Layout from "../../layouts/Layout.astro";
   const shirtZoomOut = document.querySelector("[data-shirt-zoom-out]");
   const shirtDetailSide = document.querySelector("[data-shirt-detail-side]");
   const shirtZoomValue = document.querySelector("[data-shirt-zoom-value]");
-  const shirtZoomLevels = [1, 1.25, 1.5, 1.75, 2];
+  const shirtZoomLevels = [1, 1.25, 1.5, 1.75, 2, 2.25, 2.5, 2.75, 3];
   let shirtZoomIndex = 0;
   let shirtDetailShowingBack = false;
   let shirtLensX = 0.5;
@@ -464,6 +464,27 @@ import Layout from "../../layouts/Layout.astro";
     if (!(event instanceof PointerEvent) || shirtZoomIndex === 0) return;
     positionShirtZoomLens(event.clientX, event.clientY);
   });
+
+  shirtDetailStage?.addEventListener(
+    "wheel",
+    (event) => {
+      if (!(event instanceof WheelEvent)) return;
+
+      const direction = event.deltaY < 0 ? 1 : -1;
+      const nextZoomIndex = Math.min(
+        Math.max(shirtZoomIndex + direction, 0),
+        shirtZoomLevels.length - 1
+      );
+
+      if (nextZoomIndex === shirtZoomIndex) return;
+
+      event.preventDefault();
+      shirtZoomIndex = nextZoomIndex;
+      updateShirtDetail();
+      positionShirtZoomLens(event.clientX, event.clientY);
+    },
+    { passive: false }
+  );
 
   window.addEventListener("resize", () => {
     if (shirtDetail instanceof HTMLDialogElement && shirtDetail.open && shirtZoomIndex > 0) {
