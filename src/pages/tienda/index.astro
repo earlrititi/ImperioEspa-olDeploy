@@ -347,22 +347,22 @@ import Layout from "../../layouts/Layout.astro";
     const sourceY = shirtLensY * stageRect.height;
     const lensWidth = shirtZoomLens.offsetWidth;
     const lensHeight = shirtZoomLens.offsetHeight;
-    const lensLeft = Math.min(
-      Math.max(sourceX - lensWidth / 2, 0),
-      Math.max(stageRect.width - lensWidth, 0)
-    );
-    const lensTop = Math.min(
-      Math.max(sourceY - lensHeight / 2, 0),
-      Math.max(stageRect.height - lensHeight, 0)
-    );
+    const lensLeft = Math.max((stageRect.width - lensWidth) / 2, 0);
+    const lensTop = Math.max((stageRect.height - lensHeight) / 2, 0);
 
     shirtZoomLens.style.left = `${lensLeft}px`;
     shirtZoomLens.style.top = `${lensTop}px`;
-    shirtZoomLensMedia.style.left = `${-lensLeft}px`;
-    shirtZoomLensMedia.style.top = `${-lensTop}px`;
+    shirtZoomLensMedia.style.left = `${lensWidth / 2 - sourceX}px`;
+    shirtZoomLensMedia.style.top = `${lensHeight / 2 - sourceY}px`;
     shirtZoomLensMedia.style.width = `${stageRect.width}px`;
     shirtZoomLensMedia.style.height = `${stageRect.height}px`;
     shirtZoomLensMedia.style.transformOrigin = `${sourceX}px ${sourceY}px`;
+    shirtZoomLensMedia.style.setProperty("--shirt-focus-x", `${sourceX}px`);
+    shirtZoomLensMedia.style.setProperty("--shirt-focus-y", `${sourceY}px`);
+
+    if (shirtDetailMedia instanceof HTMLElement) {
+      shirtDetailMedia.style.transformOrigin = `${sourceX}px ${sourceY}px`;
+    }
   }
 
   function updateShirtDetail() {
@@ -1033,7 +1033,9 @@ import Layout from "../../layouts/Layout.astro";
 
   .shirt-detail__lens-media .shirt-detail__image {
     transform: scale(var(--shirt-main-scale));
-    transform-origin: center;
+    transform-origin:
+      var(--shirt-focus-x, 50%)
+      var(--shirt-focus-y, 50%);
     transition:
       opacity 260ms ease,
       transform 280ms cubic-bezier(0.22, 1, 0.36, 1);
