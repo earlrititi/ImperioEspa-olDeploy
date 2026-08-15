@@ -173,7 +173,7 @@ export default function Footer() {
         .image-footer__label-text {
           fill: #ff1018;
           font-family: "Inter", "Segoe UI", sans-serif;
-          font-size: 38px;
+          font-size: 42px;
           font-weight: 800;
           letter-spacing: 0;
           transform-box: fill-box;
@@ -181,10 +181,6 @@ export default function Footer() {
           transition:
             fill 220ms ease,
             transform 220ms ease;
-        }
-
-        .image-footer__label-text--social {
-          font-size: 42px;
         }
 
         .image-footer__label-link:hover .image-footer__label-text,
