@@ -30,6 +30,39 @@ export default function Footer() {
           decoding="async"
         />
 
+        <svg
+          class="image-footer__labels"
+          viewBox="0 0 1920 660"
+          preserveAspectRatio="none"
+          role="group"
+          aria-label="Enlaces destacados del pie de pagina"
+        >
+          <rect class="image-footer__label-cover" x="1118" y="25" width="178" height="45" />
+          <rect class="image-footer__label-cover" x="1468" y="20" width="205" height="55" />
+
+          <a
+            class="image-footer__label-link"
+            href="mailto:hola@imperioes.com"
+            aria-label="Contacto"
+          >
+            <text class="image-footer__label-text" x="1127" y="60">
+              Contacto
+            </text>
+          </a>
+
+          <a
+            class="image-footer__label-link"
+            href="https://instagram.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Siguenos en redes sociales"
+          >
+            <text class="image-footer__label-text image-footer__label-text--social" x="1478" y="64">
+              {"\u00a1S\u00edguenos!"}
+            </text>
+          </a>
+        </svg>
+
         <nav class="image-footer__links" aria-label="Contacto y redes sociales">
           <a
             class="image-footer__hotspot image-footer__hotspot--email"
@@ -80,13 +113,62 @@ export default function Footer() {
         .image-footer__links {
           position: absolute;
           inset: 0;
-          z-index: 1;
+          z-index: 3;
+          pointer-events: none;
+        }
+
+        .image-footer__labels {
+          position: absolute;
+          inset: 0;
+          z-index: 2;
+          display: block;
+          width: 100%;
+          height: 100%;
+          pointer-events: none;
+          overflow: visible;
+        }
+
+        .image-footer__label-cover {
+          fill: #fdfcfb;
+        }
+
+        .image-footer__label-link {
+          pointer-events: auto;
+          cursor: pointer;
+        }
+
+        .image-footer__label-text {
+          fill: #ff1018;
+          font-family: "Inter", "Segoe UI", sans-serif;
+          font-size: 38px;
+          font-weight: 800;
+          letter-spacing: 0;
+          transform-box: fill-box;
+          transform-origin: center;
+          transition:
+            fill 220ms ease,
+            transform 220ms ease;
+        }
+
+        .image-footer__label-text--social {
+          font-size: 42px;
+        }
+
+        .image-footer__label-link:hover .image-footer__label-text,
+        .image-footer__label-link:focus-visible .image-footer__label-text {
+          fill: #000;
+          transform: scale(1.1);
+        }
+
+        .image-footer__label-link:focus-visible {
+          outline: none;
         }
 
         .image-footer__hotspot {
           position: absolute;
           display: block;
           border-radius: 4px;
+          pointer-events: auto;
         }
 
         .image-footer__hotspot:focus-visible {
@@ -96,10 +178,10 @@ export default function Footer() {
         }
 
         .image-footer__hotspot--email {
-          top: 4%;
+          top: 10.5%;
           left: 58%;
           width: 16%;
-          height: 14%;
+          height: 7%;
         }
 
         .image-footer__hotspot--instagram {
