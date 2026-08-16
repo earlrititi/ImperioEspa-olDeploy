@@ -1,7 +1,7 @@
 const SOCIAL_LINKS = [
   {
     className: "image-footer__hotspot--instagram",
-    href: "https://instagram.com",
+    href: "https://www.instagram.com/imperio_e/",
     label: "Instagram",
     iconClassName: "image-footer__social-mark--instagram",
     x: 1479,
@@ -13,7 +13,7 @@ const SOCIAL_LINKS = [
   },
   {
     className: "image-footer__hotspot--facebook",
-    href: "https://facebook.com",
+    href: "https://www.facebook.com/ElMayorImperioDeTodos/",
     label: "Facebook",
     iconClassName: "image-footer__social-mark--facebook",
     x: 1548,
@@ -25,7 +25,7 @@ const SOCIAL_LINKS = [
   },
   {
     className: "image-footer__hotspot--x",
-    href: "https://x.com",
+    href: "https://x.com/imperioespa%C3%B1ol",
     label: "X",
     iconClassName: "image-footer__social-mark--x",
     x: 1615,
@@ -70,7 +70,7 @@ export default function Footer() {
 
           <a
             class="image-footer__label-link"
-            href="https://instagram.com"
+            href="https://www.instagram.com/imperio_e/"
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Siguenos en redes sociales"
