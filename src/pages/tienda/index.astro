@@ -152,6 +152,14 @@ import Layout from "../../layouts/Layout.astro";
           </button>
           <button
             type="button"
+            aria-label="Restablecer zoom"
+            title="Restablecer zoom"
+            data-shirt-zoom-reset
+          >
+            <i data-lucide="rotate-ccw" aria-hidden="true"></i>
+          </button>
+          <button
+            type="button"
             aria-label="Cerrar vista ampliada"
             title="Cerrar"
             data-shirt-detail-close
@@ -161,7 +169,12 @@ import Layout from "../../layouts/Layout.astro";
         </div>
       </header>
 
-      <div class="shirt-detail__stage">
+      <div
+        class="shirt-detail__stage"
+        tabindex="0"
+        role="group"
+        aria-label="Visor ampliado de la camiseta"
+      >
         <div class="shirt-detail__media" data-shirt-detail-media>
           <img
             class="shirt-detail__image shirt-detail__image--front"
@@ -179,27 +192,6 @@ import Layout from "../../layouts/Layout.astro";
             height="1211"
             decoding="async"
           />
-        </div>
-
-        <div class="shirt-detail__lens" data-shirt-zoom-lens aria-hidden="true">
-          <div class="shirt-detail__lens-media" data-shirt-zoom-lens-media>
-            <img
-              class="shirt-detail__image shirt-detail__image--front"
-              src="/images/camiseta-imperio-frontal.webp"
-              alt=""
-              width="944"
-              height="1181"
-              decoding="async"
-            />
-            <img
-              class="shirt-detail__image shirt-detail__image--back"
-              src="/images/camiseta-imperio-atras.webp"
-              alt=""
-              width="1077"
-              height="1211"
-              decoding="async"
-            />
-          </div>
         </div>
 
         <button
@@ -224,6 +216,7 @@ import Layout from "../../layouts/Layout.astro";
 <script>
   import {
     ChevronRight,
+    RotateCcw,
     X,
     ZoomIn,
     ZoomOut,
@@ -233,6 +226,7 @@ import Layout from "../../layouts/Layout.astro";
   createIcons({
     icons: {
       ChevronRight,
+      RotateCcw,
       X,
       ZoomIn,
       ZoomOut,
@@ -312,77 +306,57 @@ import Layout from "../../layouts/Layout.astro";
   const shirtDetail = document.querySelector("[data-shirt-detail]");
   const shirtDetailStage = shirtDetail?.querySelector(".shirt-detail__stage");
   const shirtDetailMedia = document.querySelector("[data-shirt-detail-media]");
-  const shirtZoomLens = document.querySelector("[data-shirt-zoom-lens]");
-  const shirtZoomLensMedia = document.querySelector("[data-shirt-zoom-lens-media]");
   const shirtDetailToggle = document.querySelector("[data-shirt-detail-toggle]");
   const shirtDetailClose = document.querySelector("[data-shirt-detail-close]");
   const shirtZoomIn = document.querySelector("[data-shirt-zoom-in]");
   const shirtZoomOut = document.querySelector("[data-shirt-zoom-out]");
+  const shirtZoomReset = document.querySelector("[data-shirt-zoom-reset]");
   const shirtDetailSide = document.querySelector("[data-shirt-detail-side]");
   const shirtZoomValue = document.querySelector("[data-shirt-zoom-value]");
-  const shirtZoomLevels = [1, 1.25, 1.5, 1.75, 2, 2.25, 2.5, 2.75, 3];
-  let shirtZoomIndex = 0;
+  const shirtMinZoom = 1;
+  const shirtMaxZoom = 3;
+  const shirtButtonZoomStep = 0.5;
+  const shirtWheelZoomStep = 0.25;
+  const shirtPointers = new Map();
+  let shirtZoom = shirtMinZoom;
+  let shirtPanX = 0;
+  let shirtPanY = 0;
   let shirtDetailShowingBack = false;
-  let shirtLensX = 0.5;
-  let shirtLensY = 0.5;
+  let shirtDragPointerId = null;
+  let shirtDragX = 0;
+  let shirtDragY = 0;
+  let shirtPinchDistance = 0;
 
-  function positionShirtZoomLens(clientX, clientY) {
-    if (
-      !(shirtDetailStage instanceof HTMLElement) ||
-      !(shirtZoomLens instanceof HTMLElement) ||
-      !(shirtZoomLensMedia instanceof HTMLElement)
-    ) {
-      return;
-    }
+  function clamp(value, min, max) {
+    return Math.min(max, Math.max(min, value));
+  }
 
+  function getShirtPanBounds(zoom = shirtZoom) {
+    if (!(shirtDetailStage instanceof HTMLElement)) return { x: 0, y: 0 };
     const stageRect = shirtDetailStage.getBoundingClientRect();
-    if (!stageRect.width || !stageRect.height) return;
+    return {
+      x: Math.max(0, (stageRect.width * (zoom - 1)) / 2),
+      y: Math.max(0, (stageRect.height * (zoom - 1)) / 2),
+    };
+  }
 
-    if (typeof clientX === "number" && typeof clientY === "number") {
-      shirtLensX = Math.min(1, Math.max(0, (clientX - stageRect.left) / stageRect.width));
-      shirtLensY = Math.min(1, Math.max(0, (clientY - stageRect.top) / stageRect.height));
-    }
-
-    const sourceX = shirtLensX * stageRect.width;
-    const sourceY = shirtLensY * stageRect.height;
-    const lensWidth = shirtZoomLens.offsetWidth;
-    const lensHeight = shirtZoomLens.offsetHeight;
-    const lensLeft = Math.max((stageRect.width - lensWidth) / 2, 0);
-    const lensTop = Math.max((stageRect.height - lensHeight) / 2, 0);
-
-    shirtZoomLens.style.left = `${lensLeft}px`;
-    shirtZoomLens.style.top = `${lensTop}px`;
-    shirtZoomLensMedia.style.left = `${lensWidth / 2 - sourceX}px`;
-    shirtZoomLensMedia.style.top = `${lensHeight / 2 - sourceY}px`;
-    shirtZoomLensMedia.style.width = `${stageRect.width}px`;
-    shirtZoomLensMedia.style.height = `${stageRect.height}px`;
-    shirtZoomLensMedia.style.transformOrigin = `${sourceX}px ${sourceY}px`;
-    shirtZoomLensMedia.style.setProperty("--shirt-focus-x", `${sourceX}px`);
-    shirtZoomLensMedia.style.setProperty("--shirt-focus-y", `${sourceY}px`);
-
-    if (shirtDetailMedia instanceof HTMLElement) {
-      shirtDetailMedia.style.transformOrigin = `${sourceX}px ${sourceY}px`;
-    }
+  function clampShirtPan() {
+    const bounds = getShirtPanBounds();
+    shirtPanX = clamp(shirtPanX, -bounds.x, bounds.x);
+    shirtPanY = clamp(shirtPanY, -bounds.y, bounds.y);
   }
 
   function updateShirtDetail() {
     if (!(shirtDetail instanceof HTMLDialogElement)) return;
 
-    const zoom = shirtZoomLevels[shirtZoomIndex];
+    const isZoomed = shirtZoom > shirtMinZoom + 0.001;
     shirtDetail.classList.toggle("is-showing-back", shirtDetailShowingBack);
-    shirtDetail.classList.toggle("is-zoomed", shirtZoomIndex > 0);
+    shirtDetail.classList.toggle("is-zoomed", isZoomed);
 
     if (shirtDetailMedia instanceof HTMLElement) {
-      shirtDetailMedia.style.setProperty("--shirt-main-scale", String(zoom));
-    }
-
-    if (shirtZoomLensMedia instanceof HTMLElement) {
-      shirtZoomLensMedia.style.setProperty("--shirt-main-scale", String(zoom));
-      shirtZoomLensMedia.style.setProperty("--shirt-lens-scale", "1.5");
-    }
-
-    if (shirtZoomIndex > 0) {
-      requestAnimationFrame(() => positionShirtZoomLens());
+      shirtDetailMedia.style.setProperty("--shirt-main-scale", String(shirtZoom));
+      shirtDetailMedia.style.setProperty("--shirt-pan-x", `${shirtPanX}px`);
+      shirtDetailMedia.style.setProperty("--shirt-pan-y", `${shirtPanY}px`);
     }
 
     if (shirtDetailToggle instanceof HTMLButtonElement) {
@@ -396,11 +370,15 @@ import Layout from "../../layouts/Layout.astro";
     }
 
     if (shirtZoomOut instanceof HTMLButtonElement) {
-      shirtZoomOut.disabled = shirtZoomIndex === 0;
+      shirtZoomOut.disabled = !isZoomed;
     }
 
     if (shirtZoomIn instanceof HTMLButtonElement) {
-      shirtZoomIn.disabled = shirtZoomIndex === shirtZoomLevels.length - 1;
+      shirtZoomIn.disabled = shirtZoom >= shirtMaxZoom - 0.001;
+    }
+
+    if (shirtZoomReset instanceof HTMLButtonElement) {
+      shirtZoomReset.disabled = !isZoomed;
     }
 
     if (shirtDetailSide) {
@@ -408,7 +386,71 @@ import Layout from "../../layouts/Layout.astro";
     }
 
     if (shirtZoomValue) {
-      shirtZoomValue.textContent = `${Math.round(zoom * 100)}%`;
+      shirtZoomValue.textContent = `${Math.round(shirtZoom * 100)}%`;
+    }
+  }
+
+  function setShirtZoom(nextZoom, focalClientX, focalClientY) {
+    const previousZoom = shirtZoom;
+    const normalizedZoom = clamp(nextZoom, shirtMinZoom, shirtMaxZoom);
+    if (Math.abs(normalizedZoom - previousZoom) < 0.001) return;
+
+    if (
+      typeof focalClientX === "number" &&
+      typeof focalClientY === "number" &&
+      shirtDetailStage instanceof HTMLElement
+    ) {
+      const stageRect = shirtDetailStage.getBoundingClientRect();
+      const focalX = focalClientX - (stageRect.left + stageRect.width / 2);
+      const focalY = focalClientY - (stageRect.top + stageRect.height / 2);
+      const contentX = (focalX - shirtPanX) / previousZoom;
+      const contentY = (focalY - shirtPanY) / previousZoom;
+      shirtPanX = focalX - contentX * normalizedZoom;
+      shirtPanY = focalY - contentY * normalizedZoom;
+    }
+
+    shirtZoom = normalizedZoom;
+    if (shirtZoom <= shirtMinZoom + 0.001) {
+      shirtPanX = 0;
+      shirtPanY = 0;
+    } else {
+      clampShirtPan();
+    }
+    updateShirtDetail();
+  }
+
+  function resetShirtView() {
+    shirtZoom = shirtMinZoom;
+    shirtPanX = 0;
+    shirtPanY = 0;
+    updateShirtDetail();
+  }
+
+  function getShirtPinchMetrics() {
+    const points = Array.from(shirtPointers.values());
+    if (points.length < 2) return null;
+    const [first, second] = points;
+    return {
+      distance: Math.hypot(second.x - first.x, second.y - first.y),
+      x: (first.x + second.x) / 2,
+      y: (first.y + second.y) / 2,
+    };
+  }
+
+  function stopShirtDragging(pointerId) {
+    if (shirtDragPointerId === pointerId) shirtDragPointerId = null;
+    shirtPointers.delete(pointerId);
+    if (shirtPointers.size < 2) shirtPinchDistance = 0;
+
+    if (shirtPointers.size === 1 && shirtZoom > shirtMinZoom) {
+      const [remainingId, remainingPoint] = shirtPointers.entries().next().value;
+      shirtDragPointerId = remainingId;
+      shirtDragX = remainingPoint.x;
+      shirtDragY = remainingPoint.y;
+    }
+
+    if (shirtDragPointerId === null && shirtPointers.size < 2) {
+      shirtDetail?.classList.remove("is-dragging");
     }
   }
 
@@ -419,12 +461,13 @@ import Layout from "../../layouts/Layout.astro";
     shirtDetailShowingBack =
       cardGallery instanceof HTMLElement &&
       cardGallery.classList.contains("is-showing-back");
-    shirtZoomIndex = 0;
-    shirtLensX = 0.5;
-    shirtLensY = 0.5;
+    shirtZoom = shirtMinZoom;
+    shirtPanX = 0;
+    shirtPanY = 0;
     updateShirtDetail();
     shirtDetail.showModal();
     document.documentElement.classList.add("has-shirt-detail-open");
+    requestAnimationFrame(() => shirtDetailStage?.focus({ preventScroll: true }));
   }
 
   function closeShirtDetail() {
@@ -432,7 +475,7 @@ import Layout from "../../layouts/Layout.astro";
     shirtDetail.close();
   }
 
-  shirtCard?.addEventListener("click", (event) => {
+  shirtDetailOpen?.addEventListener("click", (event) => {
     if (!(event.target instanceof Element)) return;
     if (event.target.closest("button, a, input, select, label")) return;
     openShirtDetail();
@@ -447,23 +490,82 @@ import Layout from "../../layouts/Layout.astro";
 
   shirtDetailToggle?.addEventListener("click", () => {
     shirtDetailShowingBack = !shirtDetailShowingBack;
-    shirtZoomIndex = 0;
-    updateShirtDetail();
+    resetShirtView();
   });
 
   shirtZoomIn?.addEventListener("click", () => {
-    shirtZoomIndex = Math.min(shirtZoomIndex + 1, shirtZoomLevels.length - 1);
-    updateShirtDetail();
+    setShirtZoom(shirtZoom + shirtButtonZoomStep);
   });
 
   shirtZoomOut?.addEventListener("click", () => {
-    shirtZoomIndex = Math.max(shirtZoomIndex - 1, 0);
-    updateShirtDetail();
+    setShirtZoom(shirtZoom - shirtButtonZoomStep);
+  });
+
+  shirtZoomReset?.addEventListener("click", resetShirtView);
+
+  shirtDetailStage?.addEventListener("pointerdown", (event) => {
+    if (!(event instanceof PointerEvent) || !(shirtDetailStage instanceof HTMLElement)) return;
+    if (event.target instanceof Element && event.target.closest("button")) return;
+    if (event.pointerType === "mouse" && event.button !== 0) return;
+
+    if (event.pointerType === "touch") {
+      shirtPointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+      shirtDetailStage.setPointerCapture(event.pointerId);
+      const pinch = getShirtPinchMetrics();
+      if (pinch) {
+        shirtPinchDistance = pinch.distance;
+        shirtDragPointerId = null;
+        shirtDetail?.classList.add("is-dragging");
+        event.preventDefault();
+        return;
+      }
+    }
+
+    if (shirtZoom <= shirtMinZoom + 0.001) return;
+    shirtDragPointerId = event.pointerId;
+    shirtDragX = event.clientX;
+    shirtDragY = event.clientY;
+    shirtDetailStage.setPointerCapture(event.pointerId);
+    shirtDetail?.classList.add("is-dragging");
+    event.preventDefault();
   });
 
   shirtDetailStage?.addEventListener("pointermove", (event) => {
-    if (!(event instanceof PointerEvent) || shirtZoomIndex === 0) return;
-    positionShirtZoomLens(event.clientX, event.clientY);
+    if (!(event instanceof PointerEvent)) return;
+
+    if (shirtPointers.has(event.pointerId)) {
+      shirtPointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+      const pinch = getShirtPinchMetrics();
+      if (pinch) {
+        if (shirtPinchDistance > 0) {
+          setShirtZoom(
+            shirtZoom * (pinch.distance / shirtPinchDistance),
+            pinch.x,
+            pinch.y
+          );
+        }
+        shirtPinchDistance = pinch.distance;
+        event.preventDefault();
+        return;
+      }
+    }
+
+    if (shirtDragPointerId !== event.pointerId || shirtZoom <= shirtMinZoom) return;
+    shirtPanX += event.clientX - shirtDragX;
+    shirtPanY += event.clientY - shirtDragY;
+    shirtDragX = event.clientX;
+    shirtDragY = event.clientY;
+    clampShirtPan();
+    updateShirtDetail();
+    event.preventDefault();
+  });
+
+  shirtDetailStage?.addEventListener("pointerup", (event) => {
+    if (event instanceof PointerEvent) stopShirtDragging(event.pointerId);
+  });
+
+  shirtDetailStage?.addEventListener("pointercancel", (event) => {
+    if (event instanceof PointerEvent) stopShirtDragging(event.pointerId);
   });
 
   shirtDetailStage?.addEventListener(
@@ -471,25 +573,66 @@ import Layout from "../../layouts/Layout.astro";
     (event) => {
       if (!(event instanceof WheelEvent)) return;
 
-      const direction = event.deltaY < 0 ? 1 : -1;
-      const nextZoomIndex = Math.min(
-        Math.max(shirtZoomIndex + direction, 0),
-        shirtZoomLevels.length - 1
-      );
-
-      if (nextZoomIndex === shirtZoomIndex) return;
-
       event.preventDefault();
-      shirtZoomIndex = nextZoomIndex;
-      updateShirtDetail();
-      positionShirtZoomLens(event.clientX, event.clientY);
+      const direction = event.deltaY < 0 ? 1 : -1;
+      setShirtZoom(
+        shirtZoom + direction * shirtWheelZoomStep,
+        event.clientX,
+        event.clientY
+      );
     },
     { passive: false }
   );
 
+  shirtDetailStage?.addEventListener("dblclick", (event) => {
+    if (!(event instanceof MouseEvent)) return;
+    if (shirtZoom > shirtMinZoom) {
+      resetShirtView();
+    } else {
+      setShirtZoom(2, event.clientX, event.clientY);
+    }
+  });
+
+  shirtDetailStage?.addEventListener("keydown", (event) => {
+    if (!(event instanceof KeyboardEvent)) return;
+    const panStep = 64;
+
+    if (event.key === "+" || event.key === "=") {
+      event.preventDefault();
+      setShirtZoom(shirtZoom + shirtButtonZoomStep);
+      return;
+    }
+    if (event.key === "-") {
+      event.preventDefault();
+      setShirtZoom(shirtZoom - shirtButtonZoomStep);
+      return;
+    }
+    if (event.key === "0") {
+      event.preventDefault();
+      resetShirtView();
+      return;
+    }
+    if (shirtZoom <= shirtMinZoom) return;
+
+    const panByKey = {
+      ArrowLeft: [panStep, 0],
+      ArrowRight: [-panStep, 0],
+      ArrowUp: [0, panStep],
+      ArrowDown: [0, -panStep],
+    }[event.key];
+    if (!panByKey) return;
+
+    event.preventDefault();
+    shirtPanX += panByKey[0];
+    shirtPanY += panByKey[1];
+    clampShirtPan();
+    updateShirtDetail();
+  });
+
   window.addEventListener("resize", () => {
-    if (shirtDetail instanceof HTMLDialogElement && shirtDetail.open && shirtZoomIndex > 0) {
-      positionShirtZoomLens();
+    if (shirtDetail instanceof HTMLDialogElement && shirtDetail.open) {
+      clampShirtPan();
+      updateShirtDetail();
     }
   });
 
@@ -501,6 +644,10 @@ import Layout from "../../layouts/Layout.astro";
 
   shirtDetail?.addEventListener("close", () => {
     document.documentElement.classList.remove("has-shirt-detail-open");
+    shirtPointers.clear();
+    shirtDragPointerId = null;
+    shirtPinchDistance = 0;
+    shirtDetail.classList.remove("is-dragging");
   });
 </script>
 
@@ -980,66 +1127,38 @@ import Layout from "../../layouts/Layout.astro";
     min-height: 0;
     overflow: hidden;
     background: #ededeb;
+    cursor: zoom-in;
+    outline: 0;
+    touch-action: none;
+  }
+
+  .shirt-detail__stage:focus-visible {
+    box-shadow: inset 0 0 0 2px #f23b20;
   }
 
   .shirt-detail__media {
     --shirt-main-scale: 1;
+    --shirt-pan-x: 0px;
+    --shirt-pan-y: 0px;
     position: absolute;
     inset: 0;
-    transform: scale(var(--shirt-main-scale));
-    transform-origin: center;
+    transform: translate3d(var(--shirt-pan-x), var(--shirt-pan-y), 0)
+      scale(var(--shirt-main-scale));
+    transform-origin: 50% 50%;
     transition: transform 280ms cubic-bezier(0.22, 1, 0.36, 1);
     will-change: transform;
   }
 
-  .shirt-detail__lens {
-    position: absolute;
-    z-index: 3;
-    width: clamp(150px, 19vw, 280px);
-    aspect-ratio: 1;
-    overflow: hidden;
-    border: 2px solid #111;
-    border-radius: 4px;
-    background: #ededeb;
-    box-shadow:
-      0 0 0 1px rgba(255, 255, 255, 0.72),
-      0 16px 38px rgba(0, 0, 0, 0.3);
-    opacity: 0;
-    pointer-events: none;
-    transform: scale(0.94);
-    transition:
-      opacity 180ms ease,
-      transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
-  }
-
-  .shirt-detail.is-zoomed .shirt-detail__lens {
-    opacity: 1;
-    transform: scale(1);
-  }
-
   .shirt-detail.is-zoomed .shirt-detail__stage {
-    cursor: crosshair;
-    touch-action: none;
+    cursor: grab;
   }
 
-  .shirt-detail__lens-media {
-    --shirt-main-scale: 1;
-    --shirt-lens-scale: 1.5;
-    position: absolute;
-    transform: scale(var(--shirt-lens-scale));
-    transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
-    will-change: transform;
+  .shirt-detail.is-dragging .shirt-detail__stage {
+    cursor: grabbing;
   }
 
-  .shirt-detail__lens-media .shirt-detail__image {
-    transform: scale(var(--shirt-main-scale));
-    transform-origin:
-      var(--shirt-focus-x, 50%)
-      var(--shirt-focus-y, 50%);
-    transition:
-      opacity 260ms ease,
-      transform 280ms cubic-bezier(0.22, 1, 0.36, 1);
-    will-change: transform;
+  .shirt-detail.is-dragging .shirt-detail__media {
+    transition: none;
   }
 
   .shirt-detail__image {

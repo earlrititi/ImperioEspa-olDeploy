@@ -2134,15 +2134,67 @@ export default function Services() {
 
         @media (min-width: 960px) {
           .services-grid {
-            gap: var(--space-5, 40px);
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            align-items: stretch;
+            gap: clamp(var(--space-2), 2vw, var(--space-4));
           }
 
           .service-cta-card {
-            grid-template-columns: minmax(0, 1.1fr) minmax(230px, 0.72fr);
+            grid-template-columns: minmax(0, 1fr);
+            grid-template-rows: auto minmax(0, 1fr);
+            align-content: start;
+            align-items: start;
+            min-height: clamp(34rem, 48vw, 46rem);
+            padding: clamp(var(--space-3), 2.4vw, var(--space-5, 40px));
+          }
+
+          .service-cta-card__body {
+            align-content: start;
+            width: 100%;
+            max-width: none;
+          }
+
+          .service-cta-card__number {
+            font-size: clamp(2.4rem, 3.8vw, 4.2rem);
+          }
+
+          .service-cta-card__title {
+            display: flex;
+            align-items: flex-start;
+            min-height: 2em;
+            font-size: clamp(1.85rem, 2.6vw, 2.75rem);
+            text-wrap: balance;
+          }
+
+          .service-cta-card__copy {
+            font-size: clamp(0.94rem, 1vw, 1.08rem);
+          }
+
+          .service-cta-card:hover .service-cta-card__copy,
+          .service-cta-card:focus-within .service-cta-card__copy {
+            max-height: 24rem;
+          }
+
+          .service-cta-card__button {
+            width: 100%;
           }
 
           .service-cta-card__list {
-            justify-self: center;
+            align-self: start;
+            justify-self: stretch;
+            width: 100%;
+            font-size: clamp(0.94rem, 1.05vw, 1.08rem);
+          }
+
+          .service-cta-card:hover .service-cta-card__list,
+          .service-cta-card:focus-within .service-cta-card__list {
+            max-height: 48rem;
+          }
+
+          .service-cta-card__list-item {
+            min-height: 3.25rem;
+            padding-top: 1rem;
+            border-top: 1px solid hsl(var(--service-glow-hsl) / 0.2);
           }
 
           .service-item {
