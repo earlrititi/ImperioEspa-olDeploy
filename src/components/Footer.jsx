@@ -37,13 +37,19 @@ const SOCIAL_LINKS = [
   },
 ];
 
-export default function Footer() {
+export default function Footer({ variant = "light" }) {
+  const isDark = variant === "dark";
+
   return (
-    <footer class="image-footer" aria-label="Pie de pagina">
+    <footer class={`image-footer image-footer--${variant}`} aria-label="Pie de pagina">
       <div class="image-footer__frame">
         <img
           class="image-footer__art"
-          src="/images/imperio-espanol-footer-interactive.webp"
+          src={
+            isDark
+              ? "/images/dark-footer-interactive.webp"
+              : "/images/imperio-espanol-footer-interactive.webp"
+          }
           alt="Imperio Espanol. Mapa historico, contacto y redes sociales."
           width="1920"
           height="1080"
@@ -130,6 +136,10 @@ export default function Footer() {
           background: #f7f5f1;
         }
 
+        .image-footer--dark {
+          background: #000;
+        }
+
         .image-footer__frame {
           position: relative;
           width: 100%;
@@ -189,6 +199,11 @@ export default function Footer() {
           transform: scale(1.1);
         }
 
+        .image-footer--dark .image-footer__label-link:hover .image-footer__label-text,
+        .image-footer--dark .image-footer__label-link:focus-visible .image-footer__label-text {
+          fill: #ead7c1;
+        }
+
         .image-footer__label-link:focus-visible {
           outline: none;
         }
@@ -207,6 +222,11 @@ export default function Footer() {
           fill: #000;
           pointer-events: none;
           transition: fill 220ms ease;
+        }
+
+        .image-footer--dark .image-footer__email-mark,
+        .image-footer--dark .image-footer__social-mark {
+          fill: #ead7c1;
         }
 
         .image-footer__frame:has(.image-footer__hotspot--email:hover) .image-footer__email-mark,

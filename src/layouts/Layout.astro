@@ -12,6 +12,7 @@ interface Props {
   description?: string;
   ogImage?: string;
   noindex?: boolean;
+  footerVariant?: "light" | "dark";
 }
 
 const {
@@ -19,6 +20,7 @@ const {
   description = SITE.defaultDescription,
   ogImage = SITE.defaultOgImage,
   noindex = false,
+  footerVariant = "light",
 } = Astro.props as Props;
 
 const pageTitle =
@@ -101,7 +103,7 @@ const ogImageUrl = new URL(withBase(ogImage), deploymentOrigin).toString();
     )}
     <GlobalHomeMark />
     <slot />
-    <Footer />
+    <Footer variant={footerVariant} />
     <div id="imperio-scrollbar" aria-hidden="true">
       <div id="imperio-scrollbar-track">
         <div id="imperio-scrollbar-thumb"></div>
