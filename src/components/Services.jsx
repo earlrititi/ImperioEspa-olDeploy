@@ -36,6 +36,20 @@ const SERVICE_CARD_MEDIA = {
   },
 };
 
+const PLAN_COMPARISON_LABELS = [
+  "Mensual",
+  "Anual",
+  "Función",
+  "Foro",
+  "Discord",
+  "Artículos",
+  "Archivo",
+  "Boletín personalizado",
+  "Lanzamientos anticipados",
+  "Descuento lanzamientos",
+  "Bonus anual",
+];
+
 export default function Services() {
   const [isManifestFormOpen, setIsManifestFormOpen] = useState(false);
   const [manifestFirstName, setManifestFirstName] = useState("");
@@ -86,37 +100,27 @@ export default function Services() {
           .finally(() => card.classList.add("service-cta-card--morph-ready"));
       };
 
-      const activateMorph = () => {
+      const lockCardOpen = () => {
         requestMorph();
-        card.classList.add("service-cta-card--morph-active");
+        card.classList.add(
+          "service-cta-card--locked-open",
+          "service-cta-card--morph-active"
+        );
       };
 
-      const deactivateMorph = () => {
-        card.classList.remove("service-cta-card--morph-active");
-      };
-
-      const deactivateMorphOnFocusOut = (event) => {
-        if (!card.contains(event.relatedTarget)) {
-          deactivateMorph();
-        }
-      };
-
-      card.addEventListener("pointerenter", activateMorph);
-      card.addEventListener("pointerleave", deactivateMorph);
-      card.addEventListener("focusin", activateMorph);
-      card.addEventListener("focusout", deactivateMorphOnFocusOut);
-      card.addEventListener("pointerdown", requestMorph);
+      card.addEventListener("pointerenter", lockCardOpen);
+      card.addEventListener("focusin", lockCardOpen);
+      card.addEventListener("pointerdown", lockCardOpen);
 
       cleanups.push(() => {
         card.classList.remove(
+          "service-cta-card--locked-open",
           "service-cta-card--morph-active",
           "service-cta-card--morph-ready"
         );
-        card.removeEventListener("pointerenter", activateMorph);
-        card.removeEventListener("pointerleave", deactivateMorph);
-        card.removeEventListener("focusin", activateMorph);
-        card.removeEventListener("focusout", deactivateMorphOnFocusOut);
-        card.removeEventListener("pointerdown", requestMorph);
+        card.removeEventListener("pointerenter", lockCardOpen);
+        card.removeEventListener("focusin", lockCardOpen);
+        card.removeEventListener("pointerdown", lockCardOpen);
       });
     });
 
@@ -429,6 +433,18 @@ export default function Services() {
           )}
 
           <div class="services-grid">
+            <aside class="services-plan-index fade-in-up" aria-labelledby="services-plan-index-title">
+              <h3 class="services-plan-index__title" id="services-plan-index-title">
+                Planes
+              </h3>
+              <ul class="services-plan-index__list">
+                {PLAN_COMPARISON_LABELS.map((label) => (
+                  <li class="services-plan-index__item" key={label}>
+                    {label}
+                  </li>
+                ))}
+              </ul>
+            </aside>
             {SERVICES_ITEMS.map((service) => {
               const cardMedia = SERVICE_CARD_MEDIA[service.id];
               const cardImageSrc = cardMedia
@@ -663,6 +679,10 @@ export default function Services() {
           position: relative;
         }
 
+        .services-plan-index {
+          display: none;
+        }
+
         .services-checkout-status {
           margin: var(--space-3) 0 0;
           color: #8e1117;
@@ -855,8 +875,11 @@ export default function Services() {
           transition: opacity 0.16s ease, transform 0.16s ease, border-radius 0.16s ease, background 0.16s ease;
         }
 
-        .service-cta-card:hover,
-        .service-cta-card:focus-within {
+        .service-cta-card:is(
+          :hover,
+          :focus-within,
+          .service-cta-card--locked-open
+        ) {
           min-height: clamp(236px, 21vw, 300px);
           transform: translateY(-6px);
           border-color: hsl(var(--service-glow-hsl) / 0.42);
@@ -872,23 +895,39 @@ export default function Services() {
             -10px -10px 32px rgba(255, 255, 255, 0.58);
         }
 
-        .service-cta-card:hover .service-cta-card__stat-rail,
-        .service-cta-card:focus-within .service-cta-card__stat-rail {
+        .service-cta-card:is(
+            :hover,
+            :focus-within,
+            .service-cta-card--locked-open
+          )
+          .service-cta-card__stat-rail {
           transform: scaleY(1);
         }
 
-        .service-cta-card:hover .service-cta-card__event-bg,
-        .service-cta-card:focus-within .service-cta-card__event-bg {
+        .service-cta-card:is(
+            :hover,
+            :focus-within,
+            .service-cta-card--locked-open
+          )
+          .service-cta-card__event-bg {
           transform: scale(1.05);
         }
 
-        .service-cta-card:hover .service-cta-card__grid-pattern,
-        .service-cta-card:focus-within .service-cta-card__grid-pattern {
+        .service-cta-card:is(
+            :hover,
+            :focus-within,
+            .service-cta-card--locked-open
+          )
+          .service-cta-card__grid-pattern {
           opacity: 1;
         }
 
-        .service-cta-card:hover .service-cta-card__bg,
-        .service-cta-card:focus-within .service-cta-card__bg {
+        .service-cta-card:is(
+            :hover,
+            :focus-within,
+            .service-cta-card--locked-open
+          )
+          .service-cta-card__bg {
           opacity: 1;
           background:
             linear-gradient(145deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.13) 58%, hsl(var(--service-glow-hsl) / 0.1)),
@@ -979,9 +1018,13 @@ export default function Services() {
             transform 0.48s ease;
         }
 
-        .service-cta-card:hover .service-cta-card__copy,
-        .service-cta-card:focus-within .service-cta-card__copy {
-          max-height: 8rem;
+        .service-cta-card:is(
+            :hover,
+            :focus-within,
+            .service-cta-card--locked-open
+          )
+          .service-cta-card__copy {
+          max-height: 32rem;
           opacity: 1;
           transform: translateY(0);
         }
@@ -1020,7 +1063,12 @@ export default function Services() {
             box-shadow 0.22s ease;
         }
 
-        .service-cta-card:hover .service-cta-card__button {
+        .service-cta-card:is(
+            :hover,
+            :focus-within,
+            .service-cta-card--locked-open
+          )
+          .service-cta-card__button {
           border-color: hsl(var(--service-glow-hsl) / 0.72);
           background:
             radial-gradient(
@@ -1095,9 +1143,13 @@ export default function Services() {
             transform 0.56s ease;
         }
 
-        .service-cta-card:hover .service-cta-card__list,
-        .service-cta-card:focus-within .service-cta-card__list {
-          max-height: 18rem;
+        .service-cta-card:is(
+            :hover,
+            :focus-within,
+            .service-cta-card--locked-open
+          )
+          .service-cta-card__list {
+          max-height: 64rem;
           opacity: 1;
           transform: translateX(0);
         }
@@ -1292,7 +1344,7 @@ export default function Services() {
           color: var(--color-white-pure);
         }
 
-        .service-cta-card:nth-child(1) {
+        .service-cta-card:nth-of-type(1) {
           --service-glow-hsl: 0 0% 7%;
           --service-card-bg-start: rgba(250, 250, 250, 0.86);
           --service-card-bg-mid: hsl(0 0% 7% / 0.1);
@@ -1304,7 +1356,7 @@ export default function Services() {
           --service-button-bg-active: hsl(0 0% 4%);
         }
 
-        .service-cta-card:nth-child(2) {
+        .service-cta-card:nth-of-type(2) {
           --service-glow-hsl: 356 78% 45%;
           --service-card-bg-start: rgba(255, 248, 248, 0.84);
           --service-card-bg-mid: hsl(356 78% 45% / 0.14);
@@ -1315,7 +1367,7 @@ export default function Services() {
           --service-button-bg-active: hsl(356 74% 34%);
         }
 
-        .service-cta-card:nth-child(3) {
+        .service-cta-card:nth-of-type(3) {
           --service-glow-hsl: 43 82% 48%;
           --service-card-bg-start: rgba(255, 252, 239, 0.86);
           --service-card-bg-mid: hsl(43 82% 48% / 0.18);
@@ -1327,8 +1379,11 @@ export default function Services() {
           --service-button-text-color: var(--color-black-pure);
         }
 
-        .service-cta-card--image-bg:hover,
-        .service-cta-card--image-bg:focus-within {
+        .service-cta-card--image-bg:is(
+          :hover,
+          :focus-within,
+          .service-cta-card--locked-open
+        ) {
           --service-card-copy-color: rgba(255, 255, 255, 0.86);
           --service-card-check-color: var(--color-white-pure);
           --service-button-text-color: hsl(var(--service-glow-hsl));
@@ -1340,15 +1395,27 @@ export default function Services() {
           display: none;
         }
 
-        .service-cta-card--image-bg:hover .service-cta-card__event-bg,
-        .service-cta-card--image-bg:hover .service-cta-card__bg,
-        .service-cta-card--image-bg:focus-within .service-cta-card__event-bg,
-        .service-cta-card--image-bg:focus-within .service-cta-card__bg {
+        .service-cta-card--image-bg:is(
+            :hover,
+            :focus-within,
+            .service-cta-card--locked-open
+          )
+          .service-cta-card__event-bg,
+        .service-cta-card--image-bg:is(
+            :hover,
+            :focus-within,
+            .service-cta-card--locked-open
+          )
+          .service-cta-card__bg {
           opacity: 0;
         }
 
-        .service-cta-card--image-bg:hover .service-cta-card__media,
-        .service-cta-card--image-bg:focus-within .service-cta-card__media {
+        .service-cta-card--image-bg:is(
+            :hover,
+            :focus-within,
+            .service-cta-card--locked-open
+          )
+          .service-cta-card__media {
           opacity: 1;
           transform: scale(1);
         }
@@ -1358,34 +1425,66 @@ export default function Services() {
           animation: service-card-morph-cycle 1.72s ease forwards;
         }
 
-        .service-cta-card--image-bg:hover .service-cta-card__number,
-        .service-cta-card--image-bg:hover .service-cta-card__price-flag,
-        .service-cta-card--image-bg:hover .service-cta-card__title,
-        .service-cta-card--image-bg:hover .text-hover-effect__base,
-        .service-cta-card--image-bg:focus-within .service-cta-card__number,
-        .service-cta-card--image-bg:focus-within .service-cta-card__price-flag,
-        .service-cta-card--image-bg:focus-within .service-cta-card__title,
-        .service-cta-card--image-bg:focus-within .text-hover-effect__base {
+        .service-cta-card--image-bg:is(
+            :hover,
+            :focus-within,
+            .service-cta-card--locked-open
+          )
+          .service-cta-card__number,
+        .service-cta-card--image-bg:is(
+            :hover,
+            :focus-within,
+            .service-cta-card--locked-open
+          )
+          .service-cta-card__price-flag,
+        .service-cta-card--image-bg:is(
+            :hover,
+            :focus-within,
+            .service-cta-card--locked-open
+          )
+          .service-cta-card__title,
+        .service-cta-card--image-bg:is(
+            :hover,
+            :focus-within,
+            .service-cta-card--locked-open
+          )
+          .text-hover-effect__base {
           color: var(--color-white-pure);
         }
 
-        .service-cta-card--image-bg:hover .service-cta-card__price-flag,
-        .service-cta-card--image-bg:focus-within .service-cta-card__price-flag {
+        .service-cta-card--image-bg:is(
+            :hover,
+            :focus-within,
+            .service-cta-card--locked-open
+          )
+          .service-cta-card__price-flag {
           color: #1a1203;
           filter: saturate(1.12) brightness(1.04);
           transform: translateY(-1px) scale(1.03);
         }
 
-        .service-cta-card--image-bg:hover .text-hover-effect__gradient,
-        .service-cta-card--image-bg:hover .text-hover-effect__outline,
-        .service-cta-card--image-bg:focus-within .text-hover-effect__gradient,
-        .service-cta-card--image-bg:focus-within .text-hover-effect__outline {
+        .service-cta-card--image-bg:is(
+            :hover,
+            :focus-within,
+            .service-cta-card--locked-open
+          )
+          .text-hover-effect__gradient,
+        .service-cta-card--image-bg:is(
+            :hover,
+            :focus-within,
+            .service-cta-card--locked-open
+          )
+          .text-hover-effect__outline {
           opacity: 0;
           clip-path: inset(0 100% 0 0);
         }
 
-        .service-cta-card--image-bg:hover .service-cta-card__button,
-        .service-cta-card--image-bg:focus-within .service-cta-card__button {
+        .service-cta-card--image-bg:is(
+            :hover,
+            :focus-within,
+            .service-cta-card--locked-open
+          )
+          .service-cta-card__button {
           border-color: rgba(255, 255, 255, 0.76);
           background:
             radial-gradient(
@@ -2170,8 +2269,12 @@ export default function Services() {
             font-size: clamp(0.94rem, 1vw, 1.08rem);
           }
 
-          .service-cta-card:hover .service-cta-card__copy,
-          .service-cta-card:focus-within .service-cta-card__copy {
+          .service-cta-card:is(
+              :hover,
+              :focus-within,
+              .service-cta-card--locked-open
+            )
+            .service-cta-card__copy {
             max-height: 24rem;
           }
 
@@ -2186,8 +2289,12 @@ export default function Services() {
             font-size: clamp(0.94rem, 1.05vw, 1.08rem);
           }
 
-          .service-cta-card:hover .service-cta-card__list,
-          .service-cta-card:focus-within .service-cta-card__list {
+          .service-cta-card:is(
+              :hover,
+              :focus-within,
+              .service-cta-card--locked-open
+            )
+            .service-cta-card__list {
             max-height: 48rem;
           }
 
@@ -2214,6 +2321,69 @@ export default function Services() {
           .services-army-swap {
             margin-top: calc(var(--space-4) * -0.4);
             margin-bottom: calc(var(--space-12) * -0.5);
+          }
+        }
+
+        @media (min-width: 1180px) {
+          .services-grid {
+            grid-template-columns: minmax(190px, 0.72fr) repeat(3, minmax(0, 1fr));
+            gap: clamp(var(--space-2), 1.55vw, var(--space-4));
+          }
+
+          .services-plan-index {
+            display: grid;
+            grid-template-rows: auto minmax(0, 1fr);
+            min-height: clamp(34rem, 48vw, 46rem);
+            padding: clamp(var(--space-3), 2.4vw, var(--space-5, 40px));
+            overflow: hidden;
+            border: 1px solid rgba(0, 0, 0, 0.13);
+            border-radius: calc(var(--space-2) * 1.25);
+            background:
+              linear-gradient(145deg, rgba(255, 255, 255, 0.96), rgba(248, 246, 243, 0.88)),
+              var(--color-white-off);
+            box-shadow:
+              0 6px 6px rgba(0, 0, 0, 0.1),
+              0 18px 38px -28px rgba(0, 0, 0, 0.34),
+              inset 1px 1px 0 rgba(255, 255, 255, 0.74);
+          }
+
+          .services-plan-index__title {
+            margin: 0;
+            padding: 0 0 clamp(1rem, 1.6vw, 1.45rem);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.14);
+            color: var(--color-black-pure);
+            font-family: var(--font-serif);
+            font-size: clamp(2rem, 2.8vw, 3.1rem);
+            font-weight: 700;
+            line-height: 1;
+            text-transform: uppercase;
+          }
+
+          .services-plan-index__list {
+            display: grid;
+            grid-template-rows: repeat(11, minmax(0, 1fr));
+            min-height: 0;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+          }
+
+          .services-plan-index__item {
+            display: flex;
+            align-items: center;
+            min-width: 0;
+            padding-block: 0.58rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+            color: var(--color-black-pure);
+            font-family: var(--font-serif);
+            font-size: clamp(1rem, 1.28vw, 1.28rem);
+            font-weight: 700;
+            line-height: 1.08;
+            text-wrap: balance;
+          }
+
+          .services-plan-index__item:last-child {
+            border-bottom: 0;
           }
         }
 
@@ -2491,7 +2661,7 @@ export default function Services() {
             transition: none;
           }
 
-          .service-cta-card:hover {
+          .service-cta-card:is(:hover, .service-cta-card--locked-open) {
             transform: none;
           }
 
