@@ -1,5 +1,8 @@
 import { withBase } from "../utils/basePath";
 
+export const PLAN_COMPARISON_INTRO =
+  "Elige cómo formar parte de Imperio Español. Nuestros planes están pensados para que puedas disfrutar del proyecto a tu ritmo: desde el acceso gratuito a contenidos seleccionados hasta una experiencia más completa con materiales exclusivos, boletines, lanzamientos y recursos especiales inspirados en la historia del mundo hispánico. El plan Piquero te permite empezar a explorar la comunidad y descubrir nuestras publicaciones principales. El plan Arcabucero está pensado para quienes quieren apoyar el proyecto y recibir contenido adicional, incluyendo boletines, lanzamientos y materiales exclusivos. El plan Maestre de Campo ofrece la experiencia más completa, con acceso prioritario, recursos ampliados, mapas, efemérides y contenidos pensados para los miembros más comprometidos con el proyecto. Únete a la comunidad, apoya la divulgación histórica y acompáñanos en la construcción de un espacio dedicado al legado, la cultura y la memoria del Imperio Español.";
+
 export const PLAN_COMPARISON_LABELS = [
   "Mensual",
   "Anual",

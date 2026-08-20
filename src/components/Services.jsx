@@ -1,5 +1,9 @@
 import { useEffect, useRef, useState } from "preact/hooks";
-import { PLAN_COMPARISON_LABELS, SERVICES_ITEMS } from "../config/home";
+import {
+  PLAN_COMPARISON_INTRO,
+  PLAN_COMPARISON_LABELS,
+  SERVICES_ITEMS,
+} from "../config/home";
 import { TextHoverEffect } from "./ui/text-hover-effect";
 import { withBase } from "../utils/basePath";
 
@@ -440,6 +444,8 @@ export default function Services() {
             </dialog>
           )}
 
+          <p class="services-plan-intro fade-in-up">{PLAN_COMPARISON_INTRO}</p>
+
           <div class="services-grid">
             <aside class="services-plan-index fade-in-up" aria-labelledby="services-plan-index-title">
               <h3 class="services-plan-index__title" id="services-plan-index-title">
@@ -685,6 +691,18 @@ export default function Services() {
           display: grid;
           gap: var(--space-4);
           position: relative;
+        }
+
+        .services-plan-intro {
+          width: min(100%, 76rem);
+          margin: 0 auto clamp(var(--space-4), 4vw, var(--space-6));
+          color: rgba(0, 0, 0, 0.7);
+          font-family: var(--font-display);
+          font-size: clamp(1rem, 1.25vw, 1.14rem);
+          font-weight: 500;
+          line-height: 1.55;
+          text-align: center;
+          text-wrap: pretty;
         }
 
         .services-plan-index {
