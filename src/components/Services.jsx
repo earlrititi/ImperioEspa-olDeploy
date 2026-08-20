@@ -73,6 +73,23 @@ export default function Services() {
       document.querySelectorAll("[data-service-card-morph]")
     );
     const cleanups = [];
+    const resetCard = (card) => {
+      card.classList.remove(
+        "service-cta-card--locked-open",
+        "service-cta-card--morph-active"
+      );
+    };
+    const visibilityObserver =
+      typeof IntersectionObserver === "undefined"
+        ? null
+        : new IntersectionObserver(
+            (entries) => {
+              entries.forEach((entry) => {
+                if (!entry.isIntersecting) resetCard(entry.target);
+              });
+            },
+            { threshold: 0 }
+          );
 
     cards.forEach((card) => {
       let requested = false;
@@ -111,6 +128,7 @@ export default function Services() {
       card.addEventListener("pointerenter", lockCardOpen);
       card.addEventListener("focusin", lockCardOpen);
       card.addEventListener("pointerdown", lockCardOpen);
+      visibilityObserver?.observe(card);
 
       cleanups.push(() => {
         card.classList.remove(
@@ -121,10 +139,14 @@ export default function Services() {
         card.removeEventListener("pointerenter", lockCardOpen);
         card.removeEventListener("focusin", lockCardOpen);
         card.removeEventListener("pointerdown", lockCardOpen);
+        visibilityObserver?.unobserve(card);
       });
     });
 
-    return () => cleanups.forEach((cleanup) => cleanup());
+    return () => {
+      cleanups.forEach((cleanup) => cleanup());
+      visibilityObserver?.disconnect();
+    };
   }, []);
 
   useEffect(() => {

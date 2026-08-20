@@ -1,3 +1,5 @@
+import { SITE } from "../config/site";
+
 const SOCIAL_LINKS = [
   {
     className: "image-footer__hotspot--instagram",
@@ -66,7 +68,7 @@ export default function Footer({ variant = "light" }) {
         >
           <a
             class="image-footer__label-link"
-            href="mailto:hola@imperioes.com"
+            href={`mailto:${SITE.contactEmail}`}
             aria-label="Contacto"
           >
             <text class="image-footer__label-text" x="1127" y="60">
@@ -87,7 +89,7 @@ export default function Footer({ variant = "light" }) {
           </a>
 
           <text class="image-footer__email-mark" x="1128" y="100">
-            contacto@imperioes.com
+            {SITE.contactEmail}
           </text>
 
           {SOCIAL_LINKS.map((link) => (
@@ -109,10 +111,10 @@ export default function Footer({ variant = "light" }) {
         <nav class="image-footer__links" aria-label="Contacto y redes sociales">
           <a
             class="image-footer__hotspot image-footer__hotspot--email"
-            href="mailto:hola@imperioes.com"
+            href={`mailto:${SITE.contactEmail}`}
           >
             <span class="image-footer__sr-only">
-              Escribir a hola@imperioes.com
+              Escribir a {SITE.contactEmail}
             </span>
           </a>
 
