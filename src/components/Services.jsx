@@ -444,14 +444,15 @@ export default function Services() {
             </dialog>
           )}
 
-          <p class="services-plan-intro fade-in-up">{PLAN_COMPARISON_INTRO}</p>
-
           <div class="services-grid">
             <aside class="services-plan-index fade-in-up" aria-labelledby="services-plan-index-title">
               <h3 class="services-plan-index__title" id="services-plan-index-title">
                 Planes
               </h3>
               <ul class="services-plan-index__list">
+                <li class="services-plan-index__item services-plan-index__item--intro">
+                  {PLAN_COMPARISON_INTRO}
+                </li>
                 {PLAN_COMPARISON_LABELS.map((label) => (
                   <li class="services-plan-index__item" key={label}>
                     {label}
@@ -691,18 +692,6 @@ export default function Services() {
           display: grid;
           gap: var(--space-4);
           position: relative;
-        }
-
-        .services-plan-intro {
-          width: min(100%, 76rem);
-          margin: 0 auto clamp(var(--space-4), 4vw, var(--space-6));
-          color: rgba(0, 0, 0, 0.7);
-          font-family: var(--font-display);
-          font-size: clamp(1rem, 1.25vw, 1.14rem);
-          font-weight: 500;
-          line-height: 1.55;
-          text-align: center;
-          text-wrap: pretty;
         }
 
         .services-plan-index {
@@ -2358,7 +2347,8 @@ export default function Services() {
 
           .services-plan-index {
             display: grid;
-            grid-template-rows: auto minmax(0, 1fr);
+            grid-template-rows: auto auto;
+            align-content: start;
             min-height: clamp(34rem, 48vw, 46rem);
             padding: clamp(var(--space-3), 2.4vw, var(--space-5, 40px));
             overflow: hidden;
@@ -2387,7 +2377,7 @@ export default function Services() {
 
           .services-plan-index__list {
             display: grid;
-            grid-template-rows: repeat(11, minmax(0, 1fr));
+            grid-template-rows: auto repeat(11, minmax(3.25rem, auto));
             min-height: 0;
             margin: 0;
             padding: 0;
@@ -2406,6 +2396,17 @@ export default function Services() {
             font-weight: 700;
             line-height: 1.08;
             text-wrap: balance;
+          }
+
+          .services-plan-index__item--intro {
+            align-items: flex-start;
+            padding-block: 1rem;
+            font-family: var(--font-display);
+            font-size: clamp(0.72rem, 0.78vw, 0.82rem);
+            font-weight: 500;
+            line-height: 1.35;
+            overflow-wrap: anywhere;
+            text-wrap: pretty;
           }
 
           .services-plan-index__item:last-child {
