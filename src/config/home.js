@@ -1,5 +1,19 @@
 import { withBase } from "../utils/basePath";
 
+export const PLAN_COMPARISON_LABELS = [
+  "Mensual",
+  "Anual",
+  "Función",
+  "Foro",
+  "Discord",
+  "Artículos",
+  "Archivo",
+  "Boletín personalizado",
+  "Lanzamientos anticipados",
+  "Descuento lanzamientos",
+  "Bonus anual",
+];
+
 export const SERVICES_ITEMS = [
   {
     id: "01",
@@ -11,12 +25,13 @@ export const SERVICES_ITEMS = [
     description:
       "Una vision audaz como la tuya tiene el poder de alinear comunidades y crear impulso. El Piquero era la base de los Tercios: el soldado humilde pero esencial que sostenía las líneas. Esta es la suscripción de entrada para quien quiera comenzar a ser parte del proyecto sin compromiso económico.",
     highlights: [
-      "Lectura de artículos limitada",
+      "GRATIS",
+      "-",
+      "Explorar",
       "Acceso como lector al foro",
-      "Miembro newsletter semanal",
-      "Manifiesto gratuito",
-      "Acceso anticipado a nuestros lanzamientos",
-      "Consenso y decision sobre nuestra hoja de ruta, tanto en la elección de los lanzamientos, como en la visión estratégica global del Imperio Español.",
+      "-",
+      "Lectura de nuevos artículos limitada",
+      "Lectura de artículos del archivo limitada",
     ],
   },
   {
@@ -24,13 +39,17 @@ export const SERVICES_ITEMS = [
     statLabel: "Nivel 2",
     title: "Arcabucero",
     checkoutPlan: "arcabucero-monthly",
-    priceBadge: "3 €/mes",
+    priceBadge: "1,99 €/mes",
     imageSrc: withBase("/images/services/planificacion.jpg"),
     imageAlt: "Planificacion",
     description:
       "El Arcabucero representaba el fuego y la precisión. Un escalón superior que marcaba diferencia en el campo de batalla. Esta suscripción permite apoyar el proyecto y disfrutar de ventajas notables. Incluye:",
     highlights: [
+      "1,99 ",
+      "17,99",
+      "Acceder",
       "Comentar en el foro de debate",
+      "Acceso básico al discord como lector",
       "Dos artículos premium al mes",
       "Lectura ilimitada de toda la web",
       "Acceso anticipado a los lanzamientos de la tienda (48 horas antes)",
@@ -42,7 +61,7 @@ export const SERVICES_ITEMS = [
     statLabel: "Nivel 3",
     title: "Maestre de Campo",
     checkoutPlan: "maestre-campo-monthly",
-    priceBadge: "6 €/mes",
+    priceBadge: "3,99 €/mes",
     imageSrc: withBase("/images/services/arquitectura.jpg"),
     imageAlt: "Maestre de Campo",
     description:
@@ -56,6 +75,8 @@ export const SERVICES_ITEMS = [
     ],
   },
 ];
+
+export const ARTICLES_ITEMS = [{}];
 
 export const PROJECTS_ITEMS = [
   {
@@ -96,28 +117,6 @@ export const PROJECTS_ITEMS = [
   },
 ];
 
-export const FOOTER_STUDIOS = [
-  {
-    city: "Madrid",
-    href: "https://maps.google.com",
-    lines: ["Calle Mayor, 1", "28013 Madrid, Espana"],
-  },
-  {
-    city: "Sevilla",
-    href: "https://maps.google.com",
-    lines: ["Plaza del Triunfo, 5", "41004 Sevilla, Espana"],
-  },
-];
-
-export const FOOTER_NAV_ITEMS = [
-  { href: withBase("/estudio"), label: "Estudio" },
-  { href: withBase("/obras"), label: "Obras" },
-  { href: withBase("/diseno"), label: "Diseno" },
-  { href: withBase("/consultoria"), label: "Consultoria" },
-  { href: withBase("/equipo"), label: "Equipo" },
-  { href: withBase("/noticias"), label: "Noticias" },
-  { href: withBase("/contacto"), label: "Contacto" },
-];
 
 export const FOOTER_SOCIAL_LINKS = [
   {

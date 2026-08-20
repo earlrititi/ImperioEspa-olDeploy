@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "preact/hooks";
-import { SERVICES_ITEMS } from "../config/home";
+import { PLAN_COMPARISON_LABELS, SERVICES_ITEMS } from "../config/home";
 import { TextHoverEffect } from "./ui/text-hover-effect";
 import { withBase } from "../utils/basePath";
 
@@ -35,20 +35,6 @@ const SERVICE_CARD_MEDIA = {
     morph: "card-3-morph",
   },
 };
-
-const PLAN_COMPARISON_LABELS = [
-  "Mensual",
-  "Anual",
-  "Función",
-  "Foro",
-  "Discord",
-  "Artículos",
-  "Archivo",
-  "Boletín personalizado",
-  "Lanzamientos anticipados",
-  "Descuento lanzamientos",
-  "Bonus anual",
-];
 
 export default function Services() {
   const [isManifestFormOpen, setIsManifestFormOpen] = useState(false);
