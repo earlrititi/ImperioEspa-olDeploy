@@ -34,3 +34,4 @@ public/*.pdf
 # jetbrains setting folder
 .idea/
 .vercel
+.env*

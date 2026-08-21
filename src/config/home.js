@@ -1,7 +1,7 @@
 import { withBase } from "../utils/basePath";
 
 export const PLAN_COMPARISON_INTRO =
-  "Elige cómo formar parte de Imperio Español. Nuestros planes están pensados para que puedas disfrutar del proyecto a tu ritmo: desde el acceso gratuito a contenidos seleccionados hasta una experiencia más completa con materiales exclusivos, boletines, lanzamientos y recursos especiales inspirados en la historia del mundo hispánico. El plan Piquero te permite empezar a explorar la comunidad y descubrir nuestras publicaciones principales. El plan Arcabucero está pensado para quienes quieren apoyar el proyecto y recibir contenido adicional, incluyendo boletines, lanzamientos y materiales exclusivos. El plan Maestre de Campo ofrece la experiencia más completa, con acceso prioritario, recursos ampliados, mapas, efemérides y contenidos pensados para los miembros más comprometidos con el proyecto. Únete a la comunidad, apoya la divulgación histórica y acompáñanos en la construcción de un espacio dedicado al legado, la cultura y la memoria del Imperio Español.";
+  "Elige cómo formar parte de Imperio Español. El plan Piquero es gratuito y te permite empezar a explorar la comunidad y descubrir nuestras publicaciones principales. El plan Arcabucero está pensado para quienes quieren apoyar el proyecto y recibir contenido adicional. El plan Maestre de Campo ofrece la experiencia más completa, con acceso prioritario y contenidos pensados para los miembros más comprometidos con el proyecto. Únete a la comunidad, apoya la divulgación histórica y acompáñanos en la construcción de un espacio dedicado al legado, la cultura y la memoria del Imperio Español.";
 
 export const PLAN_COMPARISON_LABELS = [
   "Mensual",
@@ -26,7 +26,7 @@ export const SERVICES_ITEMS = [
     imageSrc: withBase("/images/services/consultoria.jpg"),
     imageAlt: "Piquero",
     description:
-      "Una vision audaz como la tuya tiene el poder de alinear comunidades y crear impulso. El Piquero era la base de los Tercios: el soldado humilde pero esencial que sostenía las líneas. Esta es la suscripción de entrada para quien quiera comenzar a ser parte del proyecto sin compromiso económico.",
+      "Una vision audaz como la tuya tiene el poder de  avanzar y alinear comunidades. El Piquero era la base de los Tercios: el soldado raso pero esencial que sostenía las líneas de los flancos. Este es el punto de entrada para explorar el proyecto de manera gratuita.",
     highlights: [
       "GRATIS",
       "-",

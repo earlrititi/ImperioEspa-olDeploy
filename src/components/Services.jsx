@@ -451,7 +451,16 @@ export default function Services() {
               </h3>
               <ul class="services-plan-index__list">
                 <li class="services-plan-index__item services-plan-index__item--intro">
-                  {PLAN_COMPARISON_INTRO}
+                  <span class="services-plan-index__intro-sizer" aria-hidden="true">
+                    {PLAN_COMPARISON_INTRO}
+                  </span>
+                  <img
+                    class="services-plan-index__intro-image"
+                    src={withBase("/images/Imagen Planes.png")}
+                    alt="Desembarco historico con la bandera espanola"
+                    loading="lazy"
+                    decoding="async"
+                  />
                 </li>
                 {PLAN_COMPARISON_LABELS.map((label) => (
                   <li class="services-plan-index__item" key={label}>
@@ -485,6 +494,9 @@ export default function Services() {
                     .join(", ")
                 : null;
               const serviceStatLabel = service.statLabel || service.id;
+              const comparisonHighlights = PLAN_COMPARISON_LABELS.map(
+                (_, index) => service.highlights?.[index] || ""
+              );
 
               if (service.highlights?.length) {
                 return (
@@ -582,12 +594,24 @@ export default function Services() {
                       )}
                     </div>
                     <ul class="service-cta-card__list" aria-label={`Puntos clave de ${service.title}`}>
-                      {service.highlights.map((highlight) => (
-                        <li class="service-cta-card__list-item" key={highlight}>
-                          <span class="service-cta-card__check" aria-hidden="true">&#10003;</span>
-                          <span>{highlight}</span>
-                        </li>
-                      ))}
+                      {comparisonHighlights.map((highlight, index) => {
+                        const isEmpty = !highlight;
+
+                        return (
+                          <li
+                            class={`service-cta-card__list-item${isEmpty ? " service-cta-card__list-item--empty" : ""}`}
+                            aria-hidden={isEmpty || undefined}
+                            key={`${service.id}-highlight-${index}`}
+                          >
+                            {!isEmpty && (
+                              <>
+                                <span class="service-cta-card__check" aria-hidden="true">&#10003;</span>
+                                <span>{highlight}</span>
+                              </>
+                            )}
+                          </li>
+                        );
+                      })}
                     </ul>
                   </article>
                 );
@@ -1174,6 +1198,10 @@ export default function Services() {
           grid-template-columns: 1.3rem minmax(0, 1fr);
           align-items: center;
           gap: 1rem;
+        }
+
+        .service-cta-card__list-item--empty {
+          display: none;
         }
 
         .service-cta-card__check {
@@ -2341,7 +2369,9 @@ export default function Services() {
 
         @media (min-width: 1180px) {
           .services-grid {
+            --services-comparison-row-height: clamp(3.625rem, 3.5vw, 4.125rem);
             grid-template-columns: minmax(190px, 0.72fr) repeat(3, minmax(0, 1fr));
+            align-items: stretch;
             gap: clamp(var(--space-2), 1.55vw, var(--space-4));
           }
 
@@ -2377,7 +2407,7 @@ export default function Services() {
 
           .services-plan-index__list {
             display: grid;
-            grid-template-rows: auto repeat(11, minmax(3.25rem, auto));
+            grid-template-rows: auto repeat(11, var(--services-comparison-row-height));
             min-height: 0;
             margin: 0;
             padding: 0;
@@ -2399,8 +2429,10 @@ export default function Services() {
           }
 
           .services-plan-index__item--intro {
+            position: relative;
             align-items: flex-start;
             padding-block: 1rem;
+            overflow: hidden;
             font-family: var(--font-display);
             font-size: clamp(0.72rem, 0.78vw, 0.82rem);
             font-weight: 500;
@@ -2409,8 +2441,66 @@ export default function Services() {
             text-wrap: pretty;
           }
 
+          .services-plan-index__intro-sizer {
+            display: block;
+            width: 100%;
+            visibility: hidden;
+          }
+
+          .services-plan-index__intro-image {
+            position: absolute;
+            inset: 0;
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: 76% center;
+          }
+
           .services-plan-index__item:last-child {
             border-bottom: 0;
+          }
+
+          .service-cta-card {
+            grid-template-rows: auto auto;
+            align-content: start;
+          }
+
+          .service-cta-card__list {
+            grid-template-rows: repeat(11, var(--services-comparison-row-height));
+            align-self: start;
+            gap: 0;
+            font-size: clamp(0.84rem, 1.06vw, 1.06rem);
+            line-height: 0.92;
+          }
+
+          .service-cta-card:is(
+              :hover,
+              :focus-within,
+              .service-cta-card--locked-open
+            )
+            .service-cta-card__list {
+            max-height: 96rem;
+          }
+
+          .service-cta-card__list-item,
+          .service-cta-card__list-item--empty {
+            display: grid;
+            grid-template-columns: 0.8rem minmax(0, 1fr);
+            gap: 0.35rem;
+            min-height: var(--services-comparison-row-height);
+            height: var(--services-comparison-row-height);
+            padding-block: 0;
+            overflow: hidden;
+          }
+
+          .service-cta-card__check {
+            font-size: 0.82rem;
+          }
+
+          .service-cta-card__list-item > span:last-child {
+            min-width: 0;
+            overflow-wrap: anywhere;
           }
         }
 
