@@ -8,7 +8,7 @@ export const NAV_ITEMS = [
     rel: "noopener noreferrer",
   },
   { href: withBase("/papeles-y-tratados"), label: "Papeles y Tratados" },
-  { href: withBase("/libreria"), label: "Archivo" },
+  { href: withBase("/archivo"), label: "Archivo" },
   { href: withBase("/foro"), label: "Foro" },
   { href: withBase("/tienda"), label: "Tienda" },
   { href: withBase("/contacto"), label: "Audiencia" },

@@ -1,8 +1,5 @@
 ---
-import InWorkPage from "../components/InWorkPage.astro";
----
+import { withBase } from "../utils/basePath";
 
-<InWorkPage
-  title="Archivo"
-  seoTitle="Archivo de libros y publicaciones | Imperio Español"
-/>
+return Astro.redirect(withBase("/archivo"), 301);
+---

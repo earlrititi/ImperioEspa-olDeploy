@@ -149,6 +149,20 @@ export default function Footer({ variant = "light" }) {
           overflow: hidden;
         }
 
+        .image-footer--dark .image-footer__frame::after {
+          content: "";
+          position: absolute;
+          inset: 0;
+          z-index: 1;
+          opacity: 0.42;
+          pointer-events: none;
+          background-image:
+            radial-gradient(circle at 18% 28%, rgb(255 255 255 / 28%) 0 1px, transparent 1px),
+            radial-gradient(circle at 65% 14%, rgb(255 255 255 / 16%) 0 1px, transparent 1px),
+            radial-gradient(circle at 42% 78%, rgb(255 255 255 / 18%) 0 1px, transparent 1px);
+          background-size: 17px 19px, 23px 29px, 31px 37px;
+        }
+
         .image-footer__art {
           position: absolute;
           inset: 0;
